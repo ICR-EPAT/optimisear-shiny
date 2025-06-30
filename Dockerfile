@@ -1,11 +1,11 @@
 ##################################################################
 # the icrsc/ is the icr's docker account, replace with your own docker user id if you iwsh to push it to docker
-# docker build -t icrsc/demo-shiny .
+# docker build -t icrsc/optimisear-shiny .
 
-# docker push icrsc/demo-shiny
+# docker push icrsc/optimisear-shiny
 
 # To run the docker image you need to pass in the path to the data, so assimungin the data is at my/path run the docker image like
-# docker run --rm --name eg-r -p 3838:3838 -v ./data:/app/data icrsc/demo-shiny
+# docker run --rm --name eg-r -p 3838:3838 -v ./data:/app/data icrsc/optimisear-shiny
 ##################################################################
 
 # 1. Base image
