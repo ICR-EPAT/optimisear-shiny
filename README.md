@@ -28,8 +28,23 @@ Document on writing shiny apps: https://mastering-shiny.org/basic-app.html
 Examples of shiny apps:
 - SYnthetic Lethal Vulnerabilities Exhibiting Reciprocation
     - Website: https://software.icr.ac.uk/app/sylver
-    - Repo: https://github.com/instituteofcancerresearch/SYLVER
+    - Source code: https://github.com/instituteofcancerresearch/SYLVER
 
+- MCran
+    - Website: https://software.icr.ac.uk/app/mrcan  
+    - Source code: https://github.com/instituteofcancerresearch/MRCan 
+
+- 8q24 
+    - Website: https://software.icr.ac.uk/app/icr8q24 
+    - Source code: https://github.com/oncogenetics/8q24  
+
+- Reversions Database:
+    - Website: https://software.icr.ac.uk/app/reversions-web  
+    - Source code: https://github.com/instituteofcancerresearch/reversions-web?tab=readme-ov-file  
+
+- Locus Explorer:
+    - Website: https://software.icr.ac.uk/app/locus-explorer 
+    - Source code: https://github.com/oncogenetics/LocusExplorer?tab=readme-ov-file 
 
 ## About the template
 The template was created by the ICR RSE team.
