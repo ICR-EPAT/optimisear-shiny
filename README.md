@@ -23,9 +23,14 @@ Rscript -e "shiny::runApp('.')"
 Type in `http://127.0.0.1:4318` in your preferred browser to access the website locally.
 
 ## Additional resources
-Document on writing shiny apps: https://mastering-shiny.org/basic-app.html  
+1) Alma Cook Book: https://almacookbook.github.io/   
+Alma Cook Book provides a comprehensive guide on how to set up environment, how to set up a container and more.
 
-Examples of shiny apps:
+2) RSE Team "Git for Beginners" course: https://github.com/ICR-RSE-Group/2025-ICR-GIT-beginners 
+
+3) Document on writing shiny apps: https://mastering-shiny.org/basic-app.html  
+
+4) Examples of shiny apps:
 - SYnthetic Lethal Vulnerabilities Exhibiting Reciprocation
     - Website: https://software.icr.ac.uk/app/sylver
     - Source code: https://github.com/instituteofcancerresearch/SYLVER
