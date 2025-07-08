@@ -20,7 +20,7 @@ Rscript -e "shiny::runApp('.')"
 ```
 
 **Access the app**  
-Type in `http://127.0.0.1:4318` in your preferred browser to access the website locally.
+Type `http://127.0.0.1:XXXX` (where XXXX is the port number provided when you start the app) into your preferred browser to access the website locally.
 
 ## Additional resources
 1) Alma Cook Book: https://almacookbook.github.io/   
