@@ -2,17 +2,18 @@ library(shiny)
 library(ggplot2)
 library(shinydashboard)
 library(DT)
+
 #library(bslib)
 
 ui <- dashboardPage(
   title = "shiny",
   dashboardHeader(title = span(tags$img(src = "ICR_logo.png"),
-                               "OPTIMISE-AR"),
+                               "Kaplan-Meier graph test - George and Karrar"),
                   titleWidth = "100%"),
   dashboardSidebar(
     sidebarMenu(
       menuItem("App", tabName = "app", icon = icon("table")),
-      menuItem("About", tabName = "about", icon = icon("question")),
+      menuItem("Description", tabName = "description", icon = icon("book")),
       menuItem("Version History", tabName = "history", icon = icon("history"))
     )
   ),
@@ -36,25 +37,23 @@ ui <- dashboardPage(
         ),
         fluidRow(
           fluidRow(
-            column(2,  radioButtons("method", label = "Structure",
-                                    choices = c("AlphaFold", "1kzy"), selected = "AlphaFold", inline = TRUE)),
-            column(6,  radioButtons("hue", label = "Hue",
-                                    choices = c("aa", "element", "bfactor"), selected = "aa", inline = TRUE)),
-          ),
+            column(3,  checkboxGroupInput("numdose", label = "Dosage",
+                                    choices = c("1", "2", "3"), selected = NULL, inline = TRUE)),),
           fluidRow(
-            column(4,  plotOutput("plot", width = "400px")),
-            column(4,  plotOutput("plotyz", width = "400px")),
-            column(4,  plotOutput("plotzx", width = "400px")),
-          ),
+            column(1,  plotOutput("graphA", width = "600px"))
+            ),
+            fluidPage(
+            fileInput("upload","Upload data file", accept = c(".csv"))
+        ),
           fluidPage(
             DTOutput("dynamic")
           ),
         )
       ),
-      tabItem(tabName = "about",
+      tabItem(tabName = "description",
         h4("About this site"),
-        p("This is a demo shiny-app"),
-        p("Authors: Rachel Alcraft"),
+        p("We used the skeleton of the GenAlpha Shiny app to run a trail for only Graph A (KP graph) using the dummy variable"),
+        p("Authors: George (Server) and Karrar (UI)"),
         p("Maintainers: Rachel Alcraft, ICR Scientific Computing"),
       ),
       tabItem(tabName = "history",
@@ -68,13 +67,15 @@ server <- function(input, output, session) {
   output$textHeader <- renderText(
                                   {"Kaplan-Meier Graph"})
   #import data
+
+req(input$upload)
+  req(input$numdose)
   ordinal_data <- reactive({
-                            req(input$upload)})
-
-
+                            (input$upload)})
+    
   #Define the relevant variables
   no_dose <- reactive({
-                      req(input$numdose)})
+                      as.numeric(input$numdose)})    #K# i think there is an issue in reading the data
 
   ordinal_data <- ordinal_data %>% filter(dose %in% no_dose)
   ordinal_data <- ordinal_data %>% group_by(id, toxicity) %>% mutate(base_adj = grade-grade[timepoint == 0])
