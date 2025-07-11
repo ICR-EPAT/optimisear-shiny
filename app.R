@@ -7,7 +7,7 @@ library(DT)
 ui <- dashboardPage(
   title = "shiny",
   dashboardHeader(title = span(tags$img(src = "ICR_logo.png"),
-                               "Demo shiny-app"),
+                               "OPTIMISE-AR"),
                   titleWidth = "100%"),
   dashboardSidebar(
     sidebarMenu(
@@ -66,37 +66,37 @@ ui <- dashboardPage(
 ###############################################################################
 server <- function(input, output, session) {
   output$textHeader <- renderText(
-                                  {"TP53 AlphaFold or crystal structure"})
-  df <- reactive({
-    if (input$method == "AlphaFold") {
-      plot_data <- "data/tp53-af.csv"
-      plot_df <- read.csv(plot_data)
-      val <- plot_df
-    } else {
-      plot_data <- "data/tp53-1kzy.csv"
-      plot_df <- read.csv(plot_data)
-      paste(plot_df)
-      val <- plot_df
-    }
-    return(val)
-  })
-  output$plot <- renderPlot(
-                            {ggplot(df(), aes(x, y, colour = get(input$hue))) +
-                               geom_point() +
-                               if (input$hue == "bfactor") scale_colour_viridis_b() else scale_colour_discrete()},
-                            res = 76)
-  output$plotyz <- renderPlot(
-                              {ggplot(df(), aes(y, z, colour = get(input$hue))) +
-                                 geom_point() +
-                                 if (input$hue == "bfactor") scale_colour_viridis_b() else scale_colour_discrete()},
-                              res = 76)
-  output$plotzx <- renderPlot(
-                              {ggplot(df(), aes(z, x, colour = get(input$hue))) +
-                                 geom_point() +
-                                 if (input$hue == "bfactor") scale_colour_viridis_b() else scale_colour_discrete()},
-                              res = 76)
+                                  {"Kaplan-Meier Graph"})
+  #import data
+  ordinal_data <- reactive({
+                            req(input$upload)})
 
-  output$dynamic <- renderDT(df(), options = list(pageLength = 5))
+
+  #Define the relevant variables
+  no_dose <- reactive({
+                      req(input$numdose)})
+
+  ordinal_data <- ordinal_data %>% filter(dose %in% no_dose)
+  ordinal_data <- ordinal_data %>% group_by(id, toxicity) %>% mutate(base_adj = grade-grade[timepoint == 0])
+  ordinal_data <- ordinal_data %>% filter(is.na(base_adj) == FALSE)
+
+  summary_df <- ordinal_data %>%
+    group_by(id) %>%
+    summarise(
+      time = if (any(base_adj == 3)) min(timepoint[base_adj == 3]) else max(time_last_report),
+      event = as.integer(any(base_adj == 3))  # 1 if grade 3 occurred, 0 if censored
+    )
+
+  summary_df <- cbind(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose)))
+
+  colnames(summary_df)[5] <- "dose"
+  summary_df
+
+  output$graphA <- survfit2(Surv(time, event) ~ dose, data = summary_df) %>%
+    ggsurvfit(linewidth = 1.5) +
+    add_censor_mark() +
+    add_confidence_interval() +
+    scale_ggsurvfit() + add_risktable()
 }
 ##################################################################################
 shinyApp(ui, server)
