@@ -2,6 +2,8 @@ library(shiny)
 library(ggplot2)
 library(shinydashboard)
 library(DT)
+library(magrittr)
+library(dplyr)
 
 #library(bslib)
 
@@ -68,16 +70,17 @@ server <- function(input, output, session) {
                                   {"Kaplan-Meier Graph"})
   #import data
 
-req(input$upload)
-  req(input$numdose)
-  ordinal_data <- reactive({
-                            (input$upload)})
-    
+  reactive({
+    req(input$upload)
+  #req(input$numdose)
+  ordinal_data <- read.csv(input$upload)
+  print(ordinal_data)
+  # print(summary(ordinal_data)) 
   #Define the relevant variables
-  no_dose <- reactive({
-                      as.numeric(input$numdose)})    #K# i think there is an issue in reading the data
+  #no_dose <- reactive({
+             #         as.numeric(input$numdose)})    #K# i think there is an issue in reading the data
 
-  ordinal_data <- ordinal_data %>% filter(dose %in% no_dose)
+  #ordinal_data <- ordinal_data %>% filter(dose %in% no_dose)
   ordinal_data <- ordinal_data %>% group_by(id, toxicity) %>% mutate(base_adj = grade-grade[timepoint == 0])
   ordinal_data <- ordinal_data %>% filter(is.na(base_adj) == FALSE)
 
@@ -98,6 +101,6 @@ req(input$upload)
     add_censor_mark() +
     add_confidence_interval() +
     scale_ggsurvfit() + add_risktable()
-}
+})}
 ##################################################################################
 shinyApp(ui, server)
