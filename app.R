@@ -40,7 +40,7 @@ ui <- dashboardPage(
         fluidRow(
           fluidRow(
                    column(3,  checkboxGroupInput("numdose", label = "Dosage",
-                                                 choices = c("1", "2", "3"), selected = NULL, inline = TRUE)),),
+                                                 selected = NULL, inline = TRUE)), ),
           fluidRow(
             column(1,  plotOutput("graphA", width = "600px"))
           ),
@@ -66,18 +66,34 @@ ui <- dashboardPage(
 )
 ###############################################################################
 server <- function(input, output, session) {
-                                            output$textHeader <- renderText(
-                                                                            {"Kaplan-Meier Graph"})
-  
+  output$textHeader <- renderText(
+                                  {"Kaplan-Meier Graph"})
+
+  #Import the data
+  ordinal_data <- reactive({
+    req(input$upload)
+    ordinal_data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
+    ordinal_data
+  })
+
+  #Update the selection boxes based on dataset
+  observe({
+    req(input$upload)
+    data <- ordinal_data()
+    numdose <- unique(data$dose)
+    updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
+  })
+
+
   #Define the relevant variables
   no_dose <- reactive({
                        req(input$numdose)
                        as.numeric(input$numdose)})
-  #import data
+  #Filter the data
   summary_df <- reactive({
                           req(input$upload)
                           req(input$numdose)
-                          ordinal_data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
+                          ordinal_data <- ordinal_data()
                           ordinal_data <- ordinal_data %>% filter(dose %in% no_dose())
                           ordinal_data <- ordinal_data %>%
                             group_by(id, toxicity) %>%
