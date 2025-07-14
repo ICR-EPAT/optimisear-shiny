@@ -15,6 +15,7 @@ ui <- dashboardPage(
   dashboardSidebar(
     sidebarMenu(
       menuItem("App", tabName = "app", icon = icon("table")),
+      menuItem("GraphB", tabName = "GraphB", icon = icon("sun")),
       menuItem("Description", tabName = "description", icon = icon("book")),
       menuItem("Version History", tabName = "history", icon = icon("history"))
     )
@@ -52,6 +53,31 @@ ui <- dashboardPage(
           ),
         )
       ),
+      ############################################ GRAPH B 
+      tabItem(tabName = "graphB",
+        fluidRow(
+          textOutput("textHeader")
+        ),
+        fluidRow(
+          fluidRow(
+                   column(3,  checkboxGroupInput("numdose", label = "Dosage",
+                                                 selected = NULL, inline = TRUE)), ),
+          fluidRow(
+                   column(4, sliderInput("tpoint", label = "Endpoint of interest", min = 0, max=1,value=0))),
+          fluidRow(
+            column(5, selectInput("toxic", label = "Toxicity of interest", choices = NULL ))),
+          fluidRow(
+            column(1,  plotOutput("graphA", width = "600px"))
+          ),
+          fluidPage(
+            fileInput("upload", "Upload data file", accept = c(".csv"))
+          ),
+          fluidPage(
+            DTOutput("dynamic")
+          ),
+        )
+      ),
+      ###################################################graph b 
       tabItem(tabName = "description",
         h4("About this site"),
         p("We used the skeleton of the GenAlpha Shiny app to run a trail for only Graph A (KP graph) using the dummy variable"),
@@ -116,6 +142,149 @@ server <- function(input, output, session) {
                                  add_censor_mark() +
                                  add_confidence_interval() +
                                  scale_ggsurvfit() + add_risktable()})
+
+################################################ graph B
+#Import the data
+ordinal_data <- reactive({
+  req(input$upload)
+  ordinal_data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
+  ordinal_data
+})
+
+#Update the selection boxes based on dataset
+observe({
+  req(input$upload)
+  data <- ordinal_data()
+  numdose <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
+})
+
+observe({
+  req(input$upload)
+  data <- ordinal_data()
+  tpoint <- unique(data$timepoint)
+  updateSliderInput(session, "tpoint", label = "Final timepoint of interest", max = length(tpoint))
+})
+
+observe({
+  req(input$upload)
+  data <- ordinal_data()
+  toxic <- unique(data$toxicity)
+  updateSelectInput(session, "toxic", label = "Toxicity of interest", choices = toxic, selected = NULL)
+})
+
+#Define the relevant variables
+no_dose <- reactive({
+                     req(input$numdose)
+                     as.numeric(input$numdose)})
+
+final_t <- reactive({
+  req(input$tpoint)
+  as.numeric(input$tpoint)
+})
+
+toxic <- reactive({
+  req(input$toxic)
+  as.numeric(input$toxic)
+})
+
+#Filter the data
+
+prop <- reactive({
+  req(input$numdose)
+  req(input$tpoint)
+  req(input$upload)
+  ordinal_data <- ordinal_data()
+  ordinal_data$grade[is.na(ordinal_data$grade)] <- "Unreported"
+
+  n_pat <- ordinal_data %>%
+    filter(timepoint == 0, toxicity %in% toxic()) %>%
+    group_by(dose) %>%
+    summarise(n.pat = n())
+
+  prop <- ordinal_data %>%
+    group_by(toxicity, timepoint, dose) %>%
+    count(grade) %>%
+    left_join(n_pat, by = "dose") %>%
+    mutate(proportion = n / n.pat) %>%
+    dplyr::select(-n)
+
+  colnames(prop) <- c("toxicity", "timepoint", "dose", "grade", "n.pat", "proportion")
+
+  prop <- prop %>% dplyr::select(-n.pat)
+  prop <- prop %>% filter(dose %in% no_dose())
+  prop <- prop %>% filter(timepoint %in% c(1:tpoint()))
+
+  missing_layer <- prop %>%
+    group_by(toxicity, timepoint, dose) %>%
+    summarise(proportion = 1 - sum(proportion), .groups = "drop") %>%
+    filter(proportion > 0)
+
+  missing_layer <- cbind(missing_layer, "Discontinued")
+  colnames(missing_layer) <- c("toxicity", "timepoint", "dose", "proportion", "grade")
+
+  missing_layer <- missing_layer %>%
+    dplyr::select(names(prop))
+
+  prop$grade <- as.character(prop$grade)
+  prop <- bind_rows(prop, missing_layer)
+
+  prop$toxicity <- as.factor(prop$toxicity)
+  prop$grade <- as.factor(prop$grade)
+  prop$dose <- as.factor(prop$dose)
+  prop$timepoint <- as.factor(prop$timepoint)
+
+  prop$dose <- factor(prop$dose, levels = c(1:numdose))
+  prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))
+  prop
+})
+
+
+#Graph labels
+
+no_patient <- reactive({
+  req(input$upload)
+  ordinal_data <- ordinal_data()
+  no_patient <- ordinal_data %>%
+    filter(timepoint == 0, toxicity %in% toxic()) %>%
+    group_by(dose) %>%
+    summarise(n.pat = n())
+})
+facet_labels <- reactive({
+  req(input$upload)
+  req(input$numdose)
+  facet_labels <- paste("Dose level", numdose(), sep = " ")
+  facet_labels <- paste(facet_labels,"(N=", sep = " ")
+  facet_labels <- paste(facet_labels, no_patient$n.pat, sep = "")
+  facet_labels <- paste(facet_labels, ")", sep = "")
+  facet_labels
+})
+
+
+#Graph output
+output$graphB <- renderPlot({
+  req(input$upload)
+  prop %>% filter(toxicity %in% toxic()) %>% ggplot(aes(x = as.factor(timepoint))) +
+    geom_bar(aes(x = as.factor(timepoint),
+                 y = proportion,
+                 fill = as.factor(grade)),
+             stat = "identity",
+             position = "stack") +
+    scale_fill_manual(values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "grey", "grey30")),
+                      labels = rev(
+                        c("None", "Mild", "Moderate", "Severe", "Very Severe", "Unreported", "Discontinued")
+                      ),
+                      guide = guide_legend(reverse = TRUE)) +
+    theme_bw(base_size = 14) +
+    facet_wrap2(~as.factor(dose),
+                nrow = 3,
+                strip.position = "left",
+                axes = "all",
+                labeller = as_labeller(facet_labels)) +
+    labs(x = "Timepoint",
+         y = "Proportion",
+         fill = "Severity Grade")
+})
 }
 ##################################################################################
 shinyApp(ui, server)
