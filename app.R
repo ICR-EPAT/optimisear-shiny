@@ -39,14 +39,14 @@ ui <- dashboardPage(
         ),
         fluidRow(
           fluidRow(
-            column(3,  checkboxGroupInput("numdose", label = "Dosage",
-                                    choices = c("1", "2", "3"), selected = NULL, inline = TRUE)),),
+                   column(3,  checkboxGroupInput("numdose", label = "Dosage",
+                                                 choices = c("1", "2", "3"), selected = NULL, inline = TRUE)),),
           fluidRow(
             column(1,  plotOutput("graphA", width = "600px"))
-            ),
-            fluidPage(
-            fileInput("upload","Upload data file", accept = c(".csv"))
-        ),
+          ),
+          fluidPage(
+            fileInput("upload", "Upload data file", accept = c(".csv"))
+          ),
           fluidPage(
             DTOutput("dynamic")
           ),
@@ -66,46 +66,40 @@ ui <- dashboardPage(
 )
 ###############################################################################
 server <- function(input, output, session) {
-  output$textHeader <- renderText(
-                                  {"Kaplan-Meier Graph"})
-  #import data
-  reactive({
-    req(input$numdose)
-    no_dose<-input$numdose
-  })
-
-  summary_df<-reactive({
-            req(input$upload)
-            ordinal_data <- read.csv(input$upload$datapath,header = TRUE,sep = ",")[,-1]
-            ordinal_data <- ordinal_data %>% group_by(id, toxicity) %>% mutate(base_adj = grade-grade[timepoint == 0])
-            ordinal_data <- ordinal_data %>% filter(is.na(base_adj) == FALSE)
-            summary_df<-ordinal_data %>%
-              group_by(id) %>%
-              summarise(
-                time = if (any(base_adj == 3)) min(timepoint[base_adj == 3]) else max(time_last_report),
-                event = as.integer(any(base_adj == 3))  # 1 if grade 3 occurred, 0 if censored
-              ) 
-              summary_df<-cbind(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose)))
-              colnames(summary_df)[5] <- "dose"
-              summary_df          
-  })
-
- 
+                                            output$textHeader <- renderText(
+                                                                            {"Kaplan-Meier Graph"})
   
-  # print(summary(ordinal_data)) 
   #Define the relevant variables
-  #no_dose <- reactive({
-             #         as.numeric(input$numdose)})    #K# i think there is an issue in reading the data
-  
-  #ordinal_data <- ordinal_data %>% filter(dose %in% no_dose)
-  output$graphA<-renderPlot({
-    req(input$upload)
-    survfit2(Surv(time, event) ~ dose, data = summary_df()) %>%
-    ggsurvfit(linewidth = 1.5) +
-    add_censor_mark() +
-    add_confidence_interval() +
-    scale_ggsurvfit() + add_risktable()
-  })}
- 
+  no_dose <- reactive({
+                       req(input$numdose)
+                       as.numeric(input$numdose)})
+  #import data
+  summary_df <- reactive({
+                          req(input$upload)
+                          req(input$numdose)
+                          ordinal_data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
+                          ordinal_data <- ordinal_data %>% filter(dose %in% no_dose())
+                          ordinal_data <- ordinal_data %>%
+                            group_by(id, toxicity) %>%
+                            mutate(base_adj = grade-grade[timepoint == 0])
+                          ordinal_data <- ordinal_data %>% filter(is.na(base_adj) == FALSE)
+                          summary_df <- ordinal_data %>%
+                            group_by(id) %>%
+                            summarise(
+                              time = if (any(base_adj == 3)) min(timepoint[base_adj == 3]) else max(time_last_report),
+                              event = as.integer(any(base_adj == 3))  # 1 if grade 3 occurred, 0 if censored
+                            )
+                          summary_df <- cbind(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose)))
+                          colnames(summary_df)[5] <- "dose"
+                          summary_df})
+
+  output$graphA <- renderPlot({
+                               req(input$upload)
+                               survfit2(Surv(time, event) ~ dose, data = summary_df()) %>%
+                                 ggsurvfit(linewidth = 1.5) +
+                                 add_censor_mark() +
+                                 add_confidence_interval() +
+                                 scale_ggsurvfit() + add_risktable()})
+}
 ##################################################################################
 shinyApp(ui, server)
