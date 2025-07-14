@@ -102,7 +102,7 @@ server <- function(input, output, session) {
                           summary_df <- ordinal_data %>%
                             group_by(id) %>%
                             summarise(
-                              time = if (any(base_adj == 3)) min(timepoint[base_adj == 3]) else max(time_last_report),
+                              time = if (any(base_adj == 3)) min(timepoint[base_adj == 3]) else max(timepoint),
                               event = as.integer(any(base_adj == 3))  # 1 if grade 3 occurred, 0 if censored
                             )
                           summary_df <- cbind(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose)))
