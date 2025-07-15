@@ -5,15 +5,16 @@ library(DT)
 library(magrittr)
 library(dplyr)
 library(ggsurvfit)
+library(ggh4x)
 #library(bslib)
 
 ui <- dashboardPage(
   title = "shiny",
   dashboardHeader(title = span(tags$img(src = "ICR_logo.png"),
-                               "Kaplan-Meier graph test - George and Karrar"),
+                               "OPTIMISE-AR"),
                   titleWidth = "100%"),
   dashboardSidebar(
-    sidebarMenu(
+    sidebarMenu(id = "tabs",
       menuItem("App", tabName = "app", icon = icon("table")),
       menuItem("GraphB", tabName = "GraphB", icon = icon("sun")),
       menuItem("Description", tabName = "description", icon = icon("book")),
@@ -48,26 +49,26 @@ ui <- dashboardPage(
           fluidPage(
             fileInput("upload", "Upload data file", accept = c(".csv"))
           ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
+           fluidPage(
+             DTOutput("dynamic")
+           ),
         )
       ),
       ############################################ GRAPH B 
-      tabItem(tabName = "graphB",
+      tabItem(tabName = "GraphB",
         fluidRow(
           textOutput("textHeader")
         ),
         fluidRow(
           fluidRow(
-                   column(3,  checkboxGroupInput("numdose", label = "Dosage",
+                   column(3,  checkboxGroupInput("numdose1", label = "Dosage",
                                                  selected = NULL, inline = TRUE)), ),
           fluidRow(
-                   column(4, sliderInput("tpoint", label = "Endpoint of interest", min = 0, max=1,value=0))),
+            column(3, sliderInput("tpoint", label = "Endpoint of interest", min = 1, max = 1, value = 0, step = 1))),
           fluidRow(
-            column(5, selectInput("toxic", label = "Toxicity of interest", choices = NULL ))),
+            column(3, selectInput("toxic", label = "Toxicity of interest", choices = NULL ))),
           fluidRow(
-            column(1,  plotOutput("graphA", width = "600px"))
+            column(1,  plotOutput("graphB", width = "600px"))
           ),
           fluidPage(
             fileInput("upload", "Upload data file", accept = c(".csv"))
@@ -88,13 +89,13 @@ ui <- dashboardPage(
               p("v1.0 - Internal ICR release 18/01/2025"))
 
     )
-  )
+  ),
 )
 ###############################################################################
 server <- function(input, output, session) {
   output$textHeader <- renderText(
                                   {"Kaplan-Meier Graph"})
-
+  
   #Import the data
   ordinal_data <- reactive({
     req(input$upload)
@@ -156,14 +157,14 @@ observe({
   req(input$upload)
   data <- ordinal_data()
   numdose <- unique(data$dose)
-  updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
+  updateCheckboxGroupInput(session, "numdose1", label = "Dosage", choices = numdose, selected = NULL)
 })
 
 observe({
   req(input$upload)
   data <- ordinal_data()
   tpoint <- unique(data$timepoint)
-  updateSliderInput(session, "tpoint", label = "Final timepoint of interest", max = length(tpoint))
+  updateSliderInput(session, "tpoint", label = "Final timepoint of interest", max = length(tpoint)-1)
 })
 
 observe({
@@ -174,9 +175,9 @@ observe({
 })
 
 #Define the relevant variables
-no_dose <- reactive({
-                     req(input$numdose)
-                     as.numeric(input$numdose)})
+no_doseb <- reactive({
+                     req(input$numdose1)
+                     as.numeric(input$numdose1)})
 
 final_t <- reactive({
   req(input$tpoint)
@@ -191,14 +192,14 @@ toxic <- reactive({
 #Filter the data
 
 prop <- reactive({
-  req(input$numdose)
+  req(input$numdose1)
   req(input$tpoint)
   req(input$upload)
   ordinal_data <- ordinal_data()
   ordinal_data$grade[is.na(ordinal_data$grade)] <- "Unreported"
 
   n_pat <- ordinal_data %>%
-    filter(timepoint == 0, toxicity %in% toxic()) %>%
+    filter(timepoint == 0, toxicity == toxic()) %>%
     group_by(dose) %>%
     summarise(n.pat = n())
 
@@ -212,8 +213,6 @@ prop <- reactive({
   colnames(prop) <- c("toxicity", "timepoint", "dose", "grade", "n.pat", "proportion")
 
   prop <- prop %>% dplyr::select(-n.pat)
-  prop <- prop %>% filter(dose %in% no_dose())
-  prop <- prop %>% filter(timepoint %in% c(1:tpoint()))
 
   missing_layer <- prop %>%
     group_by(toxicity, timepoint, dose) %>%
@@ -234,8 +233,10 @@ prop <- reactive({
   prop$dose <- as.factor(prop$dose)
   prop$timepoint <- as.factor(prop$timepoint)
 
-  prop$dose <- factor(prop$dose, levels = c(1:numdose))
+  prop$dose <- factor(prop$dose, levels = no_doseb())
   prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))
+  prop <- prop %>% filter(dose %in% no_doseb())
+  prop <- prop %>% filter(timepoint %in% c(0:final_t()))
   prop
 })
 
@@ -246,14 +247,16 @@ no_patient <- reactive({
   req(input$upload)
   ordinal_data <- ordinal_data()
   no_patient <- ordinal_data %>%
-    filter(timepoint == 0, toxicity %in% toxic()) %>%
+    filter(timepoint == 0, toxicity == toxic()) %>%
     group_by(dose) %>%
     summarise(n.pat = n())
+  no_patient
 })
 facet_labels <- reactive({
   req(input$upload)
-  req(input$numdose)
-  facet_labels <- paste("Dose level", numdose(), sep = " ")
+  req(input$numdose1)
+  no_patient<-no_patient()
+  facet_labels <- paste("Dose level", no_doseb(), sep = " ")
   facet_labels <- paste(facet_labels,"(N=", sep = " ")
   facet_labels <- paste(facet_labels, no_patient$n.pat, sep = "")
   facet_labels <- paste(facet_labels, ")", sep = "")
@@ -264,7 +267,8 @@ facet_labels <- reactive({
 #Graph output
 output$graphB <- renderPlot({
   req(input$upload)
-  prop %>% filter(toxicity %in% toxic()) %>% ggplot(aes(x = as.factor(timepoint))) +
+  prop<-prop()
+  prop %>% filter(toxicity == toxic()) %>% ggplot(aes(x = as.factor(timepoint))) +
     geom_bar(aes(x = as.factor(timepoint),
                  y = proportion,
                  fill = as.factor(grade)),
@@ -280,11 +284,12 @@ output$graphB <- renderPlot({
                 nrow = 3,
                 strip.position = "left",
                 axes = "all",
-                labeller = as_labeller(facet_labels)) +
+                labeller = as_labeller(facet_labels())) +
     labs(x = "Timepoint",
          y = "Proportion",
          fill = "Severity Grade")
 })
-}
+ }
 ##################################################################################
+
 shinyApp(ui, server)
