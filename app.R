@@ -64,7 +64,7 @@ ui <- dashboardPage(
                    column(3,  checkboxGroupInput("numdose1", label = "Dosage",
                                                  selected = NULL, inline = TRUE)), ),
           fluidRow(
-            column(3, sliderInput("tpoint", label = "Endpoint of interest", min = 1, max = 1, value = 0, step = 1))),
+            column(3, sliderInput("tpoint", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
           fluidRow(
             column(3, selectInput("toxic", label = "Toxicity of interest", choices = NULL ))),
           fluidRow(
@@ -245,29 +245,23 @@ prop <- reactive({
 
 no_patient <- reactive({
   req(input$upload)
+  req(input$numdose1)
   ordinal_data <- ordinal_data()
-  no_patient <- ordinal_data %>%
+  no_pat <- ordinal_data %>%
     filter(timepoint == 0, toxicity == toxic()) %>%
     group_by(dose) %>%
+    filter(dose %in% no_doseb()) %>%
     summarise(n.pat = n())
-  no_patient
+  no_pat$n.pat
 })
-facet_labels <- reactive({
-  req(input$upload)
-  req(input$numdose1)
-  no_patient<-no_patient()
-  facet_labels <- paste("Dose level", no_doseb(), sep = " ")
-  facet_labels <- paste(facet_labels,"(N=", sep = " ")
-  facet_labels <- paste(facet_labels, no_patient$n.pat, sep = "")
-  facet_labels <- paste(facet_labels, ")", sep = "")
-  facet_labels
-})
-
 
 #Graph output
 output$graphB <- renderPlot({
   req(input$upload)
-  prop<-prop()
+  prop <- prop()
+  no_dose <- no_doseb()
+  no_patient <- no_patient()
+  formatter <- function(no_dose, no_pat = no_patient) { paste0("Dose level ", no_dose, " (N=", no_pat, ")")}
   prop %>% filter(toxicity == toxic()) %>% ggplot(aes(x = as.factor(timepoint))) +
     geom_bar(aes(x = as.factor(timepoint),
                  y = proportion,
@@ -284,7 +278,7 @@ output$graphB <- renderPlot({
                 nrow = 3,
                 strip.position = "left",
                 axes = "all",
-                labeller = as_labeller(facet_labels())) +
+                labeller = as_labeller(formatter)) +
     labs(x = "Timepoint",
          y = "Proportion",
          fill = "Severity Grade")
