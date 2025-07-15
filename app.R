@@ -10,10 +10,10 @@ library(ggsurvfit)
 ui <- dashboardPage(
   title = "shiny",
   dashboardHeader(title = span(tags$img(src = "ICR_logo.png"),
-                               "Kaplan-Meier graph test - George and Karrar"),
+                               "OPTIMISE-AR"),
                   titleWidth = "100%"),
   dashboardSidebar(
-    sidebarMenu(
+    sidebarMenu(id = "tabs",
       menuItem("App", tabName = "app", icon = icon("table")),
       menuItem("GraphB", tabName = "GraphB", icon = icon("sun")),
       menuItem("Description", tabName = "description", icon = icon("book")),
@@ -54,7 +54,7 @@ ui <- dashboardPage(
         )
       ),
       ############################################ GRAPH B 
-      tabItem(tabName = "graphB",
+      tabItem(tabName = "GraphB",
         fluidRow(
           textOutput("textHeader")
         ),
@@ -63,11 +63,11 @@ ui <- dashboardPage(
                    column(3,  checkboxGroupInput("numdose", label = "Dosage",
                                                  selected = NULL, inline = TRUE)), ),
           fluidRow(
-                   column(4, sliderInput("tpoint", label = "Endpoint of interest", min = 0, max=1,value=0))),
+                   column(3, sliderInput("tpoint", label = "Endpoint of interest", min = 0, max=1,value=0))),
           fluidRow(
-            column(5, selectInput("toxic", label = "Toxicity of interest", choices = NULL ))),
+            column(3, selectInput("toxic", label = "Toxicity of interest", choices = NULL ))),
           fluidRow(
-            column(1,  plotOutput("graphA", width = "600px"))
+            column(1,  plotOutput("graphB", width = "600px"))
           ),
           fluidPage(
             fileInput("upload", "Upload data file", accept = c(".csv"))
@@ -88,13 +88,13 @@ ui <- dashboardPage(
               p("v1.0 - Internal ICR release 18/01/2025"))
 
     )
-  )
+  ),
 )
 ###############################################################################
 server <- function(input, output, session) {
   output$textHeader <- renderText(
                                   {"Kaplan-Meier Graph"})
-
+  
   #Import the data
   ordinal_data <- reactive({
     req(input$upload)
@@ -287,4 +287,5 @@ output$graphB <- renderPlot({
 })
 }
 ##################################################################################
+
 shinyApp(ui, server)
