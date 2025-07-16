@@ -348,21 +348,21 @@ continuous_data <- reactive({
 #### Update the inputs
 observe({
   req(input$upload_cts)
-  data <- ordinal_data()
+  data <- continuous_data()
   numdoseC <- unique(data$dose)
   updateCheckboxGroupInput(session, "numdoseC", label = "Dosage", choices = numdoseC, selected = NULL)
 })
 
 observe({
   req(input$upload_cts)
-  data <- ordinal_data()
+  data <- continuous_data()
   tpointC <- unique(data$timepoint)
   updateSliderInput(session, "tpointC", label = "Final timepoint of interest", max = length(tpointC)-1)
 })
 
 observe({
   req(input$upload_cts)
-  data <- ordinal_data()
+  data <- continuous_data()
   func <- unique(data$functioning)
   updateSelectInput(session, "functioningC", label = "Functionality of interest", choices = func, selected = NULL)
 })
@@ -386,34 +386,31 @@ func_C <- reactive({
 #### Data Filtering
 continuous_data_filtered <- reactive({
   req(input$upload_cts)
-  req(input$tpointC)
-  req(input$numdoseC)
+  req(input$functioningC)
   continuous_data <- continuous_data()
-  continuous_data %>% filter(functioning == func_C()) %>% dplyr::select(-functioning)
-  continuous_data %>% filter(timepoint %in% c(1:final_tC()))
-  continuous_data %>% filter(dose %in% numdoseC())
+  continuous_data <- continuous_data %>% filter(functioning == func_C()) %>% dplyr::select(-functioning)
   continuous_data
 })
 
 diff <- reactive({
   req(input$upload_cts)
-  continuous_data <- continuous_data_filtered()
-  continuous_data %>%
+  req(input$functioningC)
+  continuous_data_f <- continuous_data_filtered()
+  continuous_data_f <- continuous_data_f %>%
     group_by(id) %>%
-    mutate(baseline = score[timepoint == 0],
-           adjusted_value = score - baseline) %>%
-    ungroup()
-  continuous_data
+    mutate(baseline = score[timepoint == 0], adjusted_value = score - baseline) %>%
+      ungroup()
+    continuous_data_f
 })
-
 
 summary <- reactive({
   req(input$upload_cts)
   diff <- diff()
-  diff %>%
+  diff <- diff %>%
     group_by(dose, timepoint) %>%
     summarise(mean = mean(adjusted_value, na.rm = TRUE), sd = sd(adjusted_value, na.rm = TRUE) / sqrt(n()))
-  summary <- summary() %>% mutate(l.ci = mean - (1.96 * sd)) %>% mutate(u.ci = mean + (1.96 * sd))
+  summary <- diff %>% mutate(l.ci = mean - (1.96 * sd)) %>% mutate(u.ci = mean + (1.96 * sd))
+  summary <- summary %>% filter(timepoint %in% c(1:final_tC())) %>% filter(dose %in% no_doseC())
   summary
 })
 
