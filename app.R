@@ -513,21 +513,21 @@ output$select_dose <- renderUI({
 })
 ################################################################################## Graph E
 observe({
-  req(input$upload)
+  req(input$upload_cts)
   data <- continuous_data()
   numdoseE <- unique(data$dose)
   updateCheckboxGroupInput(session, "numdoseE", label = "Dosage", choices = numdoseE, selected = NULL)
 })
 
 observe({
-  req(input$upload)
+  req(input$upload_cts)
   data <- continuous_data()
   tpointD <- unique(data$timepoint)
   updateSliderInput(session, "tpointE", label = "Final timepoint of interest", max = length(tpointD)-1)
 })
 
 observe({
-  req(input$upload)
+  req(input$upload_cts)
   data <- continuous_data()
   func <- unique(data$functioning)
   updateSelectInput(session, "functioningE", label = "Functionality of interest", choices = func, selected = NULL)
@@ -556,16 +556,21 @@ data_E <- reactive({
   req(input$functioningD)
   continuous_data <- continuous_data()
   continuous_data <- continuous_data %>% filter(functioning == func_E()) %>% dplyr::select(-functioning)
-  continuous_data <- continuous_data %>% filter(dose %in% no_doseE()) %>% filter(timepoint %in% c(1:final_tE()))
+  continuous_data <- continuous_data %>%
+  filter(dose %in% no_doseE()) %>%
+  filter(timepoint %in% c(1:final_tE())) %>%
+  filter(!is.na(score))
+  continuous_data
 })
 
 output$graphE <- renderPlot({
   req(input$upload_cts)
   continuous_data <- data_E()
   ggplot(continuous_data, aes(x = as.factor(timepoint), y = score, fill = as.factor(dose))) +
+    labs(fill = "Dose level") +
     geom_boxplot() +
     theme_minimal(base_size = 14) +
-    xlab("Timepoint") + ylab(paste0("EORTC QLQ-C30 global health score in", func_E())) +
+    xlab("Timepoint") + ylab(paste0("EORTC QLQ-C30 global health score in category ", func_E())) +
     geom_segment(aes(x = 0.2, xend = 0.2, y = 0, yend = 100),
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches"))) + ylim(c(0, 100)) +
