@@ -19,6 +19,7 @@ ui <- dashboardPage(
       menuItem("GraphB", tabName = "GraphB", icon = icon("sun")),
       menuItem("GraphC", tabName = "GraphC", icon = icon("sun")),
       menuItem("GraphD", tabName = "GraphD", icon = icon("sun")),
+      menuItem("GraphE", tabName = "GraphE", icon = icon("sun")),
       menuItem("Description", tabName = "description", icon = icon("book")),
       menuItem("Version History", tabName = "history", icon = icon("history"))
     )
@@ -130,7 +131,30 @@ ui <- dashboardPage(
           ),
         )
       ),
-
+      ############################################ GRAPH E 
+      tabItem(tabName = "GraphE",
+        fluidRow(
+          textOutput("textHeader")
+        ),
+        fluidRow(
+          fluidRow(
+                   column(3,  checkboxGroupInput("numdoseE", label = "Dosage",
+                                                 selected = NULL, inline = TRUE))),
+          fluidRow(
+            column(3, sliderInput("tpointE", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
+          fluidRow(
+            column(3, selectInput("functioningE", label = "Functioning of interest", choices = NULL ))),
+          fluidRow(
+            column(1,  plotOutput("graphE", width = "600px"))
+          ),
+          fluidPage(
+            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
+          ),
+          fluidPage(
+            DTOutput("dynamic")
+          ),
+        )
+      ),
       ################################################### Description tab
       tabItem(tabName = "description",
         h4("About this site"),
