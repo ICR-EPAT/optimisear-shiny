@@ -297,7 +297,7 @@ observe({
   req(input$upload)
   data <- ordinal_data()
   numdoseC <- unique(data$dose)
-  updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdoseC, selected = NULL)
+  updateCheckboxGroupInput(session, "numdoseC", label = "Dosage", choices = numdoseC, selected = NULL)
 })
 
 observe({
