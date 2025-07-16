@@ -81,7 +81,7 @@ ui <- dashboardPage(
         )
       ),
       ############################################ GRAPH C 
-      tabItem(tabName = "Graph C",
+      tabItem(tabName = "GraphC",
         fluidRow(
           textOutput("textHeader")
         ),
@@ -97,7 +97,7 @@ ui <- dashboardPage(
             column(1,  plotOutput("graphC", width = "600px"))
           ),
           fluidPage(
-            fileInput("upload", "Upload data file", accept = c(".csv"))
+            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
           ),
           fluidPage(
             DTOutput("dynamic")
@@ -347,21 +347,21 @@ continuous_data <- reactive({
 
 #### Update the inputs
 observe({
-  req(input$upload)
+  req(input$upload_cts)
   data <- ordinal_data()
   numdoseC <- unique(data$dose)
   updateCheckboxGroupInput(session, "numdoseC", label = "Dosage", choices = numdoseC, selected = NULL)
 })
 
 observe({
-  req(input$upload)
+  req(input$upload_cts)
   data <- ordinal_data()
   tpointC <- unique(data$timepoint)
   updateSliderInput(session, "tpointC", label = "Final timepoint of interest", max = length(tpointC)-1)
 })
 
 observe({
-  req(input$upload)
+  req(input$upload_cts)
   data <- ordinal_data()
   func <- unique(data$functioning)
   updateSelectInput(session, "functioningC", label = "Functionality of interest", choices = func, selected = NULL)
@@ -384,7 +384,7 @@ func_C <- reactive({
 })
 
 #### Data Filtering
-continuous_data_filtered <- reative({
+continuous_data_filtered <- reactive({
   req(input$upload_cts)
   req(input$tpointC)
   req(input$numdoseC)
@@ -397,7 +397,7 @@ continuous_data_filtered <- reative({
 
 diff <- reactive({
   req(input$upload_cts)
-  continuous_data <- continuous_data_filtered
+  continuous_data <- continuous_data_filtered()
   continuous_data %>%
     group_by(id) %>%
     mutate(baseline = score[timepoint == 0],
@@ -413,7 +413,7 @@ summary <- reactive({
   diff %>%
     group_by(dose, timepoint) %>%
     summarise(mean = mean(adjusted_value, na.rm = TRUE), sd = sd(adjusted_value, na.rm = TRUE) / sqrt(n()))
-  summary <- summary %>% mutate(l.ci = mean - (1.96 * sd)) %>% mutate(u.ci = mean + (1.96 * sd))
+  summary <- summary() %>% mutate(l.ci = mean - (1.96 * sd)) %>% mutate(u.ci = mean + (1.96 * sd))
   summary
 })
 
