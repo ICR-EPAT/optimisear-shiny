@@ -61,12 +61,12 @@ ui <- dashboardPage(
         ),
         fluidRow(
           fluidRow(
-                   column(3,  checkboxGroupInput("numdose", label = "Dosage",
+                   column(3,  checkboxGroupInput("numdoseB", label = "Dosage",
                                                  selected = NULL, inline = TRUE)), ),
           fluidRow(
-            column(3, sliderInput("tpoint", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
+            column(3, sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
           fluidRow(
-            column(3, selectInput("toxic", label = "Toxicity of interest", choices = NULL ))),
+            column(3, selectInput("toxicB", label = "Toxicity of interest", choices = NULL ))),
           fluidRow(
             column(1,  plotOutput("graphB", width = "600px"))
           ),
@@ -157,43 +157,43 @@ observe({
   req(input$upload)
   data <- ordinal_data()
   numdose <- unique(data$dose)
-  updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
+  updateCheckboxGroupInput(session, "numdoseB", label = "Dosage", choices = numdose, selected = NULL)
 })
 
 observe({
   req(input$upload)
   data <- ordinal_data()
   tpoint <- unique(data$timepoint)
-  updateSliderInput(session, "tpoint", label = "Final timepoint of interest", max = length(tpoint)-1)
+  updateSliderInput(session, "tpointB", label = "Final timepoint of interest", max = length(tpoint)-1)
 })
 
 observe({
   req(input$upload)
   data <- ordinal_data()
   toxic <- unique(data$toxicity)
-  updateSelectInput(session, "toxic", label = "Toxicity of interest", choices = toxic, selected = NULL)
+  updateSelectInput(session, "toxicB", label = "Toxicity of interest", choices = toxic, selected = NULL)
 })
 
 #Define the relevant variables
 no_doseb <- reactive({
-                     req(input$numdose)
-                     as.numeric(input$numdose)})
+                     req(input$numdoseB)
+                     as.numeric(input$numdoseB)})
 
 final_t <- reactive({
-  req(input$tpoint)
-  as.numeric(input$tpoint)
+  req(input$tpointB)
+  as.numeric(input$tpointB)
 })
 
 toxic <- reactive({
-  req(input$toxic)
-  as.numeric(input$toxic)
+  req(input$toxicB)
+  as.numeric(input$toxicB)
 })
 
 #Filter the data
 
 prop <- reactive({
-  req(input$numdose)
-  req(input$tpoint)
+  req(input$numdoseB)
+  req(input$tpointB)
   req(input$upload)
   ordinal_data <- ordinal_data()
   ordinal_data$grade[is.na(ordinal_data$grade)] <- "Unreported"
@@ -245,7 +245,7 @@ prop <- reactive({
 
 no_patient <- reactive({
   req(input$upload)
-  req(input$numdose)
+  req(input$numdoseB)
   ordinal_data <- ordinal_data()
   no_pat <- ordinal_data %>%
     filter(timepoint == 0, toxicity == toxic()) %>%
