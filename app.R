@@ -63,12 +63,12 @@ ui <- dashboardPage(
         ),
         fluidRow(
           fluidRow(
-                   column(3,  checkboxGroupInput("numdose1", label = "Dosage",
+                   column(3,  checkboxGroupInput("numdoseB", label = "Dosage",
                                                  selected = NULL, inline = TRUE)), ),
           fluidRow(
-            column(3, sliderInput("tpoint", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
+            column(3, sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
           fluidRow(
-            column(3, selectInput("toxic", label = "Toxicity of interest", choices = NULL ))),
+            column(3, selectInput("toxicB", label = "Toxicity of interest", choices = NULL ))),
           fluidRow(
             column(1,  plotOutput("graphB", width = "600px"))
           ),
@@ -210,43 +210,43 @@ observe({
   req(input$upload)
   data <- ordinal_data()
   numdose <- unique(data$dose)
-  updateCheckboxGroupInput(session, "numdose1", label = "Dosage", choices = numdose, selected = NULL)
+  updateCheckboxGroupInput(session, "numdoseB", label = "Dosage", choices = numdose, selected = NULL)
 })
 
 observe({
   req(input$upload)
   data <- ordinal_data()
   tpoint <- unique(data$timepoint)
-  updateSliderInput(session, "tpoint", label = "Final timepoint of interest", max = length(tpoint)-1)
+  updateSliderInput(session, "tpointB", label = "Final timepoint of interest", max = length(tpoint)-1)
 })
 
 observe({
   req(input$upload)
   data <- ordinal_data()
   toxic <- unique(data$toxicity)
-  updateSelectInput(session, "toxic", label = "Toxicity of interest", choices = toxic, selected = NULL)
+  updateSelectInput(session, "toxicB", label = "Toxicity of interest", choices = toxic, selected = NULL)
 })
 
 #Define the relevant variables
 no_doseb <- reactive({
-                     req(input$numdose1)
-                     as.numeric(input$numdose1)})
+                     req(input$numdoseB)
+                     as.numeric(input$numdoseB)})
 
 final_t <- reactive({
-  req(input$tpoint)
-  as.numeric(input$tpoint)
+  req(input$tpointB)
+  as.numeric(input$tpointB)
 })
 
 toxic <- reactive({
-  req(input$toxic)
-  as.numeric(input$toxic)
+  req(input$toxicB)
+  as.numeric(input$toxicB)
 })
 
 #Filter the data
 
 prop <- reactive({
-  req(input$numdose1)
-  req(input$tpoint)
+  req(input$numdoseB)
+  req(input$tpointB)
   req(input$upload)
   ordinal_data <- ordinal_data()
   ordinal_data$grade[is.na(ordinal_data$grade)] <- "Unreported"
@@ -298,7 +298,7 @@ prop <- reactive({
 
 no_patient <- reactive({
   req(input$upload)
-  req(input$numdose1)
+  req(input$numdoseB)
   ordinal_data <- ordinal_data()
   no_pat <- ordinal_data %>%
     filter(timepoint == 0, toxicity == toxic()) %>%
@@ -336,9 +336,122 @@ output$graphB <- renderPlot({
          y = "Proportion",
          fill = "Severity Grade")
 })
- }
 
-################################################################################## Graph D
+################################################################################## GRAPH C
+#### Import the data
+continuous_data <- reactive({
+  req(input$upload_cts)
+  continuous_data <- read.csv(input$upload_cts$datapath, header = TRUE, sep = ",")[, -1]
+  continuous_data
+})
+
+#### Update the inputs
+observe({
+  req(input$upload)
+  data <- ordinal_data()
+  numdoseC <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseC", label = "Dosage", choices = numdoseC, selected = NULL)
+})
+
+observe({
+  req(input$upload)
+  data <- ordinal_data()
+  tpointC <- unique(data$timepoint)
+  updateSliderInput(session, "tpointC", label = "Final timepoint of interest", max = length(tpointC)-1)
+})
+
+observe({
+  req(input$upload)
+  data <- ordinal_data()
+  func <- unique(data$functioning)
+  updateSelectInput(session, "functioningC", label = "Functionality of interest", choices = func, selected = NULL)
+})
+
+#### Reactive Defining 
+#Define the relevant variables
+no_doseC <- reactive({
+                      req(input$numdoseC)
+                      as.numeric(input$numdoseC)})
+
+final_tC <- reactive({
+  req(input$tpointC)
+  as.numeric(input$tpointC)
+})
+
+func_C <- reactive({
+  req(input$functioningC)
+  as.numeric(input$functioningC)
+})
+
+#### Data Filtering
+continuous_data_filtered <- reative({
+  req(input$upload_cts)
+  req(input$tpointC)
+  req(input$numdoseC)
+  continuous_data <- continuous_data()
+  continuous_data %>% filter(functioning == func_C()) %>% dplyr::select(-functioning)
+  continuous_data %>% filter(timepoint %in% c(1:final_tC()))
+  continuous_data %>% filter(dose %in% numdoseC())
+  continuous_data
+})
+
+diff <- reactive({
+  req(input$upload_cts)
+  continuous_data <- continuous_data_filtered
+  continuous_data %>%
+    group_by(id) %>%
+    mutate(baseline = score[timepoint == 0],
+           adjusted_value = score - baseline) %>%
+    ungroup()
+  continuous_data
+})
+
+
+summary <- reactive({
+  req(input$upload_cts)
+  diff <- diff()
+  diff %>%
+    group_by(dose, timepoint) %>%
+    summarise(mean = mean(adjusted_value, na.rm = TRUE), sd = sd(adjusted_value, na.rm = TRUE) / sqrt(n()))
+  summary <- summary %>% mutate(l.ci = mean - (1.96 * sd)) %>% mutate(u.ci = mean + (1.96 * sd))
+  summary
+})
+
+pd <- position_dodge(width = 0.2)
+
+#### FIGURE GENERATION
+output$graphC <- renderPlot({
+  req(input$upload_cts)
+  summary() %>%
+    ggplot(
+           aes(x = as.factor(timepoint),
+               y = mean, group = as.factor(dose), shape = as.factor(dose), colour = as.factor(dose))) +
+    geom_ribbon(aes(ymin = 10, ymax = 30, fill = "palegreen1"), alpha = 0.3, colour = NA) +
+    geom_ribbon(aes(ymin = -30, ymax = -10, fill = "red"), alpha = 0.1, colour = NA) +
+    geom_point(position = pd, size=3) + geom_line(size = 1.5) +
+    geom_errorbar(position = pd, aes(ymin = l.ci, ymax = u.ci), width = 0.2, size = 1.2) +
+    theme_minimal(base_size = 14) +
+    guides(shape = guide_legend(title = "Dose"),
+           colour = guide_legend(title = "Dose")) +
+    theme_minimal(base_size = 14) +
+    xlab("Timepoint") +
+    ylab(paste0(
+                "Mean change from baseline across timepoints (with 95% CI) \n 
+                for EORTC QLQ-C30 Global status score for functioning",
+                func_C())) +
+    scale_fill_manual(name = "Threshold", values = c("palegreen1", "red"), label = c("Improvement", "Worsening")) +
+    geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = 30),
+                 colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches"))) +
+    geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = -30),
+                 colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches"))) +
+    geom_text(aes(x = 1.6, y = 17, label = "Improvement"),
+              inherit.aes = FALSE) +
+    geom_text(aes(x = 1.6, y = -17, label = "Worsening"),
+              inherit.aes = FALSE)
+})
+############################################################################################# GRAPH D
 observe({
   req(input$upload)
   data <- ordinal_data()
@@ -358,5 +471,5 @@ observe({
                        server = TRUE)  # server = TRUE is useful for long lists
 })
 ##################################################################################
-
+}
 shinyApp(ui, server)
