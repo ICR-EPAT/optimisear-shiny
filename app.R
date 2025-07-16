@@ -112,19 +112,19 @@ ui <- dashboardPage(
         ),
         fluidRow(
           fluidRow(
-                   column(3,  checkboxGroupInput("numdoseD", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)), ),
-          fluidRow(
             column(3, sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
           #Need to add a patient selection here in order to be able to select patients of interest 
           fluidRow(
-            column(4, selectizeInput("idD", label = "Select patients by dose group:",
-                           choices = NULL, multiple = TRUE))),
+            column(4, selectizeInput("idD", label = "Select patients ID",
+                           choices = NULL, multiple = TRUE),
+                   uiOutput("select_dose"))),
+          fluidRow(
+            column(3, selectInput("functioningD", label = "Functioning of interest", choices = NULL))),
           fluidRow(
             column(1,  plotOutput("graphD", width = "600px"))
           ),
           fluidPage(
-            fileInput("upload", "Upload data file", accept = c(".csv"))
+            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
           ),
           fluidPage(
             DTOutput("dynamic")
@@ -474,23 +474,104 @@ output$graphC <- renderPlot({
 })
 ############################################################################################# GRAPH D
 observe({
-  req(input$upload)
-  data <- ordinal_data()
-
-  # Get unique IDs per dose
-  grouped_ids <- split(data$id, data$dose)
-
-  # Format the choices as named lists of given lists
-  grouped_choices <- lapply(names(grouped_ids), function(dose) {
-    ids <- unique(grouped_ids[[dose]])
-    setNames(as.list(ids), paste("Patient", ids))
-  })
-  names(grouped_choices) <- paste("Dose", names(grouped_ids))
-
-  updateSelectizeInput(session, "idD",
-                       choices = grouped_choices,
-                       server = TRUE)  # server = TRUE is useful for long lists
+  req(input$upload_cts)
+  data <- continuous_data()
+  tpointD <- unique(data$timepoint)
+  updateSliderInput(session, "tpointD", label = "Final timepoint of interest", max = length(tpointD)-1)
 })
-##################################################################################
+
+observe({
+  req(input$upload_cts)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateSelectInput(session, "functioningD", label = "Functionality of interest", choices = func, selected = NULL)
+})
+
+observe({
+  req(input$upload_cts)
+  data <- continuous_data()
+  updateSelectizeInput(session, "idD",
+                       choices = data$id,
+                       server = TRUE)
+})
+
+
+
+
+
+idD <- reactive({
+  req(input$idD)
+  as.numeric(input$idD)
+})
+
+
+output$select_dose <- renderUI({
+  data <- continuous_data()
+  data <- data %>% filter(id %in% idD())
+  dose <- unique(data$dose)
+  selectizeInput("select_dose", "dose", choices = dose, multiple = TRUE, selected = NULL)
+})
+################################################################################## Graph E
+observe({
+  req(input$upload)
+  data <- continuous_data()
+  numdoseE <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseE", label = "Dosage", choices = numdoseE, selected = NULL)
+})
+
+observe({
+  req(input$upload)
+  data <- continuous_data()
+  tpointD <- unique(data$timepoint)
+  updateSliderInput(session, "tpointE", label = "Final timepoint of interest", max = length(tpointD)-1)
+})
+
+observe({
+  req(input$upload)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateSelectInput(session, "functioningE", label = "Functionality of interest", choices = func, selected = NULL)
+})
+
+
+#### Reactive Defining 
+#Define the relevant variables
+no_doseE <- reactive({
+                      req(input$numdoseE)
+                      as.numeric(input$numdoseE)})
+
+final_tE <- reactive({
+  req(input$tpointE)
+  as.numeric(input$tpointE)
+})
+
+func_E <- reactive({
+    req(input$functioningE)
+    as.numeric(input$functioningE)
+})
+
+#### Data Filtering
+data_E <- reactive({
+  req(input$upload_cts)
+  req(input$functioningD)
+  continuous_data <- continuous_data()
+  continuous_data <- continuous_data %>% filter(functioning == func_E()) %>% dplyr::select(-functioning)
+  continuous_data <- continuous_data %>% filter(dose %in% no_doseE()) %>% filter(timepoint %in% c(1:final_tE()))
+})
+
+output$graphE <- renderPlot({
+  req(input$upload_cts)
+  continuous_data <- data_E()
+  ggplot(continuous_data, aes(x = as.factor(timepoint), y = score, fill = as.factor(dose))) +
+    geom_boxplot() +
+    theme_minimal(base_size = 14) +
+    xlab("Timepoint") + ylab(paste0("EORTC QLQ-C30 global health score in", func_E())) +
+    geom_segment(aes(x = 0.2, xend = 0.2, y = 0, yend = 100),
+                 colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches"))) + ylim(c(0, 100)) +
+    scale_x_discrete(expand = expansion(add = c(2, 0))) +
+    geom_text(aes(x = -0.45, y = 90, label = "Better \n tolerability"))
+})
+##############################################################
 }
 shinyApp(ui, server)
