@@ -17,6 +17,8 @@ ui <- dashboardPage(
     sidebarMenu(id = "tabs",
       menuItem("App", tabName = "app", icon = icon("table")),
       menuItem("GraphB", tabName = "GraphB", icon = icon("sun")),
+      menuItem("GraphC", tabName = "GraphC", icon = icon("sun")),
+      menuItem("GraphD", tabName = "GraphD", icon = icon("sun")),
       menuItem("Description", tabName = "description", icon = icon("book")),
       menuItem("Version History", tabName = "history", icon = icon("history"))
     )
@@ -78,7 +80,58 @@ ui <- dashboardPage(
           ),
         )
       ),
-      ###################################################graph b 
+      ############################################ GRAPH C 
+      tabItem(tabName = "Graph C",
+        fluidRow(
+          textOutput("textHeader")
+        ),
+        fluidRow(
+          fluidRow(
+                   column(3,  checkboxGroupInput("numdoseC", label = "Dosage",
+                                                 selected = NULL, inline = TRUE))),
+          fluidRow(
+            column(3, sliderInput("tpointC", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
+          fluidRow(
+            column(3, selectInput("functioningC", label = "Functioning of interest", choices = NULL ))),
+          fluidRow(
+            column(1,  plotOutput("graphC", width = "600px"))
+          ),
+          fluidPage(
+            fileInput("upload", "Upload data file", accept = c(".csv"))
+          ),
+          fluidPage(
+            DTOutput("dynamic")
+          ),
+        )
+      ),
+      ############################################ GRAPH D 
+      tabItem(tabName = "GraphD",
+        fluidRow(
+          textOutput("textHeader")
+        ),
+        fluidRow(
+          fluidRow(
+                   column(3,  checkboxGroupInput("numdoseD", label = "Dosage",
+                                                 selected = NULL, inline = TRUE)), ),
+          fluidRow(
+            column(3, sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
+          #Need to add a patient selection here in order to be able to select patients of interest 
+          fluidRow(
+            column(4, selectizeInput("idD", label = "Select patients by dose group:",
+                           choices = NULL, multiple = TRUE))),
+          fluidRow(
+            column(1,  plotOutput("graphD", width = "600px"))
+          ),
+          fluidPage(
+            fileInput("upload", "Upload data file", accept = c(".csv"))
+          ),
+          fluidPage(
+            DTOutput("dynamic")
+          ),
+        )
+      ),
+
+      ################################################### Description tab
       tabItem(tabName = "description",
         h4("About this site"),
         p("We used the skeleton of the GenAlpha Shiny app to run a trail for only Graph A (KP graph) using the dummy variable"),
@@ -86,7 +139,7 @@ ui <- dashboardPage(
         p("Maintainers: Rachel Alcraft, ICR Scientific Computing"),
       ),
       tabItem(tabName = "history",
-              p("v1.0 - Internal ICR release 18/01/2025"))
+              p("v1.0 - Internal ICR release 20/07/2025"))
 
     )
   ),
@@ -283,7 +336,7 @@ output$graphB <- renderPlot({
          y = "Proportion",
          fill = "Severity Grade")
 })
- }
+
 ################################################################################## GRAPH C
 #### Import the data
 continuous_data <- reactive({
@@ -313,7 +366,6 @@ observe({
   func <- unique(data$functioning)
   updateSelectInput(session, "functioningC", label = "Functionality of interest", choices = func, selected = NULL)
 })
-
 
 #### Reactive Defining 
 #Define the relevant variables
@@ -399,5 +451,25 @@ output$graphC <- renderPlot({
     geom_text(aes(x = 1.6, y = -17, label = "Worsening"),
               inherit.aes = FALSE)
 })
-#############################################################################################
+############################################################################################# GRAPH D
+observe({
+  req(input$upload)
+  data <- ordinal_data()
+
+  # Get unique IDs per dose
+  grouped_ids <- split(data$id, data$dose)
+
+  # Format the choices as named lists of given lists
+  grouped_choices <- lapply(names(grouped_ids), function(dose) {
+    ids <- unique(grouped_ids[[dose]])
+    setNames(as.list(ids), paste("Patient", ids))
+  })
+  names(grouped_choices) <- paste("Dose", names(grouped_ids))
+
+  updateSelectizeInput(session, "idD",
+                       choices = grouped_choices,
+                       server = TRUE)  # server = TRUE is useful for long lists
+})
+##################################################################################
+}
 shinyApp(ui, server)
