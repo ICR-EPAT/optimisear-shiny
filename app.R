@@ -6,6 +6,7 @@ library(magrittr)
 library(dplyr)
 library(ggsurvfit)
 library(ggh4x)
+library(tidyr)
 #library(bslib)
 
 ui <- dashboardPage(
@@ -20,6 +21,7 @@ ui <- dashboardPage(
       menuItem("GraphC", tabName = "GraphC", icon = icon("sun")),
       menuItem("GraphD", tabName = "GraphD", icon = icon("sun")),
       menuItem("GraphE", tabName = "GraphE", icon = icon("sun")),
+      menuItem("GraphG", tabName = "GraphG", icon = icon("sun")),
       menuItem("Description", tabName = "description", icon = icon("book")),
       menuItem("Version History", tabName = "history", icon = icon("history"))
     )
@@ -155,6 +157,30 @@ ui <- dashboardPage(
           ),
         )
       ),
+      ########################################################### Graph G
+            tabItem(tabName = "GraphG",
+        fluidRow(
+          textOutput("textHeader")
+        ),
+        fluidRow(
+          fluidRow(
+                   column(3,  checkboxGroupInput("numdoseG", label = "Dosage",
+                                                 selected = NULL, inline = TRUE))),
+          fluidRow(
+            column(3, sliderInput("tpointG", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
+          fluidRow(
+            column(3, checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE))),
+          fluidRow(
+            column(1,  plotOutput("graphG", width = "600px"))
+          ),
+          fluidPage(
+            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
+          ),
+          fluidPage(
+            DTOutput("dynamic")
+          ),
+        )
+      ),
       ################################################### Description tab
       tabItem(tabName = "description",
         h4("About this site"),
@@ -183,8 +209,8 @@ server <- function(input, output, session) {
   #Update the selection boxes based on dataset
   observe({
     req(input$upload)
-    data <- ordinal_data()
-    numdose <- unique(data$dose)
+    ordinal_data <- ordinal_data()
+    numdose <- unique(ordinal_data$dose)
     updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
   })
 
@@ -223,11 +249,11 @@ server <- function(input, output, session) {
 
 ################################################ graph B
 #Import the data
-ordinal_data <- reactive({
-  req(input$upload)
-  ordinal_data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
-  ordinal_data
-})
+# ordinal_data <- reactive({
+#   req(input$upload)
+#   ordinal_data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
+#   ordinal_data
+# })
 
 #Update the selection boxes based on dataset
 observe({
@@ -388,7 +414,7 @@ observe({
   req(input$upload_cts)
   data <- continuous_data()
   func <- unique(data$functioning)
-  updateSelectInput(session, "functioningC", label = "Functionality of interest", choices = func, selected = NULL)
+  updateCheckboxGroupInput(session, "functioningC", label = "Functionality of interest", choices = func, selected = NULL)
 })
 
 #### Reactive Defining 
@@ -577,6 +603,164 @@ output$graphE <- renderPlot({
     scale_x_discrete(expand = expansion(add = c(2, 0))) +
     geom_text(aes(x = -0.45, y = 90, label = "Better \n tolerability"))
 })
-##############################################################
+############################################################## Graph F
+
+
+
+
+
+
+
+
+
+
+
+
+################################################################# Graph G
+####Update inputs
+observe({
+  req(input$upload_cts)
+  data <- continuous_data()
+  numdoseG <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseG", label = "Dosage", choices = numdoseG, selected = NULL)
+})
+
+observe({
+  req(input$upload_cts)
+  data <- continuous_data()
+  tpointG <- unique(data$timepoint)
+  updateSliderInput(session, "tpointG", label = "Final timepoint of interest", max = length(tpointG)-1)
+})
+
+observe({
+  req(input$upload_cts)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateCheckboxGroupInput(session, "functioningG", label = "Functionality of interest", choices = func, selected = NULL)
+})
+
+
+#### Reactive Defining 
+#Define the relevant variables
+no_doseG <- reactive({
+                      req(input$numdoseG)
+                      as.numeric(input$numdoseG)})
+
+final_tG <- reactive({
+  req(input$tpointG)
+  as.numeric(input$tpointG)
+})
+
+func_G <- reactive({
+    req(input$functioningG)
+    as.numeric(input$functioningG)
+})
+
+####Filtering
+
+
+continuous_data_filtered <- reactive({
+  req(input$upload_cts)
+  continuous_data_filtered <- continuous_data() %>%
+  filter(dose %in% no_doseG()) %>%
+  filter(functioning %in% func_G())
+  continuous_data_filtered
+})
+
+ice_n_pat <- reactive({
+  req(input$upload_cts)
+  continuous_data <- continuous_data_filtered()
+  ice_n_pat <- continuous_data %>%
+  group_by(dose, id) %>%
+  summarise(n_timepoints = n_distinct(timepoint), .groups = "drop") %>%
+  group_by(dose) %>%
+  mutate(max_timepoints = final_tG()) %>%
+  filter(n_timepoints < max_timepoints) %>%
+  summarise(n_patients_missing = n_distinct(id))
+  ice_n_pat
+})
+
+dfG <- reactive({
+  req(input$upload_cts)
+  endT <- final_tG()
+  tp_end <- sym(paste0("tp_", endT))
+  df <- continuous_data_filtered() %>%
+  filter(timepoint %in% c(0, endT)) %>%
+  pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_") %>%
+  mutate(score = as.numeric(!!tp_end - tp_0)) %>% #################this is an issue 
+  dplyr::select(id, score, dose, functioning)
+
+  df <- df %>%
+    group_by(dose, functioning) %>%
+    mutate(non_na_count = sum(!is.na(score))) %>%
+    mutate(na_count = sum(is.na(score))) %>%
+    ungroup()
+  df
+})
+
+unrep <- reactive({
+  unrep <- dfG() %>% group_by(dose, functioning) %>% distinct(na_count) %>% ungroup()
+})
+
+sum.dfG <- reactive({
+  sum.df <- dfG() %>%
+    group_by(dose, functioning) %>%
+    summarise(
+              mean = mean(score, na.rm=TRUE),non_na_count = unique(non_na_count),
+              se = sd(score, na.rm = TRUE) / sqrt(non_na_count))
+  sum.df <- sum.df %>% mutate(l.ci = mean - (1.96 * se))
+  sum.df <- sum.df %>% mutate(u.ci = mean + (1.96 * se))
+  sum.df <- sum.df %>% left_join(unrep(), by = c("dose", "functioning")) %>%
+    mutate(custom_x = paste0("Dose=", dose, "\nUR=", na_count))
+  sum.df
+})
+
+thresholds <- data.frame(
+  ymin = c(10, -25),
+  ymax = c(25, -10),
+  Threshold = factor(c("Improvement", "Worsening"))
+)
+
+
+arrowdf <- reactive({
+  first_fn <- as.symbol(as.character((func_G()[1])))
+  arrow <- tibble(functioning = as.character(first_fn))
+})
+
+output$graphG<- renderPlot({
+  end_t <- final_tG()
+  arrowdf <- arrowdf()
+  formatterG <- function(end = end_t) {paste0("Functioning ", end)}
+  data.frame(sum.dfG()) %>% ggplot(aes(x = custom_x, y = mean, colour = as.factor(dose))) +
+  geom_point(size = 3) +
+  scale_color_discrete(name = "Dose level") +
+  geom_errorbar(aes(ymin = l.ci, ymax = u.ci), width = 0.2, size = 1.2) +
+  theme_minimal(base_size = 14) + ylim(c(-25, 25)) +
+  geom_rect(data = thresholds,
+            aes(xmin = -Inf, xmax = Inf, ymin = ymin, ymax = ymax, fill = Threshold),
+            alpha = 0.3, inherit.aes = FALSE)+
+  scale_fill_manual(
+    name = "Threshold",
+    values = c("Improvement" = "palegreen1", "Worsening" = "red")
+  ) + 
+    labs(
+    y = paste0("Mean change from baseline to timepoint ", final_tG(), "(with 95% CI) \n for EORTC QLQ-C30 functional domains"),
+    x = paste0("Dose (N= ) & Unreported Patients (N= )")) +
+  facet_wrap(~ as.factor(functioning), nrow = 1,labeller = as_labeller(formatterG), scales = "free_x") +
+  scale_x_discrete(expand = expansion(add = c(1, 1))) +
+  theme(fill = "Threshold") +
+  geom_segment(data = arrowdf,
+               aes(x = 0.5, xend = 0.5, y = 0, yend = 25),
+               colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches"))) +
+  geom_segment(data = arrowdf,
+               aes(x = 0.5, xend = 0.5, y = 0, yend = -25), 
+               colour = "darkgrey", size = 0.8, arrow = arrow(type="closed",
+                                                              length = unit(0.1, "inches")))+
+  geom_text(data = arrowdf, aes(x = 2, y = 25, label = "Improvement"),
+            inherit.aes = FALSE) +
+  geom_text(data = arrowdf, aes(x = 2, y = -25, label = "Worsening"),
+            inherit.aes = FALSE)
+})
 }
 shinyApp(ui, server)
