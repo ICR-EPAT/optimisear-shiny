@@ -249,11 +249,11 @@ server <- function(input, output, session) {
 
 ################################################ graph B
 #Import the data
-# ordinal_data <- reactive({
-#   req(input$upload)
-#   ordinal_data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
-#   ordinal_data
-# })
+ordinal_data <- reactive({
+  req(input$upload)
+  ordinal_data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
+  ordinal_data
+})
 
 #Update the selection boxes based on dataset
 observe({
@@ -414,7 +414,7 @@ observe({
   req(input$upload_cts)
   data <- continuous_data()
   func <- unique(data$functioning)
-  updateCheckboxGroupInput(session, "functioningC", label = "Functionality of interest", choices = func, selected = NULL)
+  updateSelectInput(session, "functioningC", label = "Functionality of interest", choices = func, selected = NULL)
 })
 
 #### Reactive Defining 
@@ -438,11 +438,11 @@ continuous_data_filtered <- reactive({
   req(input$upload_cts)
   req(input$functioningC)
   continuous_data <- continuous_data()
-  continuous_data <- continuous_data %>% filter(functioning == func_C()) %>% dplyr::select(-functioning)
+  continuous_data <- continuous_data %>% filter(functioning == func_C()) %>% dplyr::select(-functioning) %>% filter(!is.na(score))
   continuous_data
 })
 
-diff <- reactive({
+diffC <- reactive({
   req(input$upload_cts)
   req(input$functioningC)
   continuous_data_f <- continuous_data_filtered()
@@ -453,9 +453,9 @@ diff <- reactive({
     continuous_data_f
 })
 
-summary <- reactive({
+summaryC <- reactive({
   req(input$upload_cts)
-  diff <- diff()
+  diff <- diffC()
   diff <- diff %>%
     group_by(dose, timepoint) %>%
     summarise(mean = mean(adjusted_value, na.rm = TRUE), sd = sd(adjusted_value, na.rm = TRUE) / sqrt(n()))
@@ -469,7 +469,7 @@ pd <- position_dodge(width = 0.2)
 #### FIGURE GENERATION
 output$graphC <- renderPlot({
   req(input$upload_cts)
-  summary() %>%
+  summaryC() %>%
     ggplot(
            aes(x = as.factor(timepoint),
                y = mean, group = as.factor(dose), shape = as.factor(dose), colour = as.factor(dose))) +
