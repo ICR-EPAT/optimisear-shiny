@@ -493,9 +493,9 @@ output$graphC <- renderPlot({
     geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = -30),
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches"))) +
-    geom_text(aes(x = 1.6, y = 17, label = "Improvement"),
+    geom_text(data = data.frame(x = 1.6, y = 17, label = "Improvement"), aes(x = x, y = y, label = label),
               inherit.aes = FALSE) +
-    geom_text(aes(x = 1.6, y = -17, label = "Worsening"),
+    geom_text(data = data.frame(x = 1.6, y = -17, label = "Worsening"), aes(x = x, y = y, label = label),
               inherit.aes = FALSE)
 })
 ############################################################################################# GRAPH D
