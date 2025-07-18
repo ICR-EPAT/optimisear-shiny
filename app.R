@@ -460,7 +460,7 @@ summaryC <- reactive({
     group_by(dose, timepoint) %>%
     summarise(mean = mean(adjusted_value, na.rm = TRUE), sd = sd(adjusted_value, na.rm = TRUE) / sqrt(n()))
   summary <- diff %>% mutate(l.ci = mean - (1.96 * sd)) %>% mutate(u.ci = mean + (1.96 * sd))
-  summary <- summary %>% filter(timepoint %in% c(1:final_tC())) %>% filter(dose %in% no_doseC())
+  summary <- summary %>% filter(timepoint %in% c(0:final_tC())) %>% filter(dose %in% no_doseC())
   summary
 })
 
