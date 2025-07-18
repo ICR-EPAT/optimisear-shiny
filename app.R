@@ -43,7 +43,7 @@ ui <- dashboardPage(
     tabItems(
       tabItem(tabName = "app",
         fluidRow(
-          textOutput("textHeader")
+          textOutput("textHeaderA")
         ),
         fluidRow(
           fluidRow(
@@ -63,7 +63,7 @@ ui <- dashboardPage(
       ############################################ GRAPH B 
       tabItem(tabName = "GraphB",
         fluidRow(
-          textOutput("textHeader")
+          textOutput("textHeaderB")
         ),
         fluidRow(
           fluidRow(
@@ -87,7 +87,7 @@ ui <- dashboardPage(
       ############################################ GRAPH C 
       tabItem(tabName = "GraphC",
         fluidRow(
-          textOutput("textHeader")
+          textOutput("textHeaderC")
         ),
         fluidRow(
           fluidRow(
@@ -111,7 +111,7 @@ ui <- dashboardPage(
       ############################################ GRAPH D 
       tabItem(tabName = "GraphD",
         fluidRow(
-          textOutput("textHeader")
+          textOutput("textHeaderD")
         ),
         fluidRow(
           fluidRow(
@@ -137,7 +137,7 @@ ui <- dashboardPage(
       ############################################ GRAPH E 
       tabItem(tabName = "GraphE",
         fluidRow(
-          textOutput("textHeader")
+          textOutput("textHeaderE")
         ),
         fluidRow(
           fluidRow(
@@ -161,7 +161,7 @@ ui <- dashboardPage(
       ########################################################### Graph G
             tabItem(tabName = "GraphG",
         fluidRow(
-          textOutput("textHeader")
+          textOutput("textHeaderG")
         ),
         fluidRow(
           fluidRow(
@@ -185,7 +185,7 @@ ui <- dashboardPage(
       #########################################################Graph H
       tabItem(tabName = "GraphH",
         fluidRow(
-          textOutput("textHeader")
+          textOutput("textHeaderH")
         ),
         fluidRow(
           fluidRow(
@@ -209,7 +209,7 @@ ui <- dashboardPage(
       ################################################### Description tab
       tabItem(tabName = "description",
         h4("About this site"),
-        p("We used the skeleton of the GenAlpha Shiny app to run a trail for only Graph A (KP graph) using the dummy variable"),
+        p("The beginnings of the OPTIMISE-AR app still to be reviewed"),
         p("Authors: George (Server) and Karrar (UI)"),
         p("Maintainers: Rachel Alcraft, ICR Scientific Computing"),
       ),
@@ -221,9 +221,13 @@ ui <- dashboardPage(
 )
 ###############################################################################
 server <- function(input, output, session) {
-  output$textHeader <- renderText(
-                                  {"Kaplan-Meier Graph"})
-  
+  output$textHeaderA <- renderText({"Kaplan-Meier Graph"})
+  output$textHeaderB <- renderText({"Proportional severity of doses across timepoints plot"})
+  output$textHeaderC <- renderText({"Mean change from baseline reported value across timepoints plot"})
+  output$textHeaderD <- renderText({"Patient experience plot"})
+  output$textHeaderE <- renderText({"Tolerability Boxplot"})
+  output$textHeaderG <- renderText({"Mean change in functionalities plot"})
+  output$textHeaderH <- renderText({"Butterfly plot"})
   #Import the data
   ordinal_data <- reactive({
     req(input$upload)
