@@ -676,7 +676,7 @@ ice_n_pat <- reactive({
   group_by(dose) %>%
   mutate(max_timepoints = final_tG()) %>%
   filter(n_timepoints < max_timepoints) %>%
-  summarise(n_patients_missing = n_distinct(id), .groups = "keep")
+  summarise(n_patients_missing = n_distinct(id))
   ice_n_pat
 })
 
@@ -757,9 +757,9 @@ output$graphG<- renderPlot({
                aes(x = 0.5, xend = 0.5, y = 0, yend = -25),
                colour = "darkgrey", size = 0.8, arrow = arrow(type="closed",
                                                               length = unit(0.1, "inches"))) +
-   geom_text(data = arrowdf, aes(x = 2, y = 17, label = "Improvement"),
+   geom_text(data = arrowdf, aes(x = 2, y = 22, label = "Improvement"),
               inherit.aes = FALSE) +
-   geom_text(data = arrowdf, aes(x = 2, y = -17, label = "Worsening"),
+   geom_text(data = arrowdf, aes(x = 2, y = -22, label = "Worsening"),
               inherit.aes = FALSE)
 })
 }
