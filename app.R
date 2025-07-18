@@ -438,7 +438,7 @@ continuous_data_filtered <- reactive({
   req(input$upload_cts)
   req(input$functioningC)
   continuous_data <- continuous_data()
-  continuous_data <- continuous_data %>% filter(functioning == func_C()) %>% dplyr::select(-functioning) %>% filter(!is.na(score))
+  continuous_data <- continuous_data %>% filter(functioning == func_C()) %>% dplyr::select(-functioning)# %>% filter(!is.na(score))
   continuous_data
 })
 
@@ -659,7 +659,7 @@ func_G <- reactive({
 ####Filtering
 
 
-continuous_data_filtered <- reactive({
+continuous_data_filteredG <- reactive({
   req(input$upload_cts)
   continuous_data_filtered <- continuous_data() %>%
   filter(dose %in% no_doseG()) %>%
@@ -669,7 +669,7 @@ continuous_data_filtered <- reactive({
 
 ice_n_pat <- reactive({
   req(input$upload_cts)
-  continuous_data <- continuous_data_filtered()
+  continuous_data <- continuous_data_filteredG()
   ice_n_pat <- continuous_data %>%
   group_by(dose, id) %>%
   summarise(n_timepoints = n_distinct(timepoint), .groups = "drop") %>%
