@@ -354,7 +354,7 @@ no_patient <- reactive({
     filter(timepoint == 0, toxicity == toxic()) %>%
     group_by(dose) %>%
     filter(dose %in% no_doseb()) %>%
-    summarise(n.pat = n())
+    summarise(n.pat = n(),.groups = "keep")
   no_pat$n.pat
 })
 
@@ -458,7 +458,7 @@ summaryC <- reactive({
   diff <- diffC()
   diff <- diff %>%
     group_by(dose, timepoint) %>%
-    summarise(mean = mean(adjusted_value, na.rm = TRUE), sd = sd(adjusted_value, na.rm = TRUE) / sqrt(n()))
+    summarise(mean = mean(adjusted_value, na.rm = TRUE), sd = sd(adjusted_value, na.rm = TRUE) / sqrt(n()), .groups = "keep")
   summary <- diff %>% mutate(l.ci = mean - (1.96 * sd)) %>% mutate(u.ci = mean + (1.96 * sd))
   summary <- summary %>% filter(timepoint %in% c(0:final_tC())) %>% filter(dose %in% no_doseC())
   summary
@@ -676,7 +676,7 @@ ice_n_pat <- reactive({
   group_by(dose) %>%
   mutate(max_timepoints = final_tG()) %>%
   filter(n_timepoints < max_timepoints) %>%
-  summarise(n_patients_missing = n_distinct(id))
+  summarise(n_patients_missing = n_distinct(id), .groups = "keep")
   ice_n_pat
 })
 
@@ -708,7 +708,7 @@ sum.dfG <- reactive({
     group_by(dose, functioning) %>%
     summarise(
               mean = mean(score, na.rm=TRUE),non_na_count = unique(non_na_count),
-              se = sd(score, na.rm = TRUE) / sqrt(non_na_count))
+              se = sd(score, na.rm = TRUE) / sqrt(non_na_count), .groups = "keep")
   sum.df <- sum.df %>% mutate(l.ci = mean - (1.96 * se))
   sum.df <- sum.df %>% mutate(u.ci = mean + (1.96 * se))
   sum.df <- sum.df %>% left_join(unrep(), by = c("dose", "functioning")) %>%
