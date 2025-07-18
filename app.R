@@ -22,6 +22,7 @@ ui <- dashboardPage(
       menuItem("GraphD", tabName = "GraphD", icon = icon("sun")),
       menuItem("GraphE", tabName = "GraphE", icon = icon("sun")),
       menuItem("GraphG", tabName = "GraphG", icon = icon("sun")),
+      menuItem("GraphH", tabName = "GraphH", icon = icon("sun")),
       menuItem("Description", tabName = "description", icon = icon("book")),
       menuItem("Version History", tabName = "history", icon = icon("history"))
     )
@@ -175,6 +176,30 @@ ui <- dashboardPage(
           ),
           fluidPage(
             fileInput("upload_cts", "Upload data file", accept = c(".csv"))
+          ),
+          fluidPage(
+            DTOutput("dynamic")
+          ),
+        )
+      ),
+      #########################################################Graph H
+      tabItem(tabName = "GraphH",
+        fluidRow(
+          textOutput("textHeader")
+        ),
+        fluidRow(
+          fluidRow(
+                   column(3,  checkboxGroupInput("numdoseH", label = "Dosage",
+                                                 selected = NULL, inline = TRUE)), ),
+          fluidRow(
+            column(3, sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1))),
+          fluidRow(
+            column(3, selectInput("toxicH", label = "Toxicity of interest", choices = NULL ))),
+          fluidRow(
+            column(1,  plotOutput("graphH", width = "600px"))
+          ),
+          fluidPage(
+            fileInput("upload", "Upload data file", accept = c(".csv"))
           ),
           fluidPage(
             DTOutput("dynamic")
