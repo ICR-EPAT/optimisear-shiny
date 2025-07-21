@@ -961,6 +961,8 @@ colnames(labels) <- c("score", "colour", "leg")
 output$graphH <- renderPlot({
   toxic <- toxicH()
   valH <- valH()
+  arrowdfH <- arrowdfH()
+  arrowdf.revH <- arrowdf.revH()
   formatterH <- function(toxic = toxic) {paste0("Symptomatic Adverse Event ", toxic)}
   ggplot(valH %>% subset(toxicity %in% toxic), aes(x = dose, y = proportion, fill = grade_change, group = dose)) +
     geom_bar(stat = "identity", position = "stack") +
@@ -979,22 +981,23 @@ output$graphH <- renderPlot({
     scale_y_continuous(breaks = c(0),
                        limits = c(-1, 1)) +
     geom_hline(yintercept = 0, color = "grey", size = 1) +
-    geom_segment(data = arrowdfH(),
+    geom_segment(data = arrowdfH,
                  aes(x = x, xend = xend, y = y, yend = yend),
                  colour = "darkgrey",
                  size = 0.8,
                  arrow = arrow(type = "closed", length = unit(0.1, "inches")),
                  inherit.aes = FALSE) +
     scale_x_discrete(expand = expansion(mult = c(1.5, 0))) +
-    geom_segment(data = arrowdf.revH(),
+    geom_segment(data = arrowdf.revH,
                  aes(x = x, xend = xend, y = y, yend = yend),
                  colour = "darkgrey",
                  size = 0.8,
                  arrow = arrow(type = "closed", length = unit(0.1, "inches")),
                  inherit.aes = FALSE) +
-    geom_text(data = arrowdfH(), aes(x = -0.25, y = 0.5, label = "Improvement"),
+    geom_text(data = data.frame(x = -0.25, y = 0.5, label = "Improvement"), aes(x = x, y = y, label = label),
               inherit.aes = FALSE) +
-    geom_text(data = arrowdf.revH(), aes(x = -0.25, y = -0.5, label = "Worsening"),
+    geom_text(data = data.frame(x = -0.25, y = -0.5, label = "Worsening"),
+    aes(x = x, y = y, label = label),
               inherit.aes = FALSE) +
     geom_text(
       data = missing_H() %>% filter(toxicity %in% toxic),
