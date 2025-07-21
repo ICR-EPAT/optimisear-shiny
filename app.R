@@ -625,7 +625,7 @@ output$graphE <- renderPlot({
     labs(fill = "Dose level") +
     geom_boxplot() +
     theme_minimal(base_size = 14) +
-    xlab("Timepoint") + ylab(paste0("EORTC QLQ-C30 global health score in category ", func_E())) +
+    xlab("Timepoint") + ylab(paste0("Score in category ", func_E())) +
     geom_segment(aes(x = 0.2, xend = 0.2, y = 0, yend = 100),
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches"))) + ylim(c(0, 100)) +
