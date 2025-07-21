@@ -22,6 +22,7 @@ ui <- dashboardPage(
       menuItem("GraphD", tabName = "GraphD", icon = icon("sun")),
       menuItem("GraphE", tabName = "GraphE", icon = icon("sun")),
       menuItem("GraphG", tabName = "GraphG", icon = icon("sun")),
+      menuItem("GraphH", tabName = "GraphH", icon = icon("sun")),
       menuItem("Description", tabName = "description", icon = icon("book")),
       menuItem("Version History", tabName = "history", icon = icon("history"))
     )
@@ -42,7 +43,7 @@ ui <- dashboardPage(
     tabItems(
       tabItem(tabName = "app",
         fluidRow(
-          textOutput("textHeader")
+          textOutput("textHeaderA")
         ),
         fluidRow(
           fluidRow(
@@ -62,7 +63,7 @@ ui <- dashboardPage(
       ############################################ GRAPH B 
       tabItem(tabName = "GraphB",
         fluidRow(
-          textOutput("textHeader")
+          textOutput("textHeaderB")
         ),
         fluidRow(
           fluidRow(
@@ -86,7 +87,7 @@ ui <- dashboardPage(
       ############################################ GRAPH C 
       tabItem(tabName = "GraphC",
         fluidRow(
-          textOutput("textHeader")
+          textOutput("textHeaderC")
         ),
         fluidRow(
           fluidRow(
@@ -110,7 +111,7 @@ ui <- dashboardPage(
       ############################################ GRAPH D 
       tabItem(tabName = "GraphD",
         fluidRow(
-          textOutput("textHeader")
+          textOutput("textHeaderD")
         ),
         fluidRow(
           fluidRow(
@@ -136,7 +137,7 @@ ui <- dashboardPage(
       ############################################ GRAPH E 
       tabItem(tabName = "GraphE",
         fluidRow(
-          textOutput("textHeader")
+          textOutput("textHeaderE")
         ),
         fluidRow(
           fluidRow(
@@ -160,7 +161,7 @@ ui <- dashboardPage(
       ########################################################### Graph G
             tabItem(tabName = "GraphG",
         fluidRow(
-          textOutput("textHeader")
+          textOutput("textHeaderG")
         ),
         fluidRow(
           fluidRow(
@@ -181,10 +182,34 @@ ui <- dashboardPage(
           ),
         )
       ),
+      #########################################################Graph H
+      tabItem(tabName = "GraphH",
+        fluidRow(
+          textOutput("textHeaderH")
+        ),
+        fluidRow(
+          fluidRow(
+                   column(3,  checkboxGroupInput("numdoseH", label = "Dosage",
+                                                 selected = NULL, inline = TRUE)), ),
+          fluidRow(
+            column(3, sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1))),
+          fluidRow(
+            column(3, checkboxGroupInput("toxicH", label = "Toxicity of interest", selected = NULL, inline = TRUE))),
+          fluidRow(
+            column(1,  plotOutput("graphH", width = "600px"))
+          ),
+          fluidPage(
+            fileInput("upload", "Upload data file", accept = c(".csv"))
+          ),
+          fluidPage(
+            DTOutput("dynamic")
+          ),
+        )
+      ),
       ################################################### Description tab
       tabItem(tabName = "description",
         h4("About this site"),
-        p("We used the skeleton of the GenAlpha Shiny app to run a trail for only Graph A (KP graph) using the dummy variable"),
+        p("The beginnings of the OPTIMISE-AR app still to be reviewed"),
         p("Authors: George (Server) and Karrar (UI)"),
         p("Maintainers: Rachel Alcraft, ICR Scientific Computing"),
       ),
@@ -196,9 +221,13 @@ ui <- dashboardPage(
 )
 ###############################################################################
 server <- function(input, output, session) {
-  output$textHeader <- renderText(
-                                  {"Kaplan-Meier Graph"})
-  
+  output$textHeaderA <- renderText({"Kaplan-Meier Graph"})
+  output$textHeaderB <- renderText({"Proportional severity of doses across timepoints plot"})
+  output$textHeaderC <- renderText({"Mean change from baseline reported value across timepoints plot"})
+  output$textHeaderD <- renderText({"Patient experience plot"})
+  output$textHeaderE <- renderText({"Tolerability Boxplot"})
+  output$textHeaderG <- renderText({"Mean change in functionalities plot"})
+  output$textHeaderH <- renderText({"Butterfly plot"})
   #Import the data
   ordinal_data <- reactive({
     req(input$upload)
@@ -688,7 +717,7 @@ dfG <- reactive({
   df <- continuous_data_filteredG() %>%
   filter(timepoint %in% c(0, as.numeric(endT))) %>%
   pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_") %>%
-  mutate(score = as.numeric(!!tp_end - tp_0)) %>% #################this is an issue 
+  mutate(score = as.numeric(!!tp_end - tp_0)) %>% #################this is an issue
   dplyr::select(id, score, dose, functioning)
 
   df <- df %>%
@@ -761,6 +790,220 @@ output$graphG<- renderPlot({
               inherit.aes = FALSE) +
    geom_text(data = arrowdf, aes(x = 2, y = -22, label = "Worsening"),
               inherit.aes = FALSE)
+})
+
+################################################################################ Graph H
+#Update the selection boxes based on dataset
+observe({
+  req(input$upload)
+  data <- ordinal_data()
+  numdose <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseH", label = "Dosage", choices = numdose, selected = NULL)
+})
+
+observe({
+  req(input$upload)
+  data <- ordinal_data()
+  tpoint <- unique(data$timepoint)
+  updateSliderInput(session, "tpointH", label = "Final timepoint of interest", max = length(tpoint)-1)
+})
+
+observe({
+  req(input$upload)
+  data <- ordinal_data()
+  toxic <- unique(data$toxicity)
+  updateCheckboxGroupInput(session, "toxicH", label = "Toxicity of interest", choices = toxic, selected = NULL)
+})
+
+#Define the relevant variables
+no_doseH <- reactive({
+                     req(input$numdoseH)
+                     as.numeric(input$numdoseH)})
+
+times_H <- reactive({
+  req(input$tpointH)
+  as.numeric(input$tpointH)
+})
+
+toxicH <- reactive({
+  req(input$toxicH)
+  as.numeric(input$toxicH)
+})
+
+
+
+
+
+####Filter and sort data
+
+ordinal_dataH <- reactive({
+  tps <- times_H()
+  tp_first <- as.symbol(paste0("tp_", tps[1]))
+  tp_last <- as.symbol(paste0("tp_", tps[2]))
+  ordinal_dataH <- ordinal_data()
+  ordinal_dataH <- ordinal_dataH %>% filter(dose %in% no_doseH()) %>% filter(toxicity %in% toxicH()) %>%
+    group_by(id) %>%
+    mutate(has_tp = any(timepoint == tps[2])) %>%
+    filter(timepoint %in% c(tps[1], tps[2])) %>%
+    pivot_wider(names_from = timepoint, values_from = grade, names_prefix = "tp_") %>%
+    mutate(grade_change = case_when(
+                                    has_tp == FALSE ~ "ICE",
+                                    TRUE ~  as.character(!!tp_first - !!tp_last)))
+  ordinal_dataH$grade_change[is.na(ordinal_dataH$grade_change) == TRUE] <- "Missing"
+  ordinal_dataH
+})
+
+dose_labelsH <- reactive({
+  levs <- rev(no_doseH())
+  paste0("Dose ", levs)
+})
+
+propH <- reactive({
+  propH <- ordinal_dataH()
+  propH <- propH %>% group_by(toxicity, dose) %>%
+    count(grade_change) %>%
+    ungroup() %>%
+    mutate(original = TRUE) %>%
+    complete(toxicity, dose, grade_change, fill = list(n = 0)) %>%
+    group_by(toxicity, dose) %>%
+    mutate(n.pat = sum(n[grade_change != "ICE"], na.rm = TRUE)) %>%
+    ungroup() %>%
+    mutate(proportion = n / n.pat) %>% dplyr::select(-n)
+  propH$toxicity <- as.factor(propH$toxicity)
+  propH$dose <- as.factor(propH$dose)
+  propH$dose <- factor(propH$dose, levels = rev(levels(propH$dose)))
+  #prop$base_adj <- factor(prop$base_adj, levels = c("Unreported",5,4,3,2,1))
+  propH$grade_change <- as.character(propH$grade_change)
+  #prop <- prop %>%
+  #  replace_na(list(grade_change = "Unreported"))
+  propH
+})
+missing_H <- reactive({
+  missing <- propH() %>%
+    subset(grade_change == "Missing") %>%
+    mutate(label = paste0("Unreported: ", round(proportion, 2) * 100, "%"))
+  missing <- cbind(missing, rep(0.7, times = nrow(missing)))
+  colnames(missing)[8] <- "loc"
+  levels(missing$dose) <-  dose_labelsH()
+  missing
+})
+
+prop_H_adjusted <- reactive({
+  propHadj <- propH()
+  propHadj <- propHadj %>% mutate(proportion = ifelse(grade_change >= 0, proportion, -proportion))
+  propHadj <- propHadj %>% subset(grade_change != "Missing") %>% subset(grade_change != 0)
+  propHadj <- propHadj %>% filter(original)
+  propHadj
+})
+
+valH <- reactive({
+  valH <- prop_H_adjusted()
+  valH <- valH %>%
+    group_by(dose, toxicity) %>%
+    arrange(dose, toxicity, grade_change) %>%
+    mutate(percent = paste0(round(abs(proportion) * 100, 1), "%")) %>%
+
+  # Create separate cumsum columns for pos/neg
+  mutate(
+    cumsum_pos = if_else(proportion > 0, cumsum(if_else(proportion > 0, proportion, 0)), NA_real_),
+    cumsum_neg = if_else(proportion < 0, cumsum(if_else(proportion < 0, proportion, 0)), NA_real_)
+  ) %>%
+  mutate(
+    pos = case_when(
+      proportion > 0 ~ cumsum_pos - 0.5 * proportion,
+      proportion < 0 ~ cumsum_neg - 0.5 * proportion,
+      TRUE ~ 0  # fallback for proportion == 0
+    )
+  )
+  valH <- valH %>% subset(grade_change != "ICE")
+  valH$grade_change <- factor(valH$grade_change)
+  levels(valH$dose) <-  dose_labelsH()
+  valH
+})
+
+#arrowdf <- tibble(toxicity = "10")
+
+arrowdfH <- reactive({ 
+  arrowH <- tibble(
+  toxicity = factor(as.character(unique(toxicH())), levels = levels(valH()$toxicity)),  # important!
+  x = 0.5,
+  xend = 0.5,
+  y = 0,
+  yend = 1
+)
+arrowH
+})
+
+arrowdf.revH <- reactive({ arrowH <- tibble(
+  toxicity = factor(as.character(unique(toxicH())), levels = levels(valH()$toxicity)),  # important!
+  x = 0.5,
+  xend = 0.5,
+  y = 0,
+  yend = -1
+)
+arrowH
+})
+
+
+
+ice_n_patH <- reactive({
+  prop_H_adjusted() %>% distinct(dose, n.pat)
+})
+
+labels <- cbind(c(-5, -4, -3, -2, -1, 1, 2, 3, 4, 5),
+                c("red", "deeppink", "orange", "gold", "lightyellow3", "lightblue",
+                  "darkseagreen3", "darkolivegreen3", "chartreuse3", "chartreuse4"),
+                rev(c("Improve by 5", "Improve by 4", "Improve by 3", "Improve by 2", "Improve by 1", "Worsen by 1",
+                      "Worsen by 2", "Worsen by 3", "Worsen by 4", "Worsen by 5")))
+
+colnames(labels) <- c("score", "colour", "leg")
+
+output$graphH <- renderPlot({
+  toxic <- toxicH()
+  valH <- valH()
+  arrowdfH <- arrowdfH()
+  arrowdf.revH <- arrowdf.revH()
+  formatterH <- function(toxic = toxic) {paste0("Symptomatic Adverse Event ", toxic)}
+  ggplot(valH %>% subset(toxicity %in% toxic), aes(x = dose, y = proportion, fill = grade_change, group = dose)) +
+    geom_bar(stat = "identity", position = "stack") +
+    coord_flip() +
+    scale_y_continuous(labels = abs, breaks = c(0), limits = c(-1, 1)) +
+    theme_minimal(base_size = 15) +
+    theme(
+          strip.text.y = element_text(angle = 0)) +
+    facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterH)) + #ylim(c(-1, 1)) +
+      scale_fill_manual(values=labels[match(as.numeric(levels(valH$grade_change)), labels[,1]),2],
+                    labels=labels[match(as.numeric(levels(valH$grade_change)), labels[,1]),3])+
+    geom_text(aes(y = pos, label = percent), size = 3, color = "black") +
+    labs(x = paste0("Dose (N=", paste(ice_n_patH()$n.pat, collapse = "; "), ")"),
+         y = "Percentage (%)",
+         fill = "Change in Severity ") +
+    # scale_y_continuous(breaks = c(0), limits = c(-1, 1)) +
+    geom_hline(yintercept = 0, color = "grey", size = 1) +
+    geom_segment(data = arrowdfH,
+                 aes(x = x, xend = xend, y = y, yend = yend),
+                 colour = "darkgrey",
+                 size = 0.8,
+                 arrow = arrow(type = "closed", length = unit(0.1, "inches")),
+                 inherit.aes = FALSE) +
+    scale_x_discrete(expand = expansion(mult = c(1.5, 0))) +
+    geom_segment(data = arrowdf.revH,
+                 aes(x = x, xend = xend, y = y, yend = yend),
+                 colour = "darkgrey",
+                 size = 0.8,
+                 arrow = arrow(type = "closed", length = unit(0.1, "inches")),
+                 inherit.aes = FALSE) +
+    geom_text(data = data.frame(x = -0.25, y = 0.5, label = "Improvement"), aes(x = x, y = y, label = label),
+              inherit.aes = FALSE) +
+    geom_text(data = data.frame(x = -0.25, y = -0.5, label = "Worsening"),
+    aes(x = x, y = y, label = label),
+              inherit.aes = FALSE) +
+    geom_text(
+      data = missing_H() %>% filter(toxicity %in% toxic),
+      aes(x = dose, y = loc, label = label, group = dose),  # 'toxicity' must also be in 'missing'
+      inherit.aes = FALSE,
+      vjust = -0.5
+    )
 })
 }
 shinyApp(ui, server)
