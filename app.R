@@ -16,13 +16,14 @@ ui <- dashboardPage(
                   titleWidth = "100%"),
   dashboardSidebar(
     sidebarMenu(id = "tabs",
-      menuItem("App", tabName = "app", icon = icon("table")),
+      menuItem("GraphA", tabName = "GraphA", icon = icon("sun")),
       menuItem("GraphB", tabName = "GraphB", icon = icon("sun")),
-      menuItem("GraphC", tabName = "GraphC", icon = icon("sun")),
-      menuItem("GraphD", tabName = "GraphD", icon = icon("sun")),
-      menuItem("GraphE", tabName = "GraphE", icon = icon("sun")),
-      menuItem("GraphG", tabName = "GraphG", icon = icon("sun")),
+      menuItem("GraphC", tabName = "GraphC", icon = icon("moon")),
+      menuItem("GraphD", tabName = "GraphD", icon = icon("moon")),
+      menuItem("GraphE", tabName = "GraphE", icon = icon("moon")),
+      menuItem("GraphG", tabName = "GraphG", icon = icon("moon")),
       menuItem("GraphH", tabName = "GraphH", icon = icon("sun")),
+      menuItem("GraphI", tabName = "GraphI", icon = icon("sun")),
       menuItem("Description", tabName = "description", icon = icon("book")),
       menuItem("Version History", tabName = "history", icon = icon("history"))
     )
@@ -41,7 +42,7 @@ ui <- dashboardPage(
       font-size:28px;}"
     ))),
     tabItems(
-      tabItem(tabName = "app",
+      tabItem(tabName = "GraphA",
         fluidRow(
           textOutput("textHeaderA")
         ),
@@ -197,6 +198,30 @@ ui <- dashboardPage(
             column(3, checkboxGroupInput("toxicH", label = "Toxicity of interest", selected = NULL, inline = TRUE))),
           fluidRow(
             column(1,  plotOutput("graphH", width = "600px"))
+          ),
+          fluidPage(
+            fileInput("upload", "Upload data file", accept = c(".csv"))
+          ),
+          fluidPage(
+            DTOutput("dynamic")
+          ),
+        )
+      ),
+            #########################################################Graph H
+      tabItem(tabName = "GraphI",
+        fluidRow(
+          textOutput("textHeaderI")
+        ),
+        fluidRow(
+          fluidRow(
+                   column(3,  checkboxGroupInput("numdoseI", label = "Dosage",
+                                                 selected = NULL, inline = TRUE)), ),
+          fluidRow(
+            column(3, sliderInput("tpointI", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
+          fluidRow(
+            column(3, checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE))),
+          fluidRow(
+            column(1,  plotOutput("graphI", width = "600px"))
           ),
           fluidPage(
             fileInput("upload", "Upload data file", accept = c(".csv"))
