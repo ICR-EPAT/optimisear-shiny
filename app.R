@@ -602,9 +602,45 @@ output$select_idD <- renderUI({
 })
 
 idD <- reactive({
-  req(input$idD)
-  as.numeric(input$idD)
+  req(input$select_idD)
+  as.numeric(input$select_idD)
 })
+
+#### Filter data
+continuous_data_filteredD <- reactive({
+  data <- continuous_data() %>%
+    filter(dose %in% no_doseD()) %>%
+    filter(id %in% idD()) %>%
+    filter(timepoint %in% c(0:final_tD())) %>%
+    filter(functioning == func_D()) %>%
+    filter(!is.na(score)) %>%
+    dplyr::select(-functioning)
+  data <- data.frame(data)
+  data
+})
+
+labels_D <- reactive({
+  data <- continuous_data_filteredD()
+  paste0("ID ", data$id, " (Dose: ", data$dose, ")")
+})
+
+####Plot output
+
+output$graphD <- renderPlot({
+  data <- continuous_data_filteredD()
+  data$dose <- as.factor(data$dose)
+  ggplot(data = data, aes(x = as.factor(timepoint),
+                          y = score, group = id, colour = labels_D(), linetype = dose)) +
+      geom_line(size = 0.9) +
+      labs(linetype = "Dose") +
+      theme_minimal(base_size = 16) + ylim(c(0, 100)) +
+      geom_point() +
+      labs(
+        y = paste0("Score in functionality ", func_D()),
+        x = "Timepoint",
+        color = "Patient (Dose)")
+})
+
 
 ################################################################################## Graph E
 observe({
