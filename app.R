@@ -625,7 +625,7 @@ output$graphE <- renderPlot({
     labs(fill = "Dose level") +
     geom_boxplot() +
     theme_minimal(base_size = 14) +
-    xlab("Timepoint") + ylab(paste0("EORTC QLQ-C30 global health score in category ", func_E())) +
+    xlab("Timepoint") + ylab(paste0("Score in category ", func_E())) +
     geom_segment(aes(x = 0.2, xend = 0.2, y = 0, yend = 100),
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches"))) + ylim(c(0, 100)) +
@@ -686,7 +686,13 @@ func_G <- reactive({
 })
 
 ####Filtering
-
+no_patientG <- reactive({
+  continuous_data <- continuous_data()
+  continuous_data  %>%
+  filter(dose %in% no_doseG()) %>%
+  filter(timepoint == 0, functioning == func_G()[1]) %>%
+  count(dose)
+})
 
 continuous_data_filteredG <- reactive({
   req(input$upload_cts)
@@ -757,9 +763,11 @@ arrowdf <- reactive({
   arrow <- tibble(functioning = as.character(first_fn))
 })
 
-output$graphG<- renderPlot({
+output$graphG <- renderPlot({
   end_t <- final_tG()
   arrowdf <- arrowdf()
+  no_patient <- unlist(no_patientG()[2])
+  no_patient <- paste(no_patient, collapse = ";")
   formatterG <- function(end = end_t) {paste0("Functioning ", func_G())}
   data.frame(sum.dfG()) %>% ggplot(aes(x = custom_x, y = mean, colour = as.factor(dose))) +
   geom_point(size = 3) +
@@ -769,13 +777,13 @@ output$graphG<- renderPlot({
   scale_fill_manual(
     name = "Threshold",
     values = c("Improvement" = "palegreen1", "Worsening" = "red")
-  ) + 
+  ) +
   geom_rect(data = thresholds,
             aes(xmin = -Inf, xmax = Inf, ymin = ymin, ymax = ymax, fill = Threshold),
             alpha = 0.3, inherit.aes = FALSE) +
     labs(
     y = paste0("Mean change from baseline to timepoint ", final_tG(), "(with 95% CI) \n for EORTC QLQ-C30 functional domains"),
-    x = paste0("Dose (N= ) & Unreported (N= )")) +
+    x = paste0("Dose (N= ", no_patient, ")")) +
   facet_wrap(~ as.factor(functioning), nrow = 1,labeller = as_labeller(formatterG), scales = "free_x") +
   scale_x_discrete(expand = expansion(add = c(1, 1))) +
   geom_segment(data = arrowdf,
