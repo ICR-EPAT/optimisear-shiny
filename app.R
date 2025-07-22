@@ -1038,5 +1038,115 @@ output$graphH <- renderPlot({
       vjust = -0.5
     )
 })
+################################################################################################## Graph I 
+#Update the selection boxes based on dataset
+observe({
+  req(input$upload)
+  data <- ordinal_data()
+  numdose <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseI", label = "Dosage", choices = numdose, selected = NULL)
+})
+
+observe({
+  req(input$upload)
+  data <- ordinal_data()
+  tpoint <- unique(data$timepoint)
+  updateSliderInput(session, "tpointI", label = "Final timepoint of interest", max = length(tpoint)-1)
+})
+
+observe({
+  req(input$upload)
+  data <- ordinal_data()
+  toxic <- unique(data$toxicity)
+  updateCheckboxGroupInput(session, "toxicI", label = "Toxicity of interest", choices = toxic, selected = NULL)
+})
+
+#Define the relevant variables
+no_doseI <- reactive({
+                     req(input$numdoseI)
+                     as.numeric(input$numdoseI)})
+
+times_I <- reactive({
+  req(input$tpointI)
+  as.numeric(input$tpointI)
+})
+
+toxicI <- reactive({
+  req(input$toxicI)
+  as.numeric(input$toxicI)
+})
+
+
+####Filter and sort data
+
+ordinal_dataI <- reactive({
+  ordinal_data <- ordinal_data()
+  end <- times_I()
+  tp_end <- as.symbol(paste0("tp_", end))
+  ordinal_data <- ordinal_data %>%
+    filter(toxicity %in% toxicI()) %>%
+    filter(dose %in% no_doseI()) %>%
+    group_by(id) %>%
+    mutate(has_tp = any(timepoint == end)) %>%
+    filter(timepoint %in% c(0, end)) %>%
+    pivot_wider(names_from = timepoint, values_from = grade, names_prefix = "tp_") %>%
+    mutate(grade_change = !!tp_end - tp_0) %>%
+    mutate(base_adj = case_when(
+                                has_tp == FALSE ~ "ICE",
+                                TRUE ~  ifelse(grade_change > 0, as.character(!!tp_end), as.character(1))))
+
+  ordinal_data$base_adj[is.na(ordinal_data$base_adj) == TRUE] <- "Unreported"
+  ordinal_data
+})
+# Data Manipulation
+#prop<- ordinal_data%>%group_by(toxicity,dose)%>%count(base_adj) %>%
+#  mutate(proportion = n / n.pat)%>%dplyr::select(-n)
+
+propI <- reactive({
+  prop <- ordinal_dataI() %>%
+    group_by(toxicity, dose) %>%
+    count(base_adj) %>%
+    ungroup() %>%
+    mutate(original = TRUE) %>%
+    complete(toxicity, dose, base_adj, fill = list(n = 0)) %>%
+    group_by(toxicity, dose) %>%
+    mutate(n.pat = sum(n[base_adj != "ICE"], na.rm = TRUE)) %>%
+    ungroup() %>%
+    mutate(proportion = n / n.pat) %>%
+    dplyr::select(-n)
+
+  prop$toxicity <- as.factor(prop$toxicity)
+  prop$base_adj <- as.factor(prop$base_adj)
+  prop$dose <- as.factor(prop$dose)
+  levels(prop$base_adj) <- c(levels(prop$base_adj), "Unreported")
+  prop$dose <- factor(prop$dose, levels = rev(levels(prop$dose)))
+  prop <- prop %>% subset(base_adj != "ICE")
+  prop$base_adj <- factor(prop$base_adj, levels = c("Unreported", 5, 4, 3, 2, 1))
+  prop
+})
+
+ice_n_patI <- reactive({
+  ice <- propI() %>% distinct(dose, n.pat)
+  ice
+})
+
+#Final figure
+output$graphI <- renderPlot({
+  formatterI <- function(SAE = toxicI()) {
+    paste0("Symptomatic adverse event ", SAE)
+  }
+  propI() %>% ggplot(aes(fill = base_adj, x = dose, y = proportion * 100)) +
+    geom_bar(position = "stack", stat = "identity") + coord_flip() +
+    facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterI)) +
+    scale_fill_manual(values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "darkgrey")),
+                      labels = rev(c("None", "Mild", "Moderate", "Severe", "Very Severe", "Unreported")),
+                      guide = guide_legend(reverse = TRUE)) +
+    labs(x = paste0("Dose (N=", paste(ice_n_patI()$n.pat, collapse = "; "), ")"),
+          y = "Percentage (%)",
+          fill = "Severity Grade") +
+    theme(
+          strip.text.y = element_text(angle = 0))
+})
+
 }
 shinyApp(ui, server)
