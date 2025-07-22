@@ -109,19 +109,21 @@ ui <- dashboardPage(
           ),
         )
       ),
-      ############################################ GRAPH D 
+      ############################################ GRAPH D
       tabItem(tabName = "GraphD",
         fluidRow(
           textOutput("textHeaderD")
         ),
         fluidRow(
           fluidRow(
-            column(3, sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          #Need to add a patient selection here in order to be able to select patients of interest 
+            column(3, sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))
+            ),
           fluidRow(
-            column(4, selectizeInput("idD", label = "Select patients ID",
-                           choices = NULL, multiple = TRUE),
-                   uiOutput("select_dose"))),
+            column(4, checkboxGroupInput("numdoseD", label = "Dosage",
+                           choices = NULL))),
+          fluidRow(
+            column(4, uiOutput("select_idD"))
+          ),
           fluidRow(
             column(3, selectInput("functioningD", label = "Functioning of interest", choices = NULL))),
           fluidRow(
@@ -135,7 +137,7 @@ ui <- dashboardPage(
           ),
         )
       ),
-      ############################################ GRAPH E 
+      ############################################ GRAPH E
       tabItem(tabName = "GraphE",
         fluidRow(
           textOutput("textHeaderE")
@@ -557,7 +559,7 @@ observe({
   req(input$upload_cts)
   data <- continuous_data()
   tpointD <- unique(data$timepoint)
-  updateSliderInput(session, "tpointD", label = "Final timepoint of interest", max = length(tpointD)-1)
+  updateSliderInput(session, "tpointD", label = "Final timepoint of interest", max = length(tpointD) - 1)
 })
 
 observe({
@@ -570,27 +572,76 @@ observe({
 observe({
   req(input$upload_cts)
   data <- continuous_data()
-  updateSelectizeInput(session, "idD",
-                       choices = data$id,
-                       server = TRUE)
+  numdoseD <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseD", choices = numdoseD, selected = NULL)
 })
 
+#### Reactive Defining 
+#Define the relevant variables
+no_doseD <- reactive({
+                      req(input$numdoseD)
+                      as.numeric(input$numdoseD)})
 
+final_tD <- reactive({
+  req(input$tpointD)
+  as.numeric(input$tpointD)
+})
 
+func_D <- reactive({
+  req(input$functioningD)
+  as.numeric(input$functioningD)
+})
 
+#### ID specific UI
+
+output$select_idD <- renderUI({
+  data <- continuous_data()
+  data <- data %>% filter(dose %in% no_doseD())
+  id <- unique(data$id)
+  selectizeInput("select_idD", "Select IDs", choices = id, multiple = TRUE, selected = NULL)
+})
 
 idD <- reactive({
-  req(input$idD)
-  as.numeric(input$idD)
+  req(input$select_idD)
+  as.numeric(input$select_idD)
+})
+
+#### Filter data
+continuous_data_filteredD <- reactive({
+  data <- continuous_data() %>%
+    filter(dose %in% no_doseD()) %>%
+    filter(id %in% idD()) %>%
+    filter(timepoint %in% c(0:final_tD())) %>%
+    filter(functioning == func_D()) %>%
+    filter(!is.na(score)) %>%
+    dplyr::select(-functioning)
+  data <- data.frame(data)
+  data
+})
+
+labels_D <- reactive({
+  data <- continuous_data_filteredD()
+  paste0("ID ", data$id, " (Dose: ", data$dose, ")")
+})
+
+####Plot output
+
+output$graphD <- renderPlot({
+  data <- continuous_data_filteredD()
+  data$dose <- as.factor(data$dose)
+  ggplot(data = data, aes(x = as.factor(timepoint),
+                          y = score, group = id, colour = labels_D(), linetype = dose)) +
+      geom_line(size = 0.9) +
+      labs(linetype = "Dose") +
+      theme_minimal(base_size = 16) + ylim(c(0, 100)) +
+      geom_point() +
+      labs(
+        y = paste0("Score in functionality ", func_D()),
+        x = "Timepoint",
+        color = "Patient (Dose)")
 })
 
 
-output$select_dose <- renderUI({
-  data <- continuous_data()
-  data <- data %>% filter(id %in% idD())
-  dose <- unique(data$dose)
-  selectizeInput("select_dose", "dose", choices = dose, multiple = TRUE, selected = NULL)
-})
 ################################################################################## Graph E
 observe({
   req(input$upload_cts)
@@ -602,8 +653,8 @@ observe({
 observe({
   req(input$upload_cts)
   data <- continuous_data()
-  tpointD <- unique(data$timepoint)
-  updateSliderInput(session, "tpointE", label = "Final timepoint of interest", max = length(tpointD)-1)
+  tpointE <- unique(data$timepoint)
+  updateSliderInput(session, "tpointE", label = "Final timepoint of interest", max = length(tpointE) - 1)
 })
 
 observe({
