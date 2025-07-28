@@ -773,8 +773,53 @@ func_F <- reactive({
   as.numeric(input$functioningF)
 })
 
+###Filter and sort data
+
+continuous_data_filteredF <- reactive({
+  filtered <- continuous_data() %>%
+    filter(dose %in% no_doseF()) %>%
+    filter(functionality %in% func_F()) %>%
+    filter(timepoint %in% c(0, final_tF()))
+  filtered
+})
+
+ice_n_patF <- reactive({
+  ice_n_pat <- continuous_data_filteredF() %>%
+    group_by(dose, id) %>%
+    summarise(n_timepoints = n_distinct(timepoint), .groups = "drop") %>%
+    group_by(dose) %>%
+    mutate(max_timepoints = max(n_timepoints)) %>%
+    filter(n_timepoints < max_timepoints) %>%
+    summarise(n_patients_missing = n_distinct(id))
+  ice_n_pat
+})
 
 
+dfF <- reactive({
+  finalT <- as.symbol(paste0("tp_", final_tF()))
+  df <- continuous_data_filteredF() %>%
+    pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_") %>%
+    mutate(score = as.numeric(!!finalT - tp_0)) %>%
+    dplyr::select(id, score, dose, functioning)
+
+  df <- df %>%
+    group_by(dose, functioning) %>%
+    mutate(non_na_count = sum(!is.na(score))) %>%
+    mutate(na_count = sum(is.na(score))) %>%
+    ungroup()
+  df
+})
+
+sum.dfF <- reactive({
+  sum.df <- dfF() %>%
+    group_by(dose, functioning) %>%
+    summarise(mean = mean(score, na.rm = TRUE),
+              non_na_count = unique(non_na_count),
+              se = sd(score, na.rm = TRUE) / sqrt(non_na_count))
+  sum.df <- sum.df %>% mutate(l.ci = mean - (1.96 * se))
+  sum.df <- sum.df %>% mutate(u.ci = mean + (1.96 * se))
+  sum.df
+})
 
 
 
