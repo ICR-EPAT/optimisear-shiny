@@ -176,7 +176,7 @@ ui <- dashboardPage(
           fluidRow(
             column(3, checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE))),
           fluidRow(
-            column(1,  plotOutput("graphF", width = "600px"))
+            column(1,  tableOutput("graphF"))
           ),
           fluidPage(
             fileInput("upload_cts", "Upload data file", accept = c(".csv"))
@@ -278,8 +278,10 @@ server <- function(input, output, session) {
   output$textHeaderC <- renderText({"Mean change from baseline reported value across timepoints plot"})
   output$textHeaderD <- renderText({"Patient experience plot"})
   output$textHeaderE <- renderText({"Tolerability Boxplot"})
+  output$textHeaderF <- renderText({"Change from baseline table"})
   output$textHeaderG <- renderText({"Mean change in functionalities plot"})
   output$textHeaderH <- renderText({"Butterfly plot"})
+  output$textHeaderI <- renderText({"Toxicity % plot"})
   #Import the data
   ordinal_data <- reactive({
     req(input$upload)
@@ -778,7 +780,7 @@ func_F <- reactive({
 continuous_data_filteredF <- reactive({
   filtered <- continuous_data() %>%
     filter(dose %in% no_doseF()) %>%
-    filter(functionality %in% func_F()) %>%
+    filter(functioning %in% func_F()) %>%
     filter(timepoint %in% c(0, final_tF()))
   filtered
 })
@@ -822,7 +824,7 @@ sum.dfF <- reactive({
 })
 
 
-
+output$graphF <- renderTable(sum.dfF())
 
 
 
