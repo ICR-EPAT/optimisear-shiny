@@ -735,7 +735,43 @@ output$graphE <- renderPlot({
 })
 ############################################################## Graph F
 
+#### Update the inputs
+observe({
+  req(input$upload_cts)
+  data <- continuous_data()
+  numdoseF <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseF", label = "Dosage", choices = numdoseF, selected = NULL)
+})
 
+observe({
+  req(input$upload_cts)
+  data <- continuous_data()
+  tpointF <- unique(data$timepoint)
+  updateSliderInput(session, "tpointF", label = "Final timepoint of interest", max = length(tpointF) - 1)
+})
+
+observe({
+  req(input$upload_cts)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateCheckboxGroupInput(session, "functioningF", label = "Functionality of interest", choices = func, selected = NULL)
+})
+
+#### Reactive Defining 
+#Define the relevant variables
+no_doseF <- reactive({
+                      req(input$numdoseF)
+                      as.numeric(input$numdoseF)})
+
+final_tF <- reactive({
+  req(input$tpointF)
+  as.numeric(input$tpointF)
+})
+
+func_F <- reactive({
+  req(input$functioningF)
+  as.numeric(input$functioningF)
+})
 
 
 
