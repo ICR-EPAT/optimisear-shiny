@@ -7,6 +7,8 @@ library(dplyr)
 library(ggsurvfit)
 library(ggh4x)
 library(tidyr)
+library(gt)
+library(svglite)
 #library(bslib)
 
 ui <- dashboardPage(
@@ -21,6 +23,7 @@ ui <- dashboardPage(
       menuItem("GraphC", tabName = "GraphC", icon = icon("moon")),
       menuItem("GraphD", tabName = "GraphD", icon = icon("moon")),
       menuItem("GraphE", tabName = "GraphE", icon = icon("moon")),
+      menuItem("GraphF", tabName = "GraphF", icon = icon("moon")),
       menuItem("GraphG", tabName = "GraphG", icon = icon("moon")),
       menuItem("GraphH", tabName = "GraphH", icon = icon("sun")),
       menuItem("GraphI", tabName = "GraphI", icon = icon("sun")),
@@ -59,9 +62,12 @@ ui <- dashboardPage(
            fluidPage(
              DTOutput("dynamic")
            ),
+           fluidPage(
+            downloadButton("downloadA")
+           ),
         )
       ),
-      ############################################ GRAPH B 
+      ############################################ GRAPH B
       tabItem(tabName = "GraphB",
         fluidRow(
           textOutput("textHeaderB")
@@ -152,6 +158,30 @@ ui <- dashboardPage(
             column(3, selectInput("functioningE", label = "Functioning of interest", choices = NULL ))),
           fluidRow(
             column(1,  plotOutput("graphE", width = "600px"))
+          ),
+          fluidPage(
+            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
+          ),
+          fluidPage(
+            DTOutput("dynamic")
+          ),
+        )
+      ),
+      ########################################################### Graph F
+      tabItem(tabName = "GraphF",
+        fluidRow(
+          textOutput("textHeaderF")
+        ),
+        fluidRow(
+          fluidRow(
+                   column(3,  checkboxGroupInput("numdoseF", label = "Dosage",
+                                                 selected = NULL, inline = TRUE))),
+          fluidRow(
+            column(3, sliderInput("tpointF", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
+          fluidRow(
+            column(3, checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE))),
+          fluidRow(
+            column(1,  tableOutput("graphF"))
           ),
           fluidPage(
             fileInput("upload_cts", "Upload data file", accept = c(".csv"))
@@ -253,8 +283,10 @@ server <- function(input, output, session) {
   output$textHeaderC <- renderText({"Mean change from baseline reported value across timepoints plot"})
   output$textHeaderD <- renderText({"Patient experience plot"})
   output$textHeaderE <- renderText({"Tolerability Boxplot"})
+  output$textHeaderF <- renderText({"Change from baseline table"})
   output$textHeaderG <- renderText({"Mean change in functionalities plot"})
   output$textHeaderH <- renderText({"Butterfly plot"})
+  output$textHeaderI <- renderText({"Toxicity % plot"})
   #Import the data
   ordinal_data <- reactive({
     req(input$upload)
@@ -710,13 +742,102 @@ output$graphE <- renderPlot({
 })
 ############################################################## Graph F
 
+#### Update the inputs
+observe({
+  req(input$upload_cts)
+  data <- continuous_data()
+  numdoseF <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseF", label = "Dosage", choices = numdoseF, selected = NULL)
+})
+
+observe({
+  req(input$upload_cts)
+  data <- continuous_data()
+  tpointF <- unique(data$timepoint)
+  updateSliderInput(session, "tpointF", label = "Final timepoint of interest", max = length(tpointF) - 1)
+})
+
+observe({
+  req(input$upload_cts)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateCheckboxGroupInput(session, "functioningF", label = "Functionality of interest", choices = func, selected = NULL)
+})
+
+#### Reactive Defining 
+#Define the relevant variables
+no_doseF <- reactive({
+                      req(input$numdoseF)
+                      as.numeric(input$numdoseF)})
+
+final_tF <- reactive({
+  req(input$tpointF)
+  as.numeric(input$tpointF)
+})
+
+func_F <- reactive({
+  req(input$functioningF)
+  as.numeric(input$functioningF)
+})
+
+###Filter and sort data
+
+continuous_data_filteredF <- reactive({
+  filtered <- continuous_data() %>%
+    filter(dose %in% no_doseF()) %>%
+    filter(functioning %in% func_F()) %>%
+    filter(timepoint %in% c(0, final_tF()))
+  filtered
+})
+
+ice_n_patF <- reactive({
+  ice_n_pat <- continuous_data_filteredF() %>%
+    group_by(dose, id) %>%
+    summarise(n_timepoints = n_distinct(timepoint), .groups = "drop") %>%
+    group_by(dose) %>%
+    mutate(max_timepoints = max(n_timepoints)) %>%
+    filter(n_timepoints < max_timepoints) %>%
+    summarise(n_patients_missing = n_distinct(id))
+  ice_n_pat
+})
 
 
+dfF <- reactive({
+  finalT <- as.symbol(paste0("tp_", final_tF()))
+  df <- continuous_data_filteredF() %>%
+    pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_") %>%
+    mutate(score = as.numeric(!!finalT - tp_0)) %>%
+    dplyr::select(id, score, dose, functioning)
+
+  df <- df %>%
+    group_by(dose, functioning) %>%
+    mutate(non_na_count = sum(!is.na(score))) %>%
+    mutate(na_count = sum(is.na(score))) %>%
+    ungroup()
+  df
+})
+
+sum.dfF <- reactive({
+  sum.df <- dfF() %>%
+    group_by(dose, functioning) %>%
+    summarise(mean = mean(score, na.rm = TRUE),
+              non_na_count = unique(non_na_count),
+              se = sd(score, na.rm = TRUE) / sqrt(non_na_count), .groups = "keep")
+  sum.df <- sum.df %>% mutate(l.ci = mean - (1.96 * se))
+  sum.df <- sum.df %>% mutate(u.ci = mean + (1.96 * se))
+  sum.df
+})
+
+labellerF <- function(dose) {
+  return(paste0("Dose ", no_doseF(), " (N=?????)"))
+}
 
 
-
-
-
+output$graphF <- renderTable(
+  data <- #################### ensure format is good
+  data %>%
+    gt()# %>%
+    )
 
 
 
@@ -734,7 +855,7 @@ observe({
   req(input$upload_cts)
   data <- continuous_data()
   tpointG <- unique(data$timepoint)
-  updateSliderInput(session, "tpointG", label = "Final timepoint of interest", max = length(tpointG)-1)
+  updateSliderInput(session, "tpointG", label = "Final timepoint of interest", max = length(tpointG) - 1)
 })
 
 observe({
@@ -1198,6 +1319,15 @@ output$graphI <- renderPlot({
     theme(
           strip.text.y = element_text(angle = 0))
 })
+
+output$downloadA <- downloadHandler(
+  filename = function(){
+    paste0("Kaplan-Meier", Sys.Date(), ".svg")
+  },
+  content = function(file){
+    ggsave(file, plot = last_plot(), device = "svg")
+  }
+)
 
 }
 shinyApp(ui, server)
