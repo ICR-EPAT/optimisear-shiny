@@ -21,6 +21,7 @@ ui <- dashboardPage(
       menuItem("GraphC", tabName = "GraphC", icon = icon("moon")),
       menuItem("GraphD", tabName = "GraphD", icon = icon("moon")),
       menuItem("GraphE", tabName = "GraphE", icon = icon("moon")),
+      menuItem("GraphF", tabName = "GraphF", icon = icon("moon")),
       menuItem("GraphG", tabName = "GraphG", icon = icon("moon")),
       menuItem("GraphH", tabName = "GraphH", icon = icon("sun")),
       menuItem("GraphI", tabName = "GraphI", icon = icon("sun")),
@@ -152,6 +153,30 @@ ui <- dashboardPage(
             column(3, selectInput("functioningE", label = "Functioning of interest", choices = NULL ))),
           fluidRow(
             column(1,  plotOutput("graphE", width = "600px"))
+          ),
+          fluidPage(
+            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
+          ),
+          fluidPage(
+            DTOutput("dynamic")
+          ),
+        )
+      ),
+      ########################################################### Graph F
+      tabItem(tabName = "GraphF",
+        fluidRow(
+          textOutput("textHeaderF")
+        ),
+        fluidRow(
+          fluidRow(
+                   column(3,  checkboxGroupInput("numdoseF", label = "Dosage",
+                                                 selected = NULL, inline = TRUE))),
+          fluidRow(
+            column(3, sliderInput("tpointF", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
+          fluidRow(
+            column(3, checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE))),
+          fluidRow(
+            column(1,  plotOutput("graphF", width = "600px"))
           ),
           fluidPage(
             fileInput("upload_cts", "Upload data file", accept = c(".csv"))
