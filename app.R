@@ -89,9 +89,12 @@ ui <- dashboardPage(
           fluidPage(
             DTOutput("dynamic")
           ),
+           fluidPage(
+            downloadButton("downloadB")
+           ),
         )
       ),
-      ############################################ GRAPH C 
+      ############################################ GRAPH C
       tabItem(tabName = "GraphC",
         fluidRow(
           textOutput("textHeaderC")
@@ -113,6 +116,9 @@ ui <- dashboardPage(
           fluidPage(
             DTOutput("dynamic")
           ),
+           fluidPage(
+            downloadButton("downloadC")
+           ),
         )
       ),
       ############################################ GRAPH D
@@ -141,6 +147,9 @@ ui <- dashboardPage(
           fluidPage(
             DTOutput("dynamic")
           ),
+           fluidPage(
+            downloadButton("downloadD")
+           ),
         )
       ),
       ############################################ GRAPH E
@@ -165,6 +174,9 @@ ui <- dashboardPage(
           fluidPage(
             DTOutput("dynamic")
           ),
+           fluidPage(
+            downloadButton("downloadE")
+           ),
         )
       ),
       ########################################################### Graph F
@@ -189,6 +201,9 @@ ui <- dashboardPage(
           fluidPage(
             DTOutput("dynamic")
           ),
+           fluidPage(
+            downloadButton("downloadF")
+           ),
         )
       ),
       ########################################################### Graph G
@@ -213,6 +228,9 @@ ui <- dashboardPage(
           fluidPage(
             DTOutput("dynamic")
           ),
+           fluidPage(
+            downloadButton("downloadG")
+           ),
         )
       ),
       #########################################################Graph H
@@ -237,6 +255,9 @@ ui <- dashboardPage(
           fluidPage(
             DTOutput("dynamic")
           ),
+           fluidPage(
+            downloadButton("downloadH")
+           ),
         )
       ),
       #########################################################Graph I
@@ -261,6 +282,9 @@ ui <- dashboardPage(
           fluidPage(
             DTOutput("dynamic")
           ),
+           fluidPage(
+            downloadButton("downloadI")
+           ),
         )
       ),
       ################################################### Description tab
@@ -1319,7 +1343,7 @@ output$graphI <- renderPlot({
     theme(
           strip.text.y = element_text(angle = 0))
 })
-
+##########################################################Download buttons 
 output$downloadA <- downloadHandler(
   filename = function(){
     paste0("Kaplan-Meier", Sys.Date(), ".svg")
@@ -1328,6 +1352,69 @@ output$downloadA <- downloadHandler(
     ggsave(file, plot = last_plot(), device = "svg")
   }
 )
-
+output$downloadB <- downloadHandler(
+  filename = function(){
+    paste0("Graph-B", Sys.Date(), ".svg")
+  },
+  content = function(file){
+    ggsave(file, plot = last_plot(), device = "svg")
+  }
+)
+output$downloadC <- downloadHandler(
+  filename = function(){
+    paste0("Graph-C", Sys.Date(), ".svg")
+  },
+  content = function(file){
+    ggsave(file, plot = last_plot(), device = "svg")
+  }
+)
+output$downloadD <- downloadHandler(
+  filename = function(){
+    paste0("Graph-D", Sys.Date(), ".svg")
+  },
+  content = function(file){
+    ggsave(file, plot = last_plot(), device = "svg")
+  }
+)
+output$downloadE <- downloadHandler(
+  filename = function(){
+    paste0("Graph-E", Sys.Date(), ".svg")
+  },
+  content = function(file){
+    ggsave(file, plot = last_plot(), device = "svg")
+  }
+)
+output$downloadF <- downloadHandler(
+  filename = function(){
+    paste0("Graph-F", Sys.Date(), ".svg")
+  },
+  content = function(file){
+    ggsave(file, plot = last_plot(), device = "svg")
+  }
+)
+output$downloadG <- downloadHandler(
+  filename = function(){
+    paste0("Graph-G", Sys.Date(), ".svg")
+  },
+  content = function(file){
+    ggsave(file, plot = last_plot(), device = "svg")
+  }
+)
+output$downloadH <- downloadHandler(
+  filename = function(){
+    paste0("Graph-H", Sys.Date(), ".svg")
+  },
+  content = function(file){
+    ggsave(file, plot = last_plot(), device = "svg")
+  }
+)
+output$downloadI <- downloadHandler(
+  filename = function(){
+    paste0("Graph-I", Sys.Date(), ".svg")
+  },
+  content = function(file){
+    ggsave(file, plot = last_plot(), device = "svg")
+  }
+)
 }
 shinyApp(ui, server)
