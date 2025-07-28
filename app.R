@@ -7,6 +7,8 @@ library(dplyr)
 library(ggsurvfit)
 library(ggh4x)
 library(tidyr)
+library(gt)
+library(svglite)
 #library(bslib)
 
 ui <- dashboardPage(
@@ -60,9 +62,12 @@ ui <- dashboardPage(
            fluidPage(
              DTOutput("dynamic")
            ),
+           fluidPage(
+            downloadButton("downloadA")
+           ),
         )
       ),
-      ############################################ GRAPH B 
+      ############################################ GRAPH B
       tabItem(tabName = "GraphB",
         fluidRow(
           textOutput("textHeaderB")
@@ -817,14 +822,22 @@ sum.dfF <- reactive({
     group_by(dose, functioning) %>%
     summarise(mean = mean(score, na.rm = TRUE),
               non_na_count = unique(non_na_count),
-              se = sd(score, na.rm = TRUE) / sqrt(non_na_count))
+              se = sd(score, na.rm = TRUE) / sqrt(non_na_count), .groups = "keep")
   sum.df <- sum.df %>% mutate(l.ci = mean - (1.96 * se))
   sum.df <- sum.df %>% mutate(u.ci = mean + (1.96 * se))
   sum.df
 })
 
+labellerF <- function(dose) {
+  return(paste0("Dose ", no_doseF(), " (N=?????)"))
+}
 
-output$graphF <- renderTable(sum.dfF())
+
+output$graphF <- renderTable(
+  data <- #################### ensure format is good
+  data %>%
+    gt()# %>%
+    )
 
 
 
@@ -842,7 +855,7 @@ observe({
   req(input$upload_cts)
   data <- continuous_data()
   tpointG <- unique(data$timepoint)
-  updateSliderInput(session, "tpointG", label = "Final timepoint of interest", max = length(tpointG)-1)
+  updateSliderInput(session, "tpointG", label = "Final timepoint of interest", max = length(tpointG) - 1)
 })
 
 observe({
@@ -1306,6 +1319,15 @@ output$graphI <- renderPlot({
     theme(
           strip.text.y = element_text(angle = 0))
 })
+
+output$downloadA <- downloadHandler(
+  filename = function(){
+    paste0("Kaplan-Meier", Sys.Date(), ".svg")
+  },
+  content = function(file){
+    ggsave(file, plot = last_plot(), device = "svg")
+  }
+)
 
 }
 shinyApp(ui, server)
