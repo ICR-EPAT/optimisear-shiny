@@ -193,7 +193,7 @@ ui <- dashboardPage(
           fluidRow(
             column(3, checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE))),
           fluidRow(
-            column(1,  tableOutput("graphF"))
+            column(6,  gt_output("graphF"))
           ),
           fluidPage(
             fileInput("upload_cts", "Upload data file", accept = c(".csv"))
@@ -849,19 +849,32 @@ sum.dfF <- reactive({
               se = sd(score, na.rm = TRUE) / sqrt(non_na_count), .groups = "keep")
   sum.df <- sum.df %>% mutate(l.ci = mean - (1.96 * se))
   sum.df <- sum.df %>% mutate(u.ci = mean + (1.96 * se))
+  sum.df <- sum.df %>% ungroup(dose)
   sum.df
 })
 
-labellerF <- function(dose) {
-  return(paste0("Dose ", no_doseF(), " (N=?????)"))
+
+sum.df.widerF <- reactive({
+  sum.dfF() %>% pivot_wider(id_cols = functioning, names_from = dose, values_from = c(mean,se,non_na_count))
+})
+
+sum.df.wider.gtF <- reactive({
+  sum.df.wider.gt <- sum.df.widerF() %>% gt() %>%
+  tab_header(title = "Change from baseline to timepoint x", subtitle = "This is still a work in progress") %>%
+   tab_stubhead(label = "Functioning")
+   for (i in unique(sum.dfF()$dose)){
+      sum.df.wider.gt <- sum.df.wider.gt %>%
+      tab_spanner(label = paste0("Dose ", i), columns = ends_with(as.character(!!i)))
+      sum.df.wider.gt <- sum.df.wider.gt %>% cols_label(starts_with("mean") ~ "Mean",
+                                                        starts_with("se") ~ "Standard Error",
+                                                        starts_with("non_na_count") ~ "Number Reported")
 }
+  sum.df.wider.gt <- sum.df.wider.gt %>% opt_stylize(style = 5, color = "blue")
+  sum.df.wider.gt
+})
 
 
-output$graphF <- renderTable(
-  data <- #################### ensure format is good
-  data %>%
-    gt()# %>%
-    )
+output$graphF <- render_gt(sum.df.wider.gtF())
 
 
 
