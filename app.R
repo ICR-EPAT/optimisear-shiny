@@ -12,8 +12,8 @@ library(svglite)
 library(bslib)
 
 ui <- navbarPage(
-  titlePanel(title = span(tags$img(src = "ICR_logo.png"),
-                               "OPTIMISE-AR")),
+  title = span(tags$img(src = "ICR_logo.png"),
+                               "OPTIMISE-AR"), 
   navbarMenu("Ordinal",############################################################################################################ A UI 
             tabPanel("GraphA", tabName = "GraphA", icon = icon("sun"),
             fluidRow(
@@ -61,8 +61,56 @@ ui <- navbarPage(
             downloadButton("downloadB")
            ),
         )),############################################################################################################ H UI 
-            tabPanel("GraphH", tabName = "GraphH", icon = icon("sun")),############################################################################################################ I UI 
-            tabPanel("GraphI", tabName = "GraphI", icon = icon("sun"))),
+         
+            tabPanel("GraphH", tabName = "GraphH", icon = icon("sun"), fluidRow(
+          textOutput("textHeaderH")
+        ),
+        fluidRow(
+          fluidRow(
+                   column(3,  checkboxGroupInput("numdoseH", label = "Dosage",
+                                                 selected = NULL, inline = TRUE)), ),
+          fluidRow(
+            column(3, sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1))),
+          fluidRow(
+            column(3, checkboxGroupInput("toxicH", label = "Toxicity of interest", selected = NULL, inline = TRUE))),
+          fluidRow(
+            column(1,  plotOutput("graphH", width = "600px"))
+          ),
+          fluidPage(
+            fileInput("upload", "Upload data file", accept = c(".csv"))
+          ),
+          fluidPage(
+            DTOutput("dynamic")
+          ),
+           fluidPage(
+            downloadButton("downloadH")
+           ),
+        )),############################################################################################################ I UI 
+            tabPanel("GraphI", tabName = "GraphI", icon = icon("sun"),       
+            fluidRow(
+          textOutput("textHeaderI")
+        ),
+        fluidRow(
+          fluidRow(
+                   column(3,  checkboxGroupInput("numdoseI", label = "Dosage",
+                                                 selected = NULL, inline = TRUE)), ),
+          fluidRow(
+            column(3, sliderInput("tpointI", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
+          fluidRow(
+            column(3, checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE))),
+          fluidRow(
+            column(1,  plotOutput("graphI", width = "600px"))
+          ),
+          fluidPage(
+            fileInput("upload", "Upload data file", accept = c(".csv"))
+          ),
+          fluidPage(
+            DTOutput("dynamic")
+          ),
+           fluidPage(
+            downloadButton("downloadI")
+           ),
+        ))),
   navbarMenu("Continuous",############################################################################################################ C UI 
              tabPanel("GraphC", tabName = "GraphC", icon = icon("moon"),
              fluidRow(
@@ -89,106 +137,8 @@ ui <- navbarPage(
             downloadButton("downloadC")
            ),
         )),############################################################################################################ D UI 
-             tabPanel("GraphD", tabName = "GraphD", icon = icon("moon")),############################################################################################################ E UI 
-             tabPanel("GraphE", tabName = "GraphE", icon = icon("moon")),############################################################################################################ F UI 
-             tabPanel("GraphF", tabName = "GraphF", icon = icon("moon")),############################################################################################################ G UI 
-             tabPanel("GraphG", tabName = "GraphG", icon = icon("moon"))),
-      tabPanel("Description", tabName = "description", icon = icon("book")),
-      tabPanel("Data information page", tabName = "datainfo", icon = icon("book")),
-      tabPanel("Version History", tabName = "history", icon = icon("history")),
-  dashboardBody(
-    tags$style(
-      HTML("#alldata {overflow:auto}")
-    ),
-    # this is here to demonstrate that the page can be styled with standard css/html
-    tags$head(tags$style(HTML(
-      ".content-wrapper{background-color:AliceBlue !important; padding:10px; }            
-      .main-header .logo {
-      background-color:DarkSeaGreen !important;
-      text-align:left !important;
-      color:DimGray !important;
-      font-size:28px;}"
-    ))),
-    tabItems(
-      # tabItem(tabName = "GraphA",
-      #   fluidRow(
-      #     textOutput("textHeaderA")
-      #   ),
-      #   fluidRow(
-      #     fluidRow(
-      #              column(3,  checkboxGroupInput("numdose", label = "Dosage",
-      #                                            selected = NULL, inline = TRUE)), ),
-      #     fluidRow(
-      #       column(1,  plotOutput("graphA", width = "600px"))
-      #     ),
-      #     fluidPage(
-      #       fileInput("upload", "Upload data file", accept = c(".csv"))
-      #     ),
-      #      fluidPage(
-      #        DTOutput("dynamic")
-      #      ),
-      #      fluidPage(
-      #       downloadButton("downloadA")
-      #      ),
-      #   )
-      # ),
-      ############################################ GRAPH B
-      tabItem(tabName = "GraphB",
-        fluidRow(
-          textOutput("textHeaderB")
-        ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseB", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)), ),
-          fluidRow(
-            column(3, sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, selectInput("toxicB", label = "Toxicity of interest", choices = NULL ))),
-          fluidRow(
-            column(1,  plotOutput("graphB", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadB")
-           ),
-        )
-      ),
-      ############################################ GRAPH C
-      tabItem(tabName = "GraphC",
-        fluidRow(
-          textOutput("textHeaderC")
-        ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseC", label = "Dosage",
-                                                 selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(3, sliderInput("tpointC", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, selectInput("functioningC", label = "Functioning of interest", choices = NULL ))),
-          fluidRow(
-            column(1,  plotOutput("graphC", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadC")
-           ),
-        )
-      ),
-      ############################################ GRAPH D
-      tabItem(tabName = "GraphD",
-        fluidRow(
+       
+             tabPanel("GraphD", tabName = "GraphD", icon = icon("moon"), fluidRow(
           textOutput("textHeaderD")
         ),
         fluidRow(
@@ -215,11 +165,9 @@ ui <- navbarPage(
            fluidPage(
             downloadButton("downloadD")
            ),
-        )
-      ),
-      ############################################ GRAPH E
-      tabItem(tabName = "GraphE",
-        fluidRow(
+        )),############################################################################################################ E UI 
+              
+             tabPanel("GraphE", tabName = "GraphE", icon = icon("moon"),  fluidRow(
           textOutput("textHeaderE")
         ),
         fluidRow(
@@ -242,11 +190,9 @@ ui <- navbarPage(
            fluidPage(
             downloadButton("downloadE")
            ),
-        )
-      ),
-      ########################################################### Graph F
-      tabItem(tabName = "GraphF",
-        fluidRow(
+        )),
+        ############################################################################################################ F UI 
+           tabPanel("GraphF", tabName = "GraphF", icon = icon("moon"),     fluidRow(
           textOutput("textHeaderF")
         ),
         fluidRow(
@@ -268,12 +214,10 @@ ui <- navbarPage(
           ),
            fluidPage(
             downloadButton("downloadF")
-           ),
-        )
-      ),
-      ########################################################### Graph G
-            tabItem(tabName = "GraphG",
-        fluidRow(
+           ))),
+           ############################################################################################################ G UI 
+    
+             tabPanel("GraphG", tabName = "GraphG", icon = icon("moon"),          fluidRow(
           textOutput("textHeaderG")
         ),
         fluidRow(
@@ -297,85 +241,35 @@ ui <- navbarPage(
             downloadButton("downloadG")
            ),
         )
-      ),
-      #########################################################Graph H
-      tabItem(tabName = "GraphH",
-        fluidRow(
-          textOutput("textHeaderH")
-        ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseH", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)), ),
-          fluidRow(
-            column(3, sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1))),
-          fluidRow(
-            column(3, checkboxGroupInput("toxicH", label = "Toxicity of interest", selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(1,  plotOutput("graphH", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadH")
-           ),
-        )
-      ),
-      #########################################################Graph I
-      tabItem(tabName = "GraphI",
-        fluidRow(
-          textOutput("textHeaderI")
-        ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseI", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)), ),
-          fluidRow(
-            column(3, sliderInput("tpointI", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(1,  plotOutput("graphI", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadI")
-           ),
-        )
-      ),
-      ################################################### Description tab
-      tabItem(tabName = "description",
-        h4("About this site"),
+      )),################################################################################################################## description tab
+      tabPanel("Description", tabName = "description", icon = icon("book"), h4("About this site"),
         p("The beginnings of the OPTIMISE-AR app still to be reviewed"),
         p("Authors: George (Server) and Karrar (UI)"),
-        p("Maintainers: Rachel Alcraft, ICR Scientific Computing"),
-      ),
-########################################################################### Data info tab 
-      tabItem(tabName = "datainfo",
-              h4("About data inputs"),
+        p("Maintainers: Rachel Alcraft, ICR Scientific Computing")),
+################################################################################################################## data info tab
+      tabPanel("Data information page", tabName = "datainfo", icon = icon("book"), h4("About data inputs"),
               p("Continuous"),
               p("Ordinal"),
-              p("Test"),
-            ),
+              p("Test")),
+################################################################################################################## Version history
+      tabPanel("Version History", tabName = "history", icon = icon("history"), p("v1.0 - Internal ICR release 20/07/2025")),
+  dashboardBody(
+    tags$style(
+      HTML("#alldata {overflow:auto}")
+    ),
+    # this is here to demonstrate that the page can be styled with standard css/html
+    tags$head(tags$style(HTML(
+      ".content-wrapper{background-color:AliceBlue !important; padding:10px; }            
+      .main-header .logo {
+      background-color:DarkSeaGreen !important;
+      text-align:left !important;
+      color:DimGray !important;
+      font-size:28px;}"
+    )))))
 
 
-      ################################################## History Tab
-      tabItem(tabName = "history",
-              p("v1.0 - Internal ICR release 20/07/2025"))
-
-    )
-  ),
-)
 ###############################################################################
+
 server <- function(input, output, session) {
   output$textHeaderA <- renderText({"Kaplan-Meier Graph"})
   output$textHeaderB <- renderText({"Proportional severity of doses across timepoints plot"})
