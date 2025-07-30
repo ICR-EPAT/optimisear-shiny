@@ -860,7 +860,7 @@ sum.df.widerF <- reactive({
 
 sum.df.wider.gtF <- reactive({
   sum.df.wider.gt <- sum.df.widerF() %>% gt() %>%
-  tab_header(title = "Change from baseline to timepoint x", subtitle = "This is still a work in progress") %>%
+  tab_header(title = paste0("Change from baseline to timepoint ", final_tF())) %>%
    tab_stubhead(label = "Functioning")
    for (i in unique(sum.dfF()$dose)){
       sum.df.wider.gt <- sum.df.wider.gt %>%
