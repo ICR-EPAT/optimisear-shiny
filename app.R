@@ -61,8 +61,8 @@ ui <- page_navbar(
           ,
           plotOutput("graphH")
             )),
-############################################################################################################ I UI 
-            tabPanel("GraphI", tabName = "GraphI", icon = icon("sun"),       
+############################################################################################################ I UI
+            tabPanel("GraphI", tabName = "GraphI", icon = icon("sun"),
             fluidRow(
           textOutput("textHeaderI")
         ),
@@ -82,28 +82,18 @@ ui <- page_navbar(
              fluidRow(
           textOutput("textHeaderC")
         ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseC", label = "Dosage",
-                                                 selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(3, sliderInput("tpointC", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, selectInput("functioningC", label = "Functioning of interest", choices = NULL ))),
-          fluidRow(
-            column(1,  plotOutput("graphC", width = "600px"))
+                page_sidebar(
+          sidebar = sidebar(
+          accordion(
+                    checkboxGroupInput("numdoseC", label = "Dosage",
+                                                 selected = NULL, inline = TRUE),
+                   sliderInput("tpointC", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+                   selectInput("functioningC", label = "Functioning of interest", choices = NULL )
+          ,fileInput("upload_cts", "Upload data file", accept = c(".csv")), downloadButton("downloadC"))
           ),
-          fluidPage(
-            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadC")
-           ),
-        )),############################################################################################################ D UI 
-       
+          plotOutput("graphC")
+            )),
+############################################################################################################ D UI 
              tabPanel("GraphD", tabName = "GraphD", icon = icon("moon"), fluidRow(
           textOutput("textHeaderD")
         ),
@@ -519,7 +509,7 @@ output$graphC <- renderPlot({
     xlab("Timepoint") +
     ylab(paste0(
                 "Mean change from baseline across timepoints (with 95% CI) \n 
-                for EORTC QLQ-C30 Global status score for functioning",
+                for EORTC QLQ-C30 Global status score for functioning ",
                 func_C())) +
     scale_fill_manual(name = "Threshold", values = c("palegreen1", "red"), label = c("Improvement", "Worsening")) +
     geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = 30),
