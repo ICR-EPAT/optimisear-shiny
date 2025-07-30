@@ -11,106 +11,72 @@ library(gt)
 library(svglite)
 library(bslib)
 
-ui <- navbarPage(
-  title = span(tags$img(src = "ICR_logo.png"),
-                               "OPTIMISE-AR"), 
-  navbarMenu("Ordinal",############################################################################################################ A UI 
+ui <- page_navbar(
+  title = span(tags$img(src = "ICR_logo.png"), "OPTIMISE-AR"),
+  navbarMenu("Ordinal",
+############################################################################################################ A UI 
             tabPanel("GraphA", tabName = "GraphA", icon = icon("sun"),
             fluidRow(
           textOutput("textHeaderA")
         ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdose", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)), ),
-          fluidRow(
-            column(1,  plotOutput("graphA", width = "600px"))
+        page_sidebar(
+          sidebar = sidebar(
+          accordion(
+            checkboxGroupInput("numdose", label = "Dosage",
+                                                 selected = NULL, inline = TRUE)
+          ),fileInput("upload", "Upload data file", accept = c(".csv")), downloadButton("downloadA")
           ),
-          fluidPage(
-            fileInput("upload", "Upload data file", accept = c(".csv"))
-          ),
-           fluidPage(
-             DTOutput("dynamic")
-           ),
-           fluidPage(
-            downloadButton("downloadA")
-           ),
-        )),############################################################################################################ B UI 
+          plotOutput("graphA")
+          )),
+  ############################################################################################################ B UI 
             tabPanel("GraphB", tabName = "GraphB", icon = icon("sun"),
           fluidRow(
           textOutput("textHeaderB")
         ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseB", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)), ),
-          fluidRow(
-            column(3, sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, selectInput("toxicB", label = "Toxicity of interest", choices = NULL ))),
-          fluidRow(
-            column(1,  plotOutput("graphB", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadB")
-           ),
-        )),############################################################################################################ H UI 
+        page_sidebar(
+          sidebar = sidebar(
+          accordion(
+                    checkboxGroupInput("numdoseB", label = "Dosage",
+                                                 selected = NULL, inline = TRUE),
+                    sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+                    selectInput("toxicB", label = "Toxicity of interest", choices = NULL )
+          ),fileInput("upload", "Upload data file", accept = c(".csv")), downloadButton("downloadB"))
+          ,
+          plotOutput("graphB")
+            )),
+############################################################################################################ H UI 
          
-            tabPanel("GraphH", tabName = "GraphH", icon = icon("sun"), fluidRow(
+            tabPanel("GraphH", tabName = "GraphH", icon = icon("sun"), 
+            fluidRow(
           textOutput("textHeaderH")
         ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseH", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)), ),
-          fluidRow(
-            column(3, sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1))),
-          fluidRow(
-            column(3, checkboxGroupInput("toxicH", label = "Toxicity of interest", selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(1,  plotOutput("graphH", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadH")
-           ),
-        )),############################################################################################################ I UI 
+        page_sidebar(
+          sidebar = sidebar(
+          accordion(
+                    checkboxGroupInput("numdoseH", label = "Dosage",
+                                                 selected = NULL, inline = TRUE),
+                    sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1),
+                    accordion_panel("Toxicity of interest", checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL ))
+          ),fileInput("upload", "Upload data file", accept = c(".csv")), downloadButton("downloadH"))
+          ,
+          plotOutput("graphH")
+            )),
+############################################################################################################ I UI 
             tabPanel("GraphI", tabName = "GraphI", icon = icon("sun"),       
             fluidRow(
           textOutput("textHeaderI")
         ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseI", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)), ),
-          fluidRow(
-            column(3, sliderInput("tpointI", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(1,  plotOutput("graphI", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadI")
-           ),
-        ))),
+    page_sidebar(
+          sidebar = sidebar(
+          accordion(
+                    checkboxGroupInput("numdoseI", label = "Dosage",
+                                                 selected = NULL, inline = TRUE),
+                    sliderInput("tpointI", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+                    accordion_panel("Toxicity of interest", checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE))
+          ),fileInput("upload", "Upload data file", accept = c(".csv")), downloadButton("downloadI"))
+          ,
+          plotOutput("graphI")
+            ))),
   navbarMenu("Continuous",############################################################################################################ C UI 
              tabPanel("GraphC", tabName = "GraphC", icon = icon("moon"),
              fluidRow(
@@ -252,21 +218,9 @@ ui <- navbarPage(
               p("Ordinal"),
               p("Test")),
 ################################################################################################################## Version history
-      tabPanel("Version History", tabName = "history", icon = icon("history"), p("v1.0 - Internal ICR release 20/07/2025")),
-  dashboardBody(
-    tags$style(
-      HTML("#alldata {overflow:auto}")
-    ),
-    # this is here to demonstrate that the page can be styled with standard css/html
-    tags$head(tags$style(HTML(
-      ".content-wrapper{background-color:AliceBlue !important; padding:10px; }            
-      .main-header .logo {
-      background-color:DarkSeaGreen !important;
-      text-align:left !important;
-      color:DimGray !important;
-      font-size:28px;}"
-    )))))
-
+      tabPanel("Version History", tabName = "history", icon = icon("history"), p("v1.0 - Internal ICR release 20/07/2025")), bg = "DarkSeaGreen"
+ 
+  )
 
 ###############################################################################
 
