@@ -9,28 +9,25 @@ library(ggh4x)
 library(tidyr)
 library(gt)
 library(svglite)
-#library(bslib)
+library(bslib)
 
-ui <- dashboardPage(
-  title = "shiny",
-  dashboardHeader(title = span(tags$img(src = "ICR_logo.png"),
-                               "OPTIMISE-AR"),
-                  titleWidth = "100%"),
-  dashboardSidebar(
-    sidebarMenu(id = "tabs",
-      menuItem("GraphA", tabName = "GraphA", icon = icon("sun")),
-      menuItem("GraphB", tabName = "GraphB", icon = icon("sun")),
-      menuItem("GraphC", tabName = "GraphC", icon = icon("moon")),
-      menuItem("GraphD", tabName = "GraphD", icon = icon("moon")),
-      menuItem("GraphE", tabName = "GraphE", icon = icon("moon")),
-      menuItem("GraphF", tabName = "GraphF", icon = icon("moon")),
-      menuItem("GraphG", tabName = "GraphG", icon = icon("moon")),
-      menuItem("GraphH", tabName = "GraphH", icon = icon("sun")),
-      menuItem("GraphI", tabName = "GraphI", icon = icon("sun")),
-      menuItem("Description", tabName = "description", icon = icon("book")),
-      menuItem("Version History", tabName = "history", icon = icon("history"))
-    )
-  ),
+ui <- navbarPage(
+  titlePanel(title = span(tags$img(src = "ICR_logo.png"),
+                               "OPTIMISE-AR")),
+  navbarMenu("Ordinal",
+            tabPanel("GraphA", tabName = "GraphA", icon = icon("sun")),
+            tabPanel("GraphB", tabName = "GraphB", icon = icon("sun")),
+            tabPanel("GraphH", tabName = "GraphH", icon = icon("sun")),
+            tabPanel("GraphI", tabName = "GraphI", icon = icon("sun"))),
+  navbarMenu("Continuous",
+             tabPanel("GraphC", tabName = "GraphC", icon = icon("moon")),
+             tabPanel("GraphD", tabName = "GraphD", icon = icon("moon")),
+             tabPanel("GraphE", tabName = "GraphE", icon = icon("moon")),
+             tabPanel("GraphF", tabName = "GraphF", icon = icon("moon")),
+             tabPanel("GraphG", tabName = "GraphG", icon = icon("moon"))),
+      tabPanel("Description", tabName = "description", icon = icon("book")),
+      tabPanel("Data information page", tabName = "datainfo", icon = icon("book")),
+      tabPanel("Version History", tabName = "history", icon = icon("history")),
   dashboardBody(
     tags$style(
       HTML("#alldata {overflow:auto}")
@@ -294,6 +291,16 @@ ui <- dashboardPage(
         p("Authors: George (Server) and Karrar (UI)"),
         p("Maintainers: Rachel Alcraft, ICR Scientific Computing"),
       ),
+########################################################################### Data info tab 
+      tabItem(tabName = "datainfo",
+              h4("About data inputs"),
+              p("Continuous"),
+              p("Ordinal"),
+              p("Test"),
+            ),
+
+
+      ################################################## History Tab
       tabItem(tabName = "history",
               p("v1.0 - Internal ICR release 20/07/2025"))
 
