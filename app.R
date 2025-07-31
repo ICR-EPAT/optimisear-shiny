@@ -11,7 +11,7 @@ library(gt)
 library(svglite)
 library(bslib)
 
-ui <- page_navbar(
+ui <- div(page_navbar(
   title = span(tags$img(src = "ICR_logo.png"), "OPTIMISE-AR"),
   ############################################################################################# Information 
   tabPanel("Overview", icon = icon("house"),
@@ -248,7 +248,7 @@ ui <- page_navbar(
               p("Ordinal"),
               p("Test")),
 ################################################################################################################## Version history
-      tabPanel("Version History", tabName = "history", icon = icon("history"), p("v1.0 - Internal ICR release 20/07/2025")), bg = "DarkSeaGreen")
+      tabPanel("Version History", tabName = "history", icon = icon("history"), p("v1.0 - Internal ICR release 20/07/2025")), bg = "DarkSeaGreen"))
 
 #######################################################################################################################   SERVER SIDE 
 
