@@ -40,7 +40,7 @@ ui <- div(page_navbar(
     layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
       card(card_header("Graph"), imageOutput("about_ordinal")),
       card(card_header("Information"),
-        card_body(card_title("about"), htmlOutput("ordinal_information_about")),
+        card_body(card_title("About"), htmlOutput("ordinal_information_about")),
         card_body(card_title("Advantages"), htmlOutput("ordinal_pros")),
         card_body(card_title("Disadvantages"), htmlOutput("ordinal_cons"))
         ))),
