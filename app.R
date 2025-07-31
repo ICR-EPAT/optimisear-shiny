@@ -11,7 +11,7 @@ library(gt)
 library(svglite)
 library(bslib)
 
-ui <- page_navbar(
+ui <- div(page_navbar(
   title = span(tags$img(src = "ICR_logo.png"), "OPTIMISE-AR"),
   ############################################################################################# Information 
   tabPanel("Overview", icon = icon("house"),
@@ -38,19 +38,19 @@ ui <- page_navbar(
     ),
     nav_panel("Ordinal",
     layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
-      card(card_header("Graph"), textOutput("about_ordinal")),
+      card(card_header("Graph"), imageOutput("about_ordinal")),
       card(card_header("Information"),
-        card_body(card_title("about"), textOutput("ordinal_information_about")),
-        card_body(card_title("Advantages"), textOutput("ordinal_pros")),
-        card_body(card_title("Disadvantages"), textOutput("ordinal_cons"))
+        card_body(card_title("about"), htmlOutput("ordinal_information_about")),
+        card_body(card_title("Advantages"), htmlOutput("ordinal_pros")),
+        card_body(card_title("Disadvantages"), htmlOutput("ordinal_cons"))
         ))),
     nav_panel("Continuous",
     layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
-      card(card_header("Graph"), textOutput("about_continuous")),
+      card(card_header("Graph"), imageOutput("about_continuous")),
       card(card_header("Information"),
-        card_body(card_title("about"), textOutput("continuous_information_about")),
-        card_body(card_title("Advantages"), textOutput("continuous_pros")),
-        card_body(card_title("Disadvantages"), textOutput("continuous_cons"))
+        card_body(card_title("About"), htmlOutput("continuous_information_about")),
+        card_body(card_title("Advantages"), htmlOutput("continuous_pros")),
+        card_body(card_title("Disadvantages"), htmlOutput("continuous_cons"))
         ))))),       ####################################### Bracket issue here?
   ####################################################################################################### Data Sorting
   tabPanel("Data", icon = icon("arrow-up-from-bracket"),
@@ -248,7 +248,7 @@ ui <- page_navbar(
               p("Ordinal"),
               p("Test")),
 ################################################################################################################## Version history
-      tabPanel("Version History", tabName = "history", icon = icon("history"), p("v1.0 - Internal ICR release 20/07/2025")), bg = "DarkSeaGreen")
+      tabPanel("Version History", tabName = "history", icon = icon("history"), p("v1.0 - Internal ICR release 20/07/2025")), bg = "DarkSeaGreen"))
 
 #######################################################################################################################   SERVER SIDE 
 
@@ -268,145 +268,146 @@ about_continuous <- reactive({input$about_continuous})
 
 
 ############################################# GRAPH IMAGE
-output$about_ordinal <- reactive({
+output$about_ordinal <- renderImage({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "GraphA"){
-    "About A"
+    list(src = "GraphExamples/graphA.jpeg")
   }
   else if (about_ordinal == "GraphB") {
-     "About B"
+     list(src = "GraphExamples/graphB.jpeg")
   }
   else if (about_ordinal == "GraphH") {
-     "About H"
+     list(src = "GraphExamples/graphH.svg")
   }
   else if (about_ordinal == "GraphI") {
-     "About I"
+     list(src = "GraphExamples/graphI.svg")
   }
-})
-output$about_continuous <-reactive({
+}, deleteFile = FALSE)
+
+output$about_continuous <- renderImage({
   about_continuous <- about_continuous()
   if (about_continuous == "GraphC"){
-    "About C"
+    list(src = "GraphExamples/graphC.jpeg")
   }
   else if (about_continuous == "GraphD") {
-     "About D"
+     list(src = "GraphExamples/graphD.svg")
   }
   else if (about_continuous == "GraphE") {
-     "About E"
+     list(src = "GraphExamples/graphE.svg")
   }
   else if (about_continuous == "GraphF") {
-    "About F"
+    list(src = "GraphExamples/graphF.svg")
   }
   else if (about_continuous == "GraphG") {
-    "About G"
+    list(src = "GraphExamples/graphG.svg")
   }
-})
+}, deleteFile = FALSE)
 
-#####################################################GRAPH INFO 
+#####################################################GRAPH INFO
 
-output$ordinal_information_about <- reactive({
+output$ordinal_information_about <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "GraphA"){
-    "A"
+    HTML("The Kaplan-Meier graph shows the survival percentage over time across dosages.<br>For this graph, we assume a change from baseline of 3 to represent an event.<br> <br> This app allows you to select: <br>- Dose levels")
   }
   else if (about_ordinal == "GraphB") {
-     "B"
+     html("Graph B shows the proportion of patients at each severity across time on a given dose.<br> <br> This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Toxicity of interest")
   }
   else if (about_ordinal == "GraphH") {
-     "H"
+     html("Graph H is a butterfly plot, it allows you to compare the change in severity grades between two timepoints for a dose and toxicity of interest.<br> <br> This app allows you to select: <br>- Dose levels <br>- Start timepoint <br>- Final timepoint <br>- Toxicities of interest")
   }
   else if (about_ordinal == "GraphI") {
-     "I"
+     html("Graph I shows the percentage of patients at each severity for a given dose level, timepoint and SAE. The graph also shows the number of patients who reported. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Toxicities of interest")
   }
 })
 
-output$continuous_information_about <- reactive({
+output$continuous_information_about <- renderUI({
   about_continuous <- about_continuous()
   if (about_continuous == "GraphC"){
-    "C"
+    html("Graph C shows the mean change from baseline functioning across time given dose level and a functionality of interest. The graph includes 95% confidence intervals for each timepoint.<br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionality of interest")
   }
   else if (about_continuous == "GraphD") {
-     "D"
+     html("Graph D allows viewing of individual patients trends in functionality across time. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionality of interest <br> - Patient IDs ")
   }
   else if (about_continuous == "GraphE") {
-     "E"
+     html("Graph E creates boxplots for the tolerability based on scores in functionality categories. This allows you to compare between times and doses with a fixed functionality type. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionality of interest")
   }
   else if (about_continuous == "GraphF") {
-    "F"
+    html("Graph F outputs a table which shows: <br> - Mean change from baseline <br> - Standard error <br> - Number of reported patients <br> These are calculated for a fixed time period from the baseline for selected functionalities and doses. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionalities of interest")
   }
   else if (about_continuous == "GraphG") {
-    "G"
+    html("Graph G shows the mean change from baseline to a fixed timepoint given a fuctioning category with 95% confidence intervals. Doses can be compared with each other and multiple functioning categories may be shown. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionalities of interest ")
   }
 })
 
 ############################################################# GRAPH PROS
-output$ordinal_pros <- reactive({
+output$ordinal_pros <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "GraphA"){
-    "A good"
+    HTML("- Easily compare selected doses <br> - Provides a table with number of patients")
   }
   else if (about_ordinal == "GraphB") {
-     "B good"
+    HTML("B <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
   else if (about_ordinal == "GraphH") {
-     "H good"
+    HTML("H <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
   else if (about_ordinal == "GraphI") {
-     "I good"
+     HTML("I <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
 })
-output$continuous_cons <- reactive({
+output$continuous_pros <- renderUI({
   about_continuous <- about_continuous()
   if (about_continuous == "GraphC"){
-    "C good"
+     HTML("C <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
   else if (about_continuous == "GraphD") {
-     "D good"
+     HTML("D <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
   else if (about_continuous == "GraphE") {
-     "E good"
+     HTML("E <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
   else if (about_continuous == "GraphF") {
-    "F good"
+     HTML("F <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
   else if (about_continuous == "GraphG") {
-    "G good"
+     HTML("G <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
 })
 
 
 ############################################################ GRAPH CONS
-output$ordinal_cons <- reactive({
+output$ordinal_cons <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "GraphA"){
-    "A bad"
+     HTML("- Currently only allows baseline change of 3 as an event <br> - Missing patients aren't denoted on graph")
   }
   else if (about_ordinal == "GraphB") {
-     "B bad"
+     HTML("B <br> -con 1 <br> -con 2 <br> -con 3")
   }
   else if (about_ordinal == "GraphH") {
-     "H bad"
+     HTML("H <br> -con 1 <br> -con 2 <br> -con 3")
   }
   else if (about_ordinal == "GraphI") {
-     "I bad"
+    HTML("I <br> -con 1 <br> -con 2 <br> -con 3")
   }
 })
-output$continuous_cons <- reactive({
+output$continuous_cons <- renderUI({
   about_continuous <- about_continuous()
   if (about_continuous == "GraphC"){
-    "C bad"
+    HTML("C <br> -con 1 <br> -con 2 <br> -con 3")
   }
   else if (about_continuous == "GraphD") {
-     "D bad"
+     HTML("D <br> -con 1 <br> -con 2 <br> -con 3")
   }
   else if (about_continuous == "GraphE") {
-     "E bad"
+     HTML("E <br> -con 1 <br> -con 2 <br> -con 3")
   }
   else if (about_continuous == "GraphF") {
-    "F bad"
+    HTML("F <br> -con 1 <br> -con 2 <br> -con 3")
   }
   else if (about_continuous == "GraphG") {
-    "G bad"
+    HTML("G <br> -con 1 <br> -con 2 <br> -con 3")
   }
 })
 
@@ -1149,7 +1150,7 @@ observe({
   req(input$upload)
   data <- ordinal_data()
   tpoint <- unique(data$timepoint)
-  updateSliderInput(session, "tpointH", label = "Final timepoint of interest", max = length(tpoint)-1)
+  updateSliderInput(session, "tpointH", label = "Start and endpoint for comparison", max = length(tpoint)-1)
 })
 
 observe({
