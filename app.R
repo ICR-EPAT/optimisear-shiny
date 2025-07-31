@@ -52,9 +52,11 @@ ui <- div(page_navbar(
         card_body(card_title("Advantages"), htmlOutput("continuous_pros")),
         card_body(card_title("Disadvantages"), htmlOutput("continuous_cons"))
         ))))),       ####################################### Bracket issue here?
-  ####################################################################################################### Data Sorting
+  ####################################################################################################### Data Sorting + Upload
   tabPanel("Data", icon = icon("arrow-up-from-bracket"),
-  h1("I'll add some faff in here later when I have a minute")),
+  h1("Input data"),
+  card(card_header("Ordinal Data"), card_body(fileInput("upload", "Upload data file", accept = c(".csv")))),
+  card(card_header("Continuous Data"), card_body(fileInput("upload_cts", "Upload data file", accept = c(".csv"))))),
   navbarMenu("Ordinal",
 ############################################################################################################ A UI 
             tabPanel("GraphA", tabName = "GraphA", icon = icon("sun"),
@@ -62,12 +64,11 @@ ui <- div(page_navbar(
           textOutput("textHeaderA")
         ),
         page_sidebar(
-          sidebar = sidebar(fileInput("upload", "Upload data file", accept = c(".csv")), downloadButton("downloadA")
-          ),
+          sidebar = sidebar(
           card(card_header("Variables"), card_body(checkboxGroupInput("numdose", label = "Dosage",
                                                  selected = NULL, inline = TRUE))),
           plotOutput("graphA")
-          )),
+          ))),
   ############################################################################################################ B UI 
             tabPanel("GraphB", tabName = "GraphB", icon = icon("sun"),
           fluidRow(
@@ -80,7 +81,7 @@ ui <- div(page_navbar(
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                     selectInput("toxicB", label = "Toxicity of interest", choices = NULL )
-          ),fileInput("upload", "Upload data file", accept = c(".csv")), downloadButton("downloadB"))
+          ), downloadButton("downloadB"))
           ,
           plotOutput("graphB")
             )),
@@ -97,7 +98,7 @@ ui <- div(page_navbar(
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1),
                     accordion_panel("Toxicity of interest", checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL ))
-          ),fileInput("upload", "Upload data file", accept = c(".csv")), downloadButton("downloadH"))
+          ), downloadButton("downloadH"))
           ,
           plotOutput("graphH")
             )),
@@ -113,7 +114,7 @@ ui <- div(page_navbar(
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointI", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                     accordion_panel("Toxicity of interest", checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE))
-          ),fileInput("upload", "Upload data file", accept = c(".csv")), downloadButton("downloadI"))
+          ), downloadButton("downloadI"))
           ,
           plotOutput("graphI")
             ))),
@@ -129,7 +130,7 @@ ui <- div(page_navbar(
                                                  selected = NULL, inline = TRUE),
                    sliderInput("tpointC", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                    selectInput("functioningC", label = "Functioning of interest", choices = NULL )
-          ,fileInput("upload_cts", "Upload data file", accept = c(".csv")), downloadButton("downloadC"))
+          , downloadButton("downloadC"))
           ),
           plotOutput("graphC")
             )),
@@ -151,9 +152,6 @@ ui <- div(page_navbar(
             column(3, selectInput("functioningD", label = "Functioning of interest", choices = NULL))),
           fluidRow(
             column(1,  plotOutput("graphD", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
           ),
           fluidPage(
             DTOutput("dynamic")
@@ -178,9 +176,6 @@ ui <- div(page_navbar(
             column(1,  plotOutput("graphE", width = "600px"))
           ),
           fluidPage(
-            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
             DTOutput("dynamic")
           ),
            fluidPage(
@@ -203,9 +198,6 @@ ui <- div(page_navbar(
             column(6,  gt_output("graphF"))
           ),
           fluidPage(
-            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
             DTOutput("dynamic")
           ),
            fluidPage(
@@ -226,9 +218,6 @@ ui <- div(page_navbar(
             column(3, checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE))),
           fluidRow(
             column(1,  plotOutput("graphG", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
           ),
           fluidPage(
             DTOutput("dynamic")
