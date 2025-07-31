@@ -38,7 +38,7 @@ ui <- div(page_navbar(
     ),
     nav_panel("Ordinal",
     layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
-      card(card_header("Graph"), textOutput("about_ordinal")),
+      card(card_header("Graph"), imageOutput("about_ordinal")),
       card(card_header("Information"),
         card_body(card_title("about"), htmlOutput("ordinal_information_about")),
         card_body(card_title("Advantages"), htmlOutput("ordinal_pros")),
@@ -46,7 +46,7 @@ ui <- div(page_navbar(
         ))),
     nav_panel("Continuous",
     layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
-      card(card_header("Graph"), textOutput("about_continuous")),
+      card(card_header("Graph"), imageOutput("about_continuous")),
       card(card_header("Information"),
         card_body(card_title("About"), htmlOutput("continuous_information_about")),
         card_body(card_title("Advantages"), htmlOutput("continuous_pros")),
@@ -268,41 +268,42 @@ about_continuous <- reactive({input$about_continuous})
 
 
 ############################################# GRAPH IMAGE
-output$about_ordinal <- renderText({
+output$about_ordinal <- renderImage({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "GraphA"){
-    "A"
+    list(src = "GraphExamples/graphA.jpeg")
   }
   else if (about_ordinal == "GraphB") {
-     "About B"
+     list(src = "GraphExamples/graphB.jpeg")
   }
   else if (about_ordinal == "GraphH") {
-     "About H"
+     list(src = "GraphExamples/graphH.svg")
   }
   else if (about_ordinal == "GraphI") {
-     "About I"
+     list(src = "GraphExamples/graphI.svg")
   }
-})
-output$about_continuous <-renderText({
+}, deleteFile = FALSE)
+
+output$about_continuous <- renderImage({
   about_continuous <- about_continuous()
   if (about_continuous == "GraphC"){
-    "About C"
+    list(src = "GraphExamples/graphC.jpeg")
   }
   else if (about_continuous == "GraphD") {
-     "About D"
+     list(src = "GraphExamples/graphD.svg")
   }
   else if (about_continuous == "GraphE") {
-     "About E"
+     list(src = "GraphExamples/graphE.svg")
   }
   else if (about_continuous == "GraphF") {
-    "About F"
+    list(src = "GraphExamples/graphF.svg")
   }
   else if (about_continuous == "GraphG") {
-    "About G"
+    list(src = "GraphExamples/graphG.svg")
   }
-})
+}, deleteFile = FALSE)
 
-#####################################################GRAPH INFO 
+#####################################################GRAPH INFO
 
 output$ordinal_information_about <- renderUI({
   about_ordinal <- about_ordinal()
@@ -343,7 +344,7 @@ output$continuous_information_about <- renderUI({
 output$ordinal_pros <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "GraphA"){
-    HTML("A <br> -pro 1 <br> -pro 2 <br> -pro 3")
+    HTML("- Easily compare selected doses <br> - Provides a table with number of patients")
   }
   else if (about_ordinal == "GraphB") {
     HTML("B <br> -pro 1 <br> -pro 2 <br> -pro 3")
@@ -379,7 +380,7 @@ output$continuous_pros <- renderUI({
 output$ordinal_cons <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "GraphA"){
-     HTML("A <br> -con 1 <br> -con 2 <br> -con 3")
+     HTML("- Currently only allows baseline change of 3 as an event <br> - Missing patients aren't denoted on graph")
   }
   else if (about_ordinal == "GraphB") {
      HTML("B <br> -con 1 <br> -con 2 <br> -con 3")
