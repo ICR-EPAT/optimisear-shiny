@@ -48,7 +48,7 @@ ui <- div(page_navbar(
     layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
       card(card_header("Graph"), textOutput("about_continuous")),
       card(card_header("Information"),
-        card_body(card_title("about"), htmlOutput("continuous_information_about")),
+        card_body(card_title("About"), htmlOutput("continuous_information_about")),
         card_body(card_title("Advantages"), htmlOutput("continuous_pros")),
         card_body(card_title("Disadvantages"), htmlOutput("continuous_cons"))
         ))))),       ####################################### Bracket issue here?
@@ -307,35 +307,35 @@ output$about_continuous <-renderText({
 output$ordinal_information_about <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "GraphA"){
-    HTML("The Kaplan-Meier graph shows the survival percentage over time across dosages.<br> <br> This app allows you to select: <br>- Dose levels")
+    HTML("The Kaplan-Meier graph shows the survival percentage over time across dosages.<br>For this graph, we assume a change from baseline of 3 to represent an event.<br> <br> This app allows you to select: <br>- Dose levels")
   }
   else if (about_ordinal == "GraphB") {
-     html("B")
+     html("Graph B shows the proportion of patients at each severity across time on a given dose.<br> <br> This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Toxicity of interest")
   }
   else if (about_ordinal == "GraphH") {
-     html("H")
+     html("Graph H is a butterfly plot, it allows you to compare the change in severity grades between two timepoints for a dose and toxicity of interest.<br> <br> This app allows you to select: <br>- Dose levels <br>- Start timepoint <br>- Final timepoint <br>- Toxicities of interest")
   }
   else if (about_ordinal == "GraphI") {
-     html("I")
+     html("Graph I shows the percentage of patients at each severity for a given dose level, timepoint and SAE. The graph also shows the number of patients who reported. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Toxicities of interest")
   }
 })
 
 output$continuous_information_about <- renderUI({
   about_continuous <- about_continuous()
   if (about_continuous == "GraphC"){
-    html("C")
+    html("Graph C shows the mean change from baseline functioning across time given dose level and a functionality of interest. The graph includes 95% confidence intervals for each timepoint.<br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionality of interest")
   }
   else if (about_continuous == "GraphD") {
-     html("D")
+     html("Graph D allows viewing of individual patients trends in functionality across time. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionality of interest <br> - Patient IDs ")
   }
   else if (about_continuous == "GraphE") {
-     html("E")
+     html("Graph E creates boxplots for the tolerability based on scores in functionality categories. This allows you to compare between times and doses with a fixed functionality type. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionality of interest")
   }
   else if (about_continuous == "GraphF") {
-    html("F")
+    html("Graph F outputs a table which shows: <br> - Mean change from baseline <br> - Standard error <br> - Number of reported patients <br> These are calculated for a fixed time period from the baseline for selected functionalities and doses. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionalities of interest")
   }
   else if (about_continuous == "GraphG") {
-    html("G")
+    html("Graph G shows the mean change from baseline to a fixed timepoint given a fuctioning category with 95% confidence intervals. Doses can be compared with each other and multiple functioning categories may be shown. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionalities of interest ")
   }
 })
 
@@ -1149,7 +1149,7 @@ observe({
   req(input$upload)
   data <- ordinal_data()
   tpoint <- unique(data$timepoint)
-  updateSliderInput(session, "tpointH", label = "Final timepoint of interest", max = length(tpoint)-1)
+  updateSliderInput(session, "tpointH", label = "Start and endpoint for comparison", max = length(tpoint)-1)
 })
 
 observe({
