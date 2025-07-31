@@ -40,17 +40,17 @@ ui <- div(page_navbar(
     layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
       card(card_header("Graph"), textOutput("about_ordinal")),
       card(card_header("Information"),
-        card_body(card_title("about"), textOutput("ordinal_information_about")),
-        card_body(card_title("Advantages"), textOutput("ordinal_pros")),
-        card_body(card_title("Disadvantages"), textOutput("ordinal_cons"))
+        card_body(card_title("about"), htmlOutput("ordinal_information_about")),
+        card_body(card_title("Advantages"), htmlOutput("ordinal_pros")),
+        card_body(card_title("Disadvantages"), htmlOutput("ordinal_cons"))
         ))),
     nav_panel("Continuous",
     layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
       card(card_header("Graph"), textOutput("about_continuous")),
       card(card_header("Information"),
-        card_body(card_title("about"), textOutput("continuous_information_about")),
-        card_body(card_title("Advantages"), textOutput("continuous_pros")),
-        card_body(card_title("Disadvantages"), textOutput("continuous_cons"))
+        card_body(card_title("about"), htmlOutput("continuous_information_about")),
+        card_body(card_title("Advantages"), htmlOutput("continuous_pros")),
+        card_body(card_title("Disadvantages"), htmlOutput("continuous_cons"))
         ))))),       ####################################### Bracket issue here?
   ####################################################################################################### Data Sorting
   tabPanel("Data", icon = icon("arrow-up-from-bracket"),
@@ -268,10 +268,10 @@ about_continuous <- reactive({input$about_continuous})
 
 
 ############################################# GRAPH IMAGE
-output$about_ordinal <- reactive({
+output$about_ordinal <- renderText({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "GraphA"){
-    "About A"
+    "A"
   }
   else if (about_ordinal == "GraphB") {
      "About B"
@@ -283,7 +283,7 @@ output$about_ordinal <- reactive({
      "About I"
   }
 })
-output$about_continuous <-reactive({
+output$about_continuous <-renderText({
   about_continuous <- about_continuous()
   if (about_continuous == "GraphC"){
     "About C"
@@ -304,109 +304,109 @@ output$about_continuous <-reactive({
 
 #####################################################GRAPH INFO 
 
-output$ordinal_information_about <- reactive({
+output$ordinal_information_about <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "GraphA"){
-    "A"
+    HTML("The Kaplan-Meier graph shows the survival percentage over time across dosages.<br> <br> This app allows you to select: <br>- Dose levels")
   }
   else if (about_ordinal == "GraphB") {
-     "B"
+     html("B")
   }
   else if (about_ordinal == "GraphH") {
-     "H"
+     html("H")
   }
   else if (about_ordinal == "GraphI") {
-     "I"
+     html("I")
   }
 })
 
-output$continuous_information_about <- reactive({
+output$continuous_information_about <- renderUI({
   about_continuous <- about_continuous()
   if (about_continuous == "GraphC"){
-    "C"
+    html("C")
   }
   else if (about_continuous == "GraphD") {
-     "D"
+     html("D")
   }
   else if (about_continuous == "GraphE") {
-     "E"
+     html("E")
   }
   else if (about_continuous == "GraphF") {
-    "F"
+    html("F")
   }
   else if (about_continuous == "GraphG") {
-    "G"
+    html("G")
   }
 })
 
 ############################################################# GRAPH PROS
-output$ordinal_pros <- reactive({
+output$ordinal_pros <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "GraphA"){
-    "A good"
+    HTML("A <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
   else if (about_ordinal == "GraphB") {
-     "B good"
+    HTML("B <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
   else if (about_ordinal == "GraphH") {
-     "H good"
+    HTML("H <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
   else if (about_ordinal == "GraphI") {
-     "I good"
+     HTML("I <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
 })
-output$continuous_cons <- reactive({
+output$continuous_pros <- renderUI({
   about_continuous <- about_continuous()
   if (about_continuous == "GraphC"){
-    "C good"
+     HTML("C <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
   else if (about_continuous == "GraphD") {
-     "D good"
+     HTML("D <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
   else if (about_continuous == "GraphE") {
-     "E good"
+     HTML("E <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
   else if (about_continuous == "GraphF") {
-    "F good"
+     HTML("F <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
   else if (about_continuous == "GraphG") {
-    "G good"
+     HTML("G <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
 })
 
 
 ############################################################ GRAPH CONS
-output$ordinal_cons <- reactive({
+output$ordinal_cons <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "GraphA"){
-    "A bad"
+     HTML("A <br> -con 1 <br> -con 2 <br> -con 3")
   }
   else if (about_ordinal == "GraphB") {
-     "B bad"
+     HTML("B <br> -con 1 <br> -con 2 <br> -con 3")
   }
   else if (about_ordinal == "GraphH") {
-     "H bad"
+     HTML("H <br> -con 1 <br> -con 2 <br> -con 3")
   }
   else if (about_ordinal == "GraphI") {
-     "I bad"
+    HTML("I <br> -con 1 <br> -con 2 <br> -con 3")
   }
 })
-output$continuous_cons <- reactive({
+output$continuous_cons <- renderUI({
   about_continuous <- about_continuous()
   if (about_continuous == "GraphC"){
-    "C bad"
+    HTML("C <br> -con 1 <br> -con 2 <br> -con 3")
   }
   else if (about_continuous == "GraphD") {
-     "D bad"
+     HTML("D <br> -con 1 <br> -con 2 <br> -con 3")
   }
   else if (about_continuous == "GraphE") {
-     "E bad"
+     HTML("E <br> -con 1 <br> -con 2 <br> -con 3")
   }
   else if (about_continuous == "GraphF") {
-    "F bad"
+    HTML("F <br> -con 1 <br> -con 2 <br> -con 3")
   }
   else if (about_continuous == "GraphG") {
-    "G bad"
+    HTML("G <br> -con 1 <br> -con 2 <br> -con 3")
   }
 })
 
