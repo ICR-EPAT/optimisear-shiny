@@ -11,133 +11,129 @@ library(gt)
 library(svglite)
 library(bslib)
 
-ui <- navbarPage(
-  title = span(tags$img(src = "ICR_logo.png"),
-                               "OPTIMISE-AR"), 
-  navbarMenu("Ordinal",############################################################################################################ A UI 
+ui <- page_navbar(
+  title = span(tags$img(src = "ICR_logo.png"), "OPTIMISE-AR"),
+  ############################################################################################# Information 
+  tabPanel("Overview", icon = icon("house"),
+  h1("OPTIMISE-AR"),
+  h3("Background"),
+  p("Recently, there has been an increasing interest in the use of PRO data to supplement assessment of tolerability in early phase dose-finding trials."),
+  p("However, there are no guidelines on how analysis should be conducted or what visualisations should be made."),
+  p("This app aims to provide and easy to use platform to assist in analysis and visualisations using current recommended methods."),
+  h3("Work-flow"),
+  p("this section will be updated when there is a more clear workflow approach"),
+  h3("About the graphs"),
+  page_navbar(
+    title = "Select data type",
+    id = "about",
+    sidebar = sidebar(
+      conditionalPanel(
+        "input.about == 'Ordinal'",
+        radioButtons("about_ordinal", label = NULL, choices = c("GraphA", "GraphB", "GraphH", "GraphI"))
+      ),
+      conditionalPanel(
+        "input.about == 'Continuous'",
+        radioButtons("about_continuous", label = NULL, choices = c("GraphC", "GraphD", "GraphE", "GraphF", "GraphG"))
+      ),
+    ),
+    nav_panel("Ordinal",
+    layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
+      card(card_header("Graph"), textOutput("about_ordinal")),
+      card(card_header("Information"),
+        card_body(card_title("about"), textOutput("ordinal_information_about")),
+        card_body(card_title("Advantages"), textOutput("ordinal_pros")),
+        card_body(card_title("Disadvantages"), textOutput("ordinal_cons"))
+        ))),
+    nav_panel("Continuous",
+    layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
+      card(card_header("Graph"), textOutput("about_continuous")),
+      card(card_header("Information"),
+        card_body(card_title("about"), textOutput("continuous_information_about")),
+        card_body(card_title("Advantages"), textOutput("continuous_pros")),
+        card_body(card_title("Disadvantages"), textOutput("continuous_cons"))
+        ))))),       ####################################### Bracket issue here?
+  ####################################################################################################### Data Sorting
+  tabPanel("Data", icon = icon("arrow-up-from-bracket"),
+  h1("I'll add some faff in here later when I have a minute")),
+  navbarMenu("Ordinal",
+############################################################################################################ A UI 
             tabPanel("GraphA", tabName = "GraphA", icon = icon("sun"),
             fluidRow(
           textOutput("textHeaderA")
         ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdose", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)), ),
-          fluidRow(
-            column(1,  plotOutput("graphA", width = "600px"))
+        page_sidebar(
+          sidebar = sidebar(fileInput("upload", "Upload data file", accept = c(".csv")), downloadButton("downloadA")
           ),
-          fluidPage(
-            fileInput("upload", "Upload data file", accept = c(".csv"))
-          ),
-           fluidPage(
-             DTOutput("dynamic")
-           ),
-           fluidPage(
-            downloadButton("downloadA")
-           ),
-        )),############################################################################################################ B UI 
+          card(card_header("Variables"), card_body(checkboxGroupInput("numdose", label = "Dosage",
+                                                 selected = NULL, inline = TRUE))),
+          plotOutput("graphA")
+          )),
+  ############################################################################################################ B UI 
             tabPanel("GraphB", tabName = "GraphB", icon = icon("sun"),
           fluidRow(
           textOutput("textHeaderB")
         ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseB", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)), ),
-          fluidRow(
-            column(3, sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, selectInput("toxicB", label = "Toxicity of interest", choices = NULL ))),
-          fluidRow(
-            column(1,  plotOutput("graphB", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadB")
-           ),
-        )),############################################################################################################ H UI 
+        page_sidebar(
+          sidebar = sidebar(
+          accordion(
+                    checkboxGroupInput("numdoseB", label = "Dosage",
+                                                 selected = NULL, inline = TRUE),
+                    sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+                    selectInput("toxicB", label = "Toxicity of interest", choices = NULL )
+          ),fileInput("upload", "Upload data file", accept = c(".csv")), downloadButton("downloadB"))
+          ,
+          plotOutput("graphB")
+            )),
+############################################################################################################ H UI 
          
-            tabPanel("GraphH", tabName = "GraphH", icon = icon("sun"), fluidRow(
+            tabPanel("GraphH", tabName = "GraphH", icon = icon("sun"), 
+            fluidRow(
           textOutput("textHeaderH")
         ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseH", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)), ),
-          fluidRow(
-            column(3, sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1))),
-          fluidRow(
-            column(3, checkboxGroupInput("toxicH", label = "Toxicity of interest", selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(1,  plotOutput("graphH", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadH")
-           ),
-        )),############################################################################################################ I UI 
-            tabPanel("GraphI", tabName = "GraphI", icon = icon("sun"),       
+        page_sidebar(
+          sidebar = sidebar(
+          accordion(
+                    checkboxGroupInput("numdoseH", label = "Dosage",
+                                                 selected = NULL, inline = TRUE),
+                    sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1),
+                    accordion_panel("Toxicity of interest", checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL ))
+          ),fileInput("upload", "Upload data file", accept = c(".csv")), downloadButton("downloadH"))
+          ,
+          plotOutput("graphH")
+            )),
+############################################################################################################ I UI
+            tabPanel("GraphI", tabName = "GraphI", icon = icon("sun"),
             fluidRow(
           textOutput("textHeaderI")
         ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseI", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)), ),
-          fluidRow(
-            column(3, sliderInput("tpointI", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(1,  plotOutput("graphI", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadI")
-           ),
-        ))),
+    page_sidebar(
+          sidebar = sidebar(
+          accordion(
+                    checkboxGroupInput("numdoseI", label = "Dosage",
+                                                 selected = NULL, inline = TRUE),
+                    sliderInput("tpointI", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+                    accordion_panel("Toxicity of interest", checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE))
+          ),fileInput("upload", "Upload data file", accept = c(".csv")), downloadButton("downloadI"))
+          ,
+          plotOutput("graphI")
+            ))),
   navbarMenu("Continuous",############################################################################################################ C UI 
              tabPanel("GraphC", tabName = "GraphC", icon = icon("moon"),
              fluidRow(
           textOutput("textHeaderC")
         ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseC", label = "Dosage",
-                                                 selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(3, sliderInput("tpointC", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, selectInput("functioningC", label = "Functioning of interest", choices = NULL ))),
-          fluidRow(
-            column(1,  plotOutput("graphC", width = "600px"))
+                page_sidebar(
+          sidebar = sidebar(
+          accordion(
+                    checkboxGroupInput("numdoseC", label = "Dosage",
+                                                 selected = NULL, inline = TRUE),
+                   sliderInput("tpointC", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+                   selectInput("functioningC", label = "Functioning of interest", choices = NULL )
+          ,fileInput("upload_cts", "Upload data file", accept = c(".csv")), downloadButton("downloadC"))
           ),
-          fluidPage(
-            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadC")
-           ),
-        )),############################################################################################################ D UI 
-       
+          plotOutput("graphC")
+            )),
+############################################################################################################ D UI 
              tabPanel("GraphD", tabName = "GraphD", icon = icon("moon"), fluidRow(
           textOutput("textHeaderD")
         ),
@@ -252,23 +248,9 @@ ui <- navbarPage(
               p("Ordinal"),
               p("Test")),
 ################################################################################################################## Version history
-      tabPanel("Version History", tabName = "history", icon = icon("history"), p("v1.0 - Internal ICR release 20/07/2025")),
-  dashboardBody(
-    tags$style(
-      HTML("#alldata {overflow:auto}")
-    ),
-    # this is here to demonstrate that the page can be styled with standard css/html
-    tags$head(tags$style(HTML(
-      ".content-wrapper{background-color:AliceBlue !important; padding:10px; }            
-      .main-header .logo {
-      background-color:DarkSeaGreen !important;
-      text-align:left !important;
-      color:DimGray !important;
-      font-size:28px;}"
-    )))))
+      tabPanel("Version History", tabName = "history", icon = icon("history"), p("v1.0 - Internal ICR release 20/07/2025")), bg = "DarkSeaGreen")
 
-
-###############################################################################
+#######################################################################################################################   SERVER SIDE 
 
 server <- function(input, output, session) {
   output$textHeaderA <- renderText({"Kaplan-Meier Graph"})
@@ -280,6 +262,157 @@ server <- function(input, output, session) {
   output$textHeaderG <- renderText({"Mean change in functionalities plot"})
   output$textHeaderH <- renderText({"Butterfly plot"})
   output$textHeaderI <- renderText({"Toxicity % plot"})
+  ############################################################################################Overview page 
+about_ordinal <- reactive({input$about_ordinal})
+about_continuous <- reactive({input$about_continuous})
+
+
+############################################# GRAPH IMAGE
+output$about_ordinal <- reactive({
+  about_ordinal <- about_ordinal()
+  if (about_ordinal == "GraphA"){
+    "About A"
+  }
+  else if (about_ordinal == "GraphB") {
+     "About B"
+  }
+  else if (about_ordinal == "GraphH") {
+     "About H"
+  }
+  else if (about_ordinal == "GraphI") {
+     "About I"
+  }
+})
+output$about_continuous <-reactive({
+  about_continuous <- about_continuous()
+  if (about_continuous == "GraphC"){
+    "About C"
+  }
+  else if (about_continuous == "GraphD") {
+     "About D"
+  }
+  else if (about_continuous == "GraphE") {
+     "About E"
+  }
+  else if (about_continuous == "GraphF") {
+    "About F"
+  }
+  else if (about_continuous == "GraphG") {
+    "About G"
+  }
+})
+
+#####################################################GRAPH INFO 
+
+output$ordinal_information_about <- reactive({
+  about_ordinal <- about_ordinal()
+  if (about_ordinal == "GraphA"){
+    "A"
+  }
+  else if (about_ordinal == "GraphB") {
+     "B"
+  }
+  else if (about_ordinal == "GraphH") {
+     "H"
+  }
+  else if (about_ordinal == "GraphI") {
+     "I"
+  }
+})
+
+output$continuous_information_about <- reactive({
+  about_continuous <- about_continuous()
+  if (about_continuous == "GraphC"){
+    "C"
+  }
+  else if (about_continuous == "GraphD") {
+     "D"
+  }
+  else if (about_continuous == "GraphE") {
+     "E"
+  }
+  else if (about_continuous == "GraphF") {
+    "F"
+  }
+  else if (about_continuous == "GraphG") {
+    "G"
+  }
+})
+
+############################################################# GRAPH PROS
+output$ordinal_pros <- reactive({
+  about_ordinal <- about_ordinal()
+  if (about_ordinal == "GraphA"){
+    "A good"
+  }
+  else if (about_ordinal == "GraphB") {
+     "B good"
+  }
+  else if (about_ordinal == "GraphH") {
+     "H good"
+  }
+  else if (about_ordinal == "GraphI") {
+     "I good"
+  }
+})
+output$continuous_cons <- reactive({
+  about_continuous <- about_continuous()
+  if (about_continuous == "GraphC"){
+    "C good"
+  }
+  else if (about_continuous == "GraphD") {
+     "D good"
+  }
+  else if (about_continuous == "GraphE") {
+     "E good"
+  }
+  else if (about_continuous == "GraphF") {
+    "F good"
+  }
+  else if (about_continuous == "GraphG") {
+    "G good"
+  }
+})
+
+
+############################################################ GRAPH CONS
+output$ordinal_cons <- reactive({
+  about_ordinal <- about_ordinal()
+  if (about_ordinal == "GraphA"){
+    "A bad"
+  }
+  else if (about_ordinal == "GraphB") {
+     "B bad"
+  }
+  else if (about_ordinal == "GraphH") {
+     "H bad"
+  }
+  else if (about_ordinal == "GraphI") {
+     "I bad"
+  }
+})
+output$continuous_cons <- reactive({
+  about_continuous <- about_continuous()
+  if (about_continuous == "GraphC"){
+    "C bad"
+  }
+  else if (about_continuous == "GraphD") {
+     "D bad"
+  }
+  else if (about_continuous == "GraphE") {
+     "E bad"
+  }
+  else if (about_continuous == "GraphF") {
+    "F bad"
+  }
+  else if (about_continuous == "GraphG") {
+    "G bad"
+  }
+})
+
+
+
+#############################################################################################################Graph A
   #Import the data
   ordinal_data <- reactive({
     req(input$upload)
@@ -565,7 +698,7 @@ output$graphC <- renderPlot({
     xlab("Timepoint") +
     ylab(paste0(
                 "Mean change from baseline across timepoints (with 95% CI) \n 
-                for EORTC QLQ-C30 Global status score for functioning",
+                for EORTC QLQ-C30 Global status score for functioning ",
                 func_C())) +
     scale_fill_manual(name = "Threshold", values = c("palegreen1", "red"), label = c("Improvement", "Worsening")) +
     geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = 30),
