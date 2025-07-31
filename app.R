@@ -13,6 +13,48 @@ library(bslib)
 
 ui <- page_navbar(
   title = span(tags$img(src = "ICR_logo.png"), "OPTIMISE-AR"),
+  ############################################################################################# Information 
+  tabPanel("Overview", icon = icon("house"),
+  h1("OPTIMISE-AR"),
+  h3("Background"),
+  p("Recently, there has been an increasing interest in the use of PRO data to supplement assessment of tolerability in early phase dose-finding trials."),
+  p("However, there are no guidelines on how analysis should be conducted or what visualisations should be made."),
+  p("This app aims to provide and easy to use platform to assist in analysis and visualisations using current recommended methods."),
+  h3("Work-flow"),
+  p("this section will be updated when there is a more clear workflow approach"),
+  h3("About the graphs"),
+  page_navbar(
+    title = "Select data type",
+    id = "about",
+    sidebar = sidebar(
+      conditionalPanel(
+        "input.about == 'Ordinal'",
+        radioButtons("about_ordinal", label = NULL, choices = c("GraphA", "GraphB", "GraphH", "GraphI"))
+      ),
+      conditionalPanel(
+        "input.about == 'Continuous'",
+        radioButtons("about_continuous", label = NULL, choices = c("GraphC", "GraphD", "GraphE", "GraphF", "GraphG"))
+      ),
+    ),
+    nav_panel("Ordinal",
+    layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
+      card(card_header("Graph"), textOutput("about_ordinal")),
+      card(card_header("Information"),
+        card_body(card_title("about"), textOutput("ordinal_information_about")),
+        card_body(card_title("Advantages"), textOutput("ordinal_pros")),
+        card_body(card_title("Disadvantages"), textOutput("ordinal_cons"))
+        ))),
+    nav_panel("Continuous",
+    layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
+      card(card_header("Graph"), textOutput("about_continuous")),
+      card(card_header("Information"),
+        card_body(card_title("about"), textOutput("continuous_information_about")),
+        card_body(card_title("Advantages"), textOutput("continuous_pros")),
+        card_body(card_title("Disadvantages"), textOutput("continuous_cons"))
+        ))))),       ####################################### Bracket issue here?
+  ####################################################################################################### Data Sorting
+  tabPanel("Data", icon = icon("arrow-up-from-bracket"),
+  h1("I'll add some faff in here later when I have a minute")),
   navbarMenu("Ordinal",
 ############################################################################################################ A UI 
             tabPanel("GraphA", tabName = "GraphA", icon = icon("sun"),
@@ -20,12 +62,10 @@ ui <- page_navbar(
           textOutput("textHeaderA")
         ),
         page_sidebar(
-          sidebar = sidebar(
-          accordion(
-            checkboxGroupInput("numdose", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)
-          ),fileInput("upload", "Upload data file", accept = c(".csv")), downloadButton("downloadA")
+          sidebar = sidebar(fileInput("upload", "Upload data file", accept = c(".csv")), downloadButton("downloadA")
           ),
+          card(card_header("Variables"), card_body(checkboxGroupInput("numdose", label = "Dosage",
+                                                 selected = NULL, inline = TRUE))),
           plotOutput("graphA")
           )),
   ############################################################################################################ B UI 
@@ -208,11 +248,9 @@ ui <- page_navbar(
               p("Ordinal"),
               p("Test")),
 ################################################################################################################## Version history
-      tabPanel("Version History", tabName = "history", icon = icon("history"), p("v1.0 - Internal ICR release 20/07/2025")), bg = "DarkSeaGreen"
- 
-  )
+      tabPanel("Version History", tabName = "history", icon = icon("history"), p("v1.0 - Internal ICR release 20/07/2025")), bg = "DarkSeaGreen")
 
-###############################################################################
+#######################################################################################################################   SERVER SIDE 
 
 server <- function(input, output, session) {
   output$textHeaderA <- renderText({"Kaplan-Meier Graph"})
@@ -224,6 +262,157 @@ server <- function(input, output, session) {
   output$textHeaderG <- renderText({"Mean change in functionalities plot"})
   output$textHeaderH <- renderText({"Butterfly plot"})
   output$textHeaderI <- renderText({"Toxicity % plot"})
+  ############################################################################################Overview page 
+about_ordinal <- reactive({input$about_ordinal})
+about_continuous <- reactive({input$about_continuous})
+
+
+############################################# GRAPH IMAGE
+output$about_ordinal <- reactive({
+  about_ordinal <- about_ordinal()
+  if (about_ordinal == "GraphA"){
+    "About A"
+  }
+  else if (about_ordinal == "GraphB") {
+     "About B"
+  }
+  else if (about_ordinal == "GraphH") {
+     "About H"
+  }
+  else if (about_ordinal == "GraphI") {
+     "About I"
+  }
+})
+output$about_continuous <-reactive({
+  about_continuous <- about_continuous()
+  if (about_continuous == "GraphC"){
+    "About C"
+  }
+  else if (about_continuous == "GraphD") {
+     "About D"
+  }
+  else if (about_continuous == "GraphE") {
+     "About E"
+  }
+  else if (about_continuous == "GraphF") {
+    "About F"
+  }
+  else if (about_continuous == "GraphG") {
+    "About G"
+  }
+})
+
+#####################################################GRAPH INFO 
+
+output$ordinal_information_about <- reactive({
+  about_ordinal <- about_ordinal()
+  if (about_ordinal == "GraphA"){
+    "A"
+  }
+  else if (about_ordinal == "GraphB") {
+     "B"
+  }
+  else if (about_ordinal == "GraphH") {
+     "H"
+  }
+  else if (about_ordinal == "GraphI") {
+     "I"
+  }
+})
+
+output$continuous_information_about <- reactive({
+  about_continuous <- about_continuous()
+  if (about_continuous == "GraphC"){
+    "C"
+  }
+  else if (about_continuous == "GraphD") {
+     "D"
+  }
+  else if (about_continuous == "GraphE") {
+     "E"
+  }
+  else if (about_continuous == "GraphF") {
+    "F"
+  }
+  else if (about_continuous == "GraphG") {
+    "G"
+  }
+})
+
+############################################################# GRAPH PROS
+output$ordinal_pros <- reactive({
+  about_ordinal <- about_ordinal()
+  if (about_ordinal == "GraphA"){
+    "A good"
+  }
+  else if (about_ordinal == "GraphB") {
+     "B good"
+  }
+  else if (about_ordinal == "GraphH") {
+     "H good"
+  }
+  else if (about_ordinal == "GraphI") {
+     "I good"
+  }
+})
+output$continuous_cons <- reactive({
+  about_continuous <- about_continuous()
+  if (about_continuous == "GraphC"){
+    "C good"
+  }
+  else if (about_continuous == "GraphD") {
+     "D good"
+  }
+  else if (about_continuous == "GraphE") {
+     "E good"
+  }
+  else if (about_continuous == "GraphF") {
+    "F good"
+  }
+  else if (about_continuous == "GraphG") {
+    "G good"
+  }
+})
+
+
+############################################################ GRAPH CONS
+output$ordinal_cons <- reactive({
+  about_ordinal <- about_ordinal()
+  if (about_ordinal == "GraphA"){
+    "A bad"
+  }
+  else if (about_ordinal == "GraphB") {
+     "B bad"
+  }
+  else if (about_ordinal == "GraphH") {
+     "H bad"
+  }
+  else if (about_ordinal == "GraphI") {
+     "I bad"
+  }
+})
+output$continuous_cons <- reactive({
+  about_continuous <- about_continuous()
+  if (about_continuous == "GraphC"){
+    "C bad"
+  }
+  else if (about_continuous == "GraphD") {
+     "D bad"
+  }
+  else if (about_continuous == "GraphE") {
+     "E bad"
+  }
+  else if (about_continuous == "GraphF") {
+    "F bad"
+  }
+  else if (about_continuous == "GraphG") {
+    "G bad"
+  }
+})
+
+
+
+#############################################################################################################Graph A
   #Import the data
   ordinal_data <- reactive({
     req(input$upload)
