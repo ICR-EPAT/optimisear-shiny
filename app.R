@@ -34,7 +34,7 @@ ui <- div(page_navbar(
       conditionalPanel(
         "input.about == 'Continuous'",
         radioButtons("about_continuous", label = NULL, choices = c("GraphC", "GraphD", "GraphE", "GraphF", "GraphG"))
-      ),
+      )
     ),
     nav_panel("Ordinal",
     layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
@@ -165,7 +165,7 @@ ui <- div(page_navbar(
           ),
            fluidPage(
             downloadButton("downloadD")
-           ),
+           )
         )),############################################################################################################ E UI 
               
              tabPanel("GraphE", tabName = "GraphE", icon = icon("moon"),  fluidRow(
@@ -187,7 +187,7 @@ ui <- div(page_navbar(
           ),
            fluidPage(
             downloadButton("downloadE")
-           ),
+           )
         )),
         ############################################################################################################ F UI 
            tabPanel("GraphF", tabName = "GraphF", icon = icon("moon"),     fluidRow(
@@ -231,7 +231,7 @@ ui <- div(page_navbar(
           ),
            fluidPage(
             downloadButton("downloadG")
-           ),
+           )
         )
       )),################################################################################################################## description tab
       tabPanel("Description", tabName = "description", icon = icon("book"), h4("About this site"),
@@ -407,13 +407,6 @@ output$continuous_cons <- renderUI({
   }
 })
 
-##################################################### Dummy buttons
-# ordinal_data <- eventReactive(input$dummy-ordinal, {
-#   read.csv("DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")[, -1]
-# })
-# continuous_data <- eventReactive(input$dummy-continuous, {
-#   read.csv("DummyData/dummy_continuous.csv", header = TRUE, sep = ",")[, -1]
-# })
 
 #############################################################################################################Graph A
   #Import the data
@@ -629,10 +622,15 @@ output$graphB <- renderPlot({
 ################################################################################## GRAPH C
 #### Import the data
 continuous_data <- reactive({
-  continuous_data <- read.csv(input$upload_cts$datapath, header = TRUE, sep = ",")[, -1]
-  continuous_data
+  if (input$dummy_continuous == FALSE) {
+    req(input$upload_cts)
+      read.csv(input$upload_cts$datapath, header = TRUE, sep = ",")[, -1]
+        
+  }
+  else if (input$dummy_continuous == TRUE) {
+        read.csv("DummyData/dummy_continuous.csv", header = TRUE, sep = ",")[, -1]
+}
 })
-
 #### Update the inputs
 observe({
   req(input$upload_cts)
@@ -654,6 +652,28 @@ observe({
   func <- unique(data$functioning)
   updateSelectInput(session, "functioningC", label = "Functionality of interest", choices = func, selected = NULL)
 })
+########## For the dummy set 
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  numdoseC <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseC", label = "Dosage", choices = numdoseC, selected = NULL)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  tpointC <- unique(data$timepoint)
+  updateSliderInput(session, "tpointC", label = "Final timepoint of interest", max = length(tpointC)-1)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateSelectInput(session, "functioningC", label = "Functionality of interest", choices = func, selected = NULL)
+})
+
 
 #### Reactive Defining 
 #Define the relevant variables
@@ -753,6 +773,27 @@ observe({
   numdoseD <- unique(data$dose)
   updateCheckboxGroupInput(session, "numdoseD", choices = numdoseD, selected = NULL)
 })
+####### for dummy set 
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  tpointD <- unique(data$timepoint)
+  updateSliderInput(session, "tpointD", label = "Final timepoint of interest", max = length(tpointD) - 1)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateSelectInput(session, "functioningD", label = "Functionality of interest", choices = func, selected = NULL)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  numdoseD <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseD", choices = numdoseD, selected = NULL)
+})
 
 #### Reactive Defining 
 #Define the relevant variables
@@ -842,6 +883,28 @@ observe({
   updateSelectInput(session, "functioningE", label = "Functionality of interest", choices = func, selected = NULL)
 })
 
+########### for dummy set 
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  numdoseE <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseE", label = "Dosage", choices = numdoseE, selected = NULL)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  tpointE <- unique(data$timepoint)
+  updateSliderInput(session, "tpointE", label = "Final timepoint of interest", max = length(tpointE) - 1)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateSelectInput(session, "functioningE", label = "Functionality of interest", choices = func, selected = NULL)
+})
+
 
 #### Reactive Defining 
 #Define the relevant variables
@@ -903,6 +966,27 @@ observe({
 
 observe({
   req(input$upload_cts)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateCheckboxGroupInput(session, "functioningF", label = "Functionality of interest", choices = func, selected = NULL)
+})
+##### for dummy set
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  numdoseF <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseF", label = "Dosage", choices = numdoseF, selected = NULL)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  tpointF <- unique(data$timepoint)
+  updateSliderInput(session, "tpointF", label = "Final timepoint of interest", max = length(tpointF) - 1)
+})
+
+observe({
+  req(input$dummy_continuous)
   data <- continuous_data()
   func <- unique(data$functioning)
   updateCheckboxGroupInput(session, "functioningF", label = "Functionality of interest", choices = func, selected = NULL)
@@ -1022,6 +1106,27 @@ observe({
   updateCheckboxGroupInput(session, "functioningG", label = "Functionality of interest", choices = func, selected = NULL)
 })
 
+########### for dummy set
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  numdoseG <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseG", label = "Dosage", choices = numdoseG, selected = NULL)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  tpointG <- unique(data$timepoint)
+  updateSliderInput(session, "tpointG", label = "Final timepoint of interest", max = length(tpointG) - 1)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateCheckboxGroupInput(session, "functioningG", label = "Functionality of interest", choices = func, selected = NULL)
+})
 
 #### Reactive Defining 
 #Define the relevant variables
