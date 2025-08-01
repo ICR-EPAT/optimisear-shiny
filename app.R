@@ -73,9 +73,9 @@ ui <- div(page_navbar(
         page_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(checkboxGroupInput("numdose", label = "Dosage",
-                                                 selected = NULL, inline = TRUE))),
+                                                 selected = NULL, inline = TRUE)))),
           plotOutput("graphA")
-          ))),
+          )),
   ############################################################################################################ B UI 
             tabPanel("GraphB", tabName = "GraphB", icon = icon("sun"),
           fluidRow(
