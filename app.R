@@ -54,11 +54,17 @@ ui <- div(page_navbar(
         ))))),       ####################################### Bracket issue here?
   ####################################################################################################### Data Sorting + Upload
   tabPanel("Data", icon = icon("arrow-up-from-bracket"),
-  h1("Input data"),
-  card(card_header("Ordinal Data"), card_body(fileInput("upload", "Upload data file", accept = c(".csv")))),
-  card(card_header("Continuous Data"), card_body(fileInput("upload_cts", "Upload data file", accept = c(".csv"))))),
+  page_sidebar(
+    title = "Input data",
+  sidebar = sidebar(
+  card(card_header("Upload data file"), card_body(fileInput("upload", "Ordinal data", accept = c(".csv"))),
+  card_body(fileInput("upload_cts", "Continuous data", accept = c(".csv")))),
+  card(card_header("Dummy data"), card_body("For those with no data wishing to test the app, you can select these to test with."),
+  card_body(actionButton("dummy_ordinal", "Dummy Ordinal data", icon = icon("chart-column"))),
+  card_body(actionButton("dummy_continuous", "Dummy Continuous data", icon = icon("chart-line"))))
+  ))),
   navbarMenu("Ordinal",
-############################################################################################################ A UI 
+############################################################################################################ A UI
             tabPanel("GraphA", tabName = "GraphA", icon = icon("sun"),
             fluidRow(
           textOutput("textHeaderA")
@@ -400,19 +406,34 @@ output$continuous_cons <- renderUI({
   }
 })
 
-
+##################################################### Dummy buttons
+# ordinal_data <- eventReactive(input$dummy-ordinal, {
+#   read.csv("DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")[, -1]
+# })
+# continuous_data <- eventReactive(input$dummy-continuous, {
+#   read.csv("DummyData/dummy_continuous.csv", header = TRUE, sep = ",")[, -1]
+# })
 
 #############################################################################################################Graph A
   #Import the data
   ordinal_data <- reactive({
-    req(input$upload)
-    ordinal_data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
-    ordinal_data
-  })
+    if (req(input$upload)) {
+          read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
+    }
+    else if (req(input$dummy_ordinal)) {
+          read.csv("DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")[, -1]
+}
+})
 
   #Update the selection boxes based on dataset
   observe({
     req(input$upload)
+    ordinal_data <- ordinal_data()
+    numdose <- unique(ordinal_data$dose)
+    updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
+  })
+
+  observeEvent(input$dummy_ordinal,{
     ordinal_data <- ordinal_data()
     numdose <- unique(ordinal_data$dose)
     updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
@@ -425,7 +446,6 @@ output$continuous_cons <- renderUI({
                        as.numeric(input$numdose)})
   #Filter the data
   summary_df <- reactive({
-                          req(input$upload)
                           req(input$numdose)
                           ordinal_data <- ordinal_data()
                           ordinal_data <- ordinal_data %>% filter(dose %in% no_dose())
@@ -444,7 +464,6 @@ output$continuous_cons <- renderUI({
                           summary_df})
 
   output$graphA <- renderPlot({
-                               req(input$upload)
                                survfit2(Surv(time, event) ~ dose, data = summary_df()) %>%
                                  ggsurvfit(linewidth = 1.5) +
                                  add_censor_mark() +
@@ -454,7 +473,6 @@ output$continuous_cons <- renderUI({
 ################################################ graph B
 #Import the data
 ordinal_data <- reactive({
-  req(input$upload)
   ordinal_data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
   ordinal_data
 })
@@ -501,7 +519,6 @@ toxic <- reactive({
 prop <- reactive({
   req(input$numdoseB)
   req(input$tpointB)
-  req(input$upload)
   ordinal_data <- ordinal_data()
   ordinal_data$grade[is.na(ordinal_data$grade)] <- "Unreported"
 
@@ -551,7 +568,6 @@ prop <- reactive({
 #Graph labels
 
 no_patient <- reactive({
-  req(input$upload)
   req(input$numdoseB)
   ordinal_data <- ordinal_data()
   no_pat <- ordinal_data %>%
@@ -564,7 +580,6 @@ no_patient <- reactive({
 
 #Graph output
 output$graphB <- renderPlot({
-  req(input$upload)
   prop <- prop()
   no_dose <- no_doseb()
   no_patient <- no_patient()
@@ -594,7 +609,6 @@ output$graphB <- renderPlot({
 ################################################################################## GRAPH C
 #### Import the data
 continuous_data <- reactive({
-  req(input$upload_cts)
   continuous_data <- read.csv(input$upload_cts$datapath, header = TRUE, sep = ",")[, -1]
   continuous_data
 })
@@ -639,7 +653,6 @@ func_C <- reactive({
 
 #### Data Filtering
 continuous_data_filtered <- reactive({
-  req(input$upload_cts)
   req(input$functioningC)
   continuous_data <- continuous_data()
   continuous_data <- continuous_data %>% filter(functioning == func_C()) %>% dplyr::select(-functioning)# %>% filter(!is.na(score))
@@ -647,7 +660,6 @@ continuous_data_filtered <- reactive({
 })
 
 diffC <- reactive({
-  req(input$upload_cts)
   req(input$functioningC)
   continuous_data_f <- continuous_data_filtered()
   continuous_data_f <- continuous_data_f %>%
@@ -658,7 +670,6 @@ diffC <- reactive({
 })
 
 summaryC <- reactive({
-  req(input$upload_cts)
   diff <- diffC()
   diff <- diff %>%
     group_by(dose, timepoint) %>%
@@ -672,7 +683,6 @@ pd <- position_dodge(width = 0.2)
 
 #### FIGURE GENERATION
 output$graphC <- renderPlot({
-  req(input$upload_cts)
   summaryC() %>%
     ggplot(
            aes(x = as.factor(timepoint),
@@ -831,7 +841,6 @@ func_E <- reactive({
 
 #### Data Filtering
 data_E <- reactive({
-  req(input$upload_cts)
   req(input$functioningD)
   continuous_data <- continuous_data()
   continuous_data <- continuous_data %>% filter(functioning == func_E()) %>% dplyr::select(-functioning)
@@ -843,7 +852,6 @@ data_E <- reactive({
 })
 
 output$graphE <- renderPlot({
-  req(input$upload_cts)
   continuous_data <- data_E()
   ggplot(continuous_data, aes(x = as.factor(timepoint), y = score, fill = as.factor(dose))) +
     labs(fill = "Dose level") +
@@ -1021,7 +1029,6 @@ no_patientG <- reactive({
 })
 
 continuous_data_filteredG <- reactive({
-  req(input$upload_cts)
   continuous_data_filtered <- continuous_data() %>%
   filter(dose %in% no_doseG()) %>%
   filter(functioning %in% func_G())
@@ -1029,7 +1036,6 @@ continuous_data_filteredG <- reactive({
 })
 
 ice_n_pat <- reactive({
-  req(input$upload_cts)
   continuous_data <- continuous_data_filteredG()
   ice_n_pat <- continuous_data %>%
   group_by(dose, id) %>%
@@ -1042,7 +1048,6 @@ ice_n_pat <- reactive({
 })
 
 dfG <- reactive({
-  req(input$upload_cts)
   endT <- final_tG()
   endT<- as.character(endT)
   tp_end <- sym(paste0("tp_", endT))
