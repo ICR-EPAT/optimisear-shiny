@@ -34,13 +34,13 @@ ui <- div(page_navbar(
       conditionalPanel(
         "input.about == 'Continuous'",
         radioButtons("about_continuous", label = NULL, choices = c("GraphC", "GraphD", "GraphE", "GraphF", "GraphG"))
-      ),
+      )
     ),
     nav_panel("Ordinal",
     layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
       card(card_header("Graph"), imageOutput("about_ordinal")),
       card(card_header("Information"),
-        card_body(card_title("about"), htmlOutput("ordinal_information_about")),
+        card_body(card_title("About"), htmlOutput("ordinal_information_about")),
         card_body(card_title("Advantages"), htmlOutput("ordinal_pros")),
         card_body(card_title("Disadvantages"), htmlOutput("ordinal_cons"))
         ))),
@@ -51,21 +51,29 @@ ui <- div(page_navbar(
         card_body(card_title("About"), htmlOutput("continuous_information_about")),
         card_body(card_title("Advantages"), htmlOutput("continuous_pros")),
         card_body(card_title("Disadvantages"), htmlOutput("continuous_cons"))
-        ))))),       ####################################### Bracket issue here?
-  ####################################################################################################### Data Sorting
+        ))))),
+  ####################################################################################################### Data Sorting + Upload
   tabPanel("Data", icon = icon("arrow-up-from-bracket"),
-  h1("I'll add some faff in here later when I have a minute")),
+  page_sidebar(
+    title = "Input data",
+  sidebar = sidebar(
+  card(card_header("Upload data file"), card_body(fileInput("upload", "Ordinal data", accept = c(".csv"))),
+  card_body(fileInput("upload_cts", "Continuous data", accept = c(".csv")))),
+  card(card_header("Dummy data"), card_body("For those with no data wishing to test the app, you can select these to test with."),
+  card_body(input_switch("dummy_ordinal", "Dummy Ordinal data")),
+  card_body(input_switch("dummy_continuous", "Dummy Continuous data")))
+  )),
+  tableOutput("table")),
   navbarMenu("Ordinal",
-############################################################################################################ A UI 
+############################################################################################################ A UI
             tabPanel("GraphA", tabName = "GraphA", icon = icon("sun"),
             fluidRow(
           textOutput("textHeaderA")
         ),
         page_sidebar(
-          sidebar = sidebar(fileInput("upload", "Upload data file", accept = c(".csv")), downloadButton("downloadA")
-          ),
+          sidebar = sidebar(
           card(card_header("Variables"), card_body(checkboxGroupInput("numdose", label = "Dosage",
-                                                 selected = NULL, inline = TRUE))),
+                                                 selected = NULL, inline = TRUE)))),
           plotOutput("graphA")
           )),
   ############################################################################################################ B UI 
@@ -80,7 +88,7 @@ ui <- div(page_navbar(
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                     selectInput("toxicB", label = "Toxicity of interest", choices = NULL )
-          ),fileInput("upload", "Upload data file", accept = c(".csv")), downloadButton("downloadB"))
+          ), downloadButton("downloadB"))
           ,
           plotOutput("graphB")
             )),
@@ -97,7 +105,7 @@ ui <- div(page_navbar(
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1),
                     accordion_panel("Toxicity of interest", checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL ))
-          ),fileInput("upload", "Upload data file", accept = c(".csv")), downloadButton("downloadH"))
+          ), downloadButton("downloadH"))
           ,
           plotOutput("graphH")
             )),
@@ -113,7 +121,7 @@ ui <- div(page_navbar(
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointI", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                     accordion_panel("Toxicity of interest", checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE))
-          ),fileInput("upload", "Upload data file", accept = c(".csv")), downloadButton("downloadI"))
+          ), downloadButton("downloadI"))
           ,
           plotOutput("graphI")
             ))),
@@ -129,7 +137,7 @@ ui <- div(page_navbar(
                                                  selected = NULL, inline = TRUE),
                    sliderInput("tpointC", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                    selectInput("functioningC", label = "Functioning of interest", choices = NULL )
-          ,fileInput("upload_cts", "Upload data file", accept = c(".csv")), downloadButton("downloadC"))
+          , downloadButton("downloadC"))
           ),
           plotOutput("graphC")
             )),
@@ -153,14 +161,11 @@ ui <- div(page_navbar(
             column(1,  plotOutput("graphD", width = "600px"))
           ),
           fluidPage(
-            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
             DTOutput("dynamic")
           ),
            fluidPage(
             downloadButton("downloadD")
-           ),
+           )
         )),############################################################################################################ E UI 
               
              tabPanel("GraphE", tabName = "GraphE", icon = icon("moon"),  fluidRow(
@@ -178,14 +183,11 @@ ui <- div(page_navbar(
             column(1,  plotOutput("graphE", width = "600px"))
           ),
           fluidPage(
-            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
             DTOutput("dynamic")
           ),
            fluidPage(
             downloadButton("downloadE")
-           ),
+           )
         )),
         ############################################################################################################ F UI 
            tabPanel("GraphF", tabName = "GraphF", icon = icon("moon"),     fluidRow(
@@ -201,9 +203,6 @@ ui <- div(page_navbar(
             column(3, checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE))),
           fluidRow(
             column(6,  gt_output("graphF"))
-          ),
-          fluidPage(
-            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
           ),
           fluidPage(
             DTOutput("dynamic")
@@ -228,14 +227,11 @@ ui <- div(page_navbar(
             column(1,  plotOutput("graphG", width = "600px"))
           ),
           fluidPage(
-            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
             DTOutput("dynamic")
           ),
            fluidPage(
             downloadButton("downloadG")
-           ),
+           )
         )
       )),################################################################################################################## description tab
       tabPanel("Description", tabName = "description", icon = icon("book"), h4("About this site"),
@@ -412,18 +408,28 @@ output$continuous_cons <- renderUI({
 })
 
 
-
 #############################################################################################################Graph A
   #Import the data
   ordinal_data <- reactive({
-    req(input$upload)
-    ordinal_data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
-    ordinal_data
-  })
+    if (input$dummy_ordinal == FALSE) {
+      req(input$upload)
+        read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
+          
+    }
+    else if (input$dummy_ordinal == TRUE) {
+          read.csv("DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")[, -1]
+}
+})
 
   #Update the selection boxes based on dataset
   observe({
-    req(input$upload)
+    req(input$upload) 
+    ordinal_data <- ordinal_data()
+    numdose <- unique(ordinal_data$dose)
+    updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
+  })
+  observe({
+    req(input$dummy_ordinal) 
     ordinal_data <- ordinal_data()
     numdose <- unique(ordinal_data$dose)
     updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
@@ -436,7 +442,6 @@ output$continuous_cons <- renderUI({
                        as.numeric(input$numdose)})
   #Filter the data
   summary_df <- reactive({
-                          req(input$upload)
                           req(input$numdose)
                           ordinal_data <- ordinal_data()
                           ordinal_data <- ordinal_data %>% filter(dose %in% no_dose())
@@ -455,7 +460,6 @@ output$continuous_cons <- renderUI({
                           summary_df})
 
   output$graphA <- renderPlot({
-                               req(input$upload)
                                survfit2(Surv(time, event) ~ dose, data = summary_df()) %>%
                                  ggsurvfit(linewidth = 1.5) +
                                  add_censor_mark() +
@@ -463,12 +467,7 @@ output$continuous_cons <- renderUI({
                                  scale_ggsurvfit() + add_risktable()})
 
 ################################################ graph B
-#Import the data
-ordinal_data <- reactive({
-  req(input$upload)
-  ordinal_data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
-  ordinal_data
-})
+
 
 #Update the selection boxes based on dataset
 observe({
@@ -487,6 +486,27 @@ observe({
 
 observe({
   req(input$upload)
+  data <- ordinal_data()
+  toxic <- unique(data$toxicity)
+  updateSelectInput(session, "toxicB", label = "Toxicity of interest", choices = toxic, selected = NULL)
+})
+####### for dummy data
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  numdose <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseB", label = "Dosage", choices = numdose, selected = NULL)
+})
+
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  tpoint <- unique(data$timepoint)
+  updateSliderInput(session, "tpointB", label = "Final timepoint of interest", max = length(tpoint)-1)
+})
+
+observe({
+  req(input$dummy_ordinal)
   data <- ordinal_data()
   toxic <- unique(data$toxicity)
   updateSelectInput(session, "toxicB", label = "Toxicity of interest", choices = toxic, selected = NULL)
@@ -512,7 +532,6 @@ toxic <- reactive({
 prop <- reactive({
   req(input$numdoseB)
   req(input$tpointB)
-  req(input$upload)
   ordinal_data <- ordinal_data()
   ordinal_data$grade[is.na(ordinal_data$grade)] <- "Unreported"
 
@@ -562,7 +581,6 @@ prop <- reactive({
 #Graph labels
 
 no_patient <- reactive({
-  req(input$upload)
   req(input$numdoseB)
   ordinal_data <- ordinal_data()
   no_pat <- ordinal_data %>%
@@ -575,7 +593,6 @@ no_patient <- reactive({
 
 #Graph output
 output$graphB <- renderPlot({
-  req(input$upload)
   prop <- prop()
   no_dose <- no_doseb()
   no_patient <- no_patient()
@@ -605,11 +622,15 @@ output$graphB <- renderPlot({
 ################################################################################## GRAPH C
 #### Import the data
 continuous_data <- reactive({
-  req(input$upload_cts)
-  continuous_data <- read.csv(input$upload_cts$datapath, header = TRUE, sep = ",")[, -1]
-  continuous_data
+  if (input$dummy_continuous == FALSE) {
+    req(input$upload_cts)
+      read.csv(input$upload_cts$datapath, header = TRUE, sep = ",")[, -1]
+        
+  }
+  else if (input$dummy_continuous == TRUE) {
+        read.csv("DummyData/dummy_continuous.csv", header = TRUE, sep = ",")[, -1]
+}
 })
-
 #### Update the inputs
 observe({
   req(input$upload_cts)
@@ -631,6 +652,28 @@ observe({
   func <- unique(data$functioning)
   updateSelectInput(session, "functioningC", label = "Functionality of interest", choices = func, selected = NULL)
 })
+########## For the dummy set 
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  numdoseC <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseC", label = "Dosage", choices = numdoseC, selected = NULL)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  tpointC <- unique(data$timepoint)
+  updateSliderInput(session, "tpointC", label = "Final timepoint of interest", max = length(tpointC)-1)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateSelectInput(session, "functioningC", label = "Functionality of interest", choices = func, selected = NULL)
+})
+
 
 #### Reactive Defining 
 #Define the relevant variables
@@ -650,7 +693,6 @@ func_C <- reactive({
 
 #### Data Filtering
 continuous_data_filtered <- reactive({
-  req(input$upload_cts)
   req(input$functioningC)
   continuous_data <- continuous_data()
   continuous_data <- continuous_data %>% filter(functioning == func_C()) %>% dplyr::select(-functioning)# %>% filter(!is.na(score))
@@ -658,7 +700,6 @@ continuous_data_filtered <- reactive({
 })
 
 diffC <- reactive({
-  req(input$upload_cts)
   req(input$functioningC)
   continuous_data_f <- continuous_data_filtered()
   continuous_data_f <- continuous_data_f %>%
@@ -669,7 +710,6 @@ diffC <- reactive({
 })
 
 summaryC <- reactive({
-  req(input$upload_cts)
   diff <- diffC()
   diff <- diff %>%
     group_by(dose, timepoint) %>%
@@ -683,7 +723,6 @@ pd <- position_dodge(width = 0.2)
 
 #### FIGURE GENERATION
 output$graphC <- renderPlot({
-  req(input$upload_cts)
   summaryC() %>%
     ggplot(
            aes(x = as.factor(timepoint),
@@ -730,6 +769,27 @@ observe({
 
 observe({
   req(input$upload_cts)
+  data <- continuous_data()
+  numdoseD <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseD", choices = numdoseD, selected = NULL)
+})
+####### for dummy set 
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  tpointD <- unique(data$timepoint)
+  updateSliderInput(session, "tpointD", label = "Final timepoint of interest", max = length(tpointD) - 1)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateSelectInput(session, "functioningD", label = "Functionality of interest", choices = func, selected = NULL)
+})
+
+observe({
+  req(input$dummy_continuous)
   data <- continuous_data()
   numdoseD <- unique(data$dose)
   updateCheckboxGroupInput(session, "numdoseD", choices = numdoseD, selected = NULL)
@@ -823,6 +883,28 @@ observe({
   updateSelectInput(session, "functioningE", label = "Functionality of interest", choices = func, selected = NULL)
 })
 
+########### for dummy set 
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  numdoseE <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseE", label = "Dosage", choices = numdoseE, selected = NULL)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  tpointE <- unique(data$timepoint)
+  updateSliderInput(session, "tpointE", label = "Final timepoint of interest", max = length(tpointE) - 1)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateSelectInput(session, "functioningE", label = "Functionality of interest", choices = func, selected = NULL)
+})
+
 
 #### Reactive Defining 
 #Define the relevant variables
@@ -842,7 +924,6 @@ func_E <- reactive({
 
 #### Data Filtering
 data_E <- reactive({
-  req(input$upload_cts)
   req(input$functioningD)
   continuous_data <- continuous_data()
   continuous_data <- continuous_data %>% filter(functioning == func_E()) %>% dplyr::select(-functioning)
@@ -854,7 +935,6 @@ data_E <- reactive({
 })
 
 output$graphE <- renderPlot({
-  req(input$upload_cts)
   continuous_data <- data_E()
   ggplot(continuous_data, aes(x = as.factor(timepoint), y = score, fill = as.factor(dose))) +
     labs(fill = "Dose level") +
@@ -886,6 +966,27 @@ observe({
 
 observe({
   req(input$upload_cts)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateCheckboxGroupInput(session, "functioningF", label = "Functionality of interest", choices = func, selected = NULL)
+})
+##### for dummy set
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  numdoseF <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseF", label = "Dosage", choices = numdoseF, selected = NULL)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  tpointF <- unique(data$timepoint)
+  updateSliderInput(session, "tpointF", label = "Final timepoint of interest", max = length(tpointF) - 1)
+})
+
+observe({
+  req(input$dummy_continuous)
   data <- continuous_data()
   func <- unique(data$functioning)
   updateCheckboxGroupInput(session, "functioningF", label = "Functionality of interest", choices = func, selected = NULL)
@@ -1005,6 +1106,27 @@ observe({
   updateCheckboxGroupInput(session, "functioningG", label = "Functionality of interest", choices = func, selected = NULL)
 })
 
+########### for dummy set
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  numdoseG <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseG", label = "Dosage", choices = numdoseG, selected = NULL)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  tpointG <- unique(data$timepoint)
+  updateSliderInput(session, "tpointG", label = "Final timepoint of interest", max = length(tpointG) - 1)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateCheckboxGroupInput(session, "functioningG", label = "Functionality of interest", choices = func, selected = NULL)
+})
 
 #### Reactive Defining 
 #Define the relevant variables
@@ -1032,7 +1154,6 @@ no_patientG <- reactive({
 })
 
 continuous_data_filteredG <- reactive({
-  req(input$upload_cts)
   continuous_data_filtered <- continuous_data() %>%
   filter(dose %in% no_doseG()) %>%
   filter(functioning %in% func_G())
@@ -1040,7 +1161,6 @@ continuous_data_filteredG <- reactive({
 })
 
 ice_n_pat <- reactive({
-  req(input$upload_cts)
   continuous_data <- continuous_data_filteredG()
   ice_n_pat <- continuous_data %>%
   group_by(dose, id) %>%
@@ -1053,7 +1173,6 @@ ice_n_pat <- reactive({
 })
 
 dfG <- reactive({
-  req(input$upload_cts)
   endT <- final_tG()
   endT<- as.character(endT)
   tp_end <- sym(paste0("tp_", endT))
@@ -1155,6 +1274,27 @@ observe({
 
 observe({
   req(input$upload)
+  data <- ordinal_data()
+  toxic <- unique(data$toxicity)
+  updateCheckboxGroupInput(session, "toxicH", label = "Toxicity of interest", choices = toxic, selected = NULL)
+})
+####### Dummy 
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  numdose <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseH", label = "Dosage", choices = numdose, selected = NULL)
+})
+
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  tpoint <- unique(data$timepoint)
+  updateSliderInput(session, "tpointH", label = "Start and endpoint for comparison", max = length(tpoint)-1)
+})
+
+observe({
+  req(input$dummy_ordinal)
   data <- ordinal_data()
   toxic <- unique(data$toxicity)
   updateCheckboxGroupInput(session, "toxicH", label = "Toxicity of interest", choices = toxic, selected = NULL)
@@ -1368,6 +1508,27 @@ observe({
 
 observe({
   req(input$upload)
+  data <- ordinal_data()
+  toxic <- unique(data$toxicity)
+  updateCheckboxGroupInput(session, "toxicI", label = "Toxicity of interest", choices = toxic, selected = NULL)
+})
+############# for the dummy set 
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  numdose <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseI", label = "Dosage", choices = numdose, selected = NULL)
+})
+
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  tpoint <- unique(data$timepoint)
+  updateSliderInput(session, "tpointI", label = "Final timepoint of interest", max = length(tpoint)-1)
+})
+
+observe({
+  req(input$dummy_ordinal)
   data <- ordinal_data()
   toxic <- unique(data$toxicity)
   updateCheckboxGroupInput(session, "toxicI", label = "Toxicity of interest", choices = toxic, selected = NULL)
