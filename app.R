@@ -51,7 +51,7 @@ ui <- div(page_navbar(
         card_body(card_title("About"), htmlOutput("continuous_information_about")),
         card_body(card_title("Advantages"), htmlOutput("continuous_pros")),
         card_body(card_title("Disadvantages"), htmlOutput("continuous_cons"))
-        ))))),       ####################################### Bracket issue here?
+        ))))),
   ####################################################################################################### Data Sorting + Upload
   tabPanel("Data", icon = icon("arrow-up-from-bracket"),
   page_sidebar(
@@ -60,9 +60,10 @@ ui <- div(page_navbar(
   card(card_header("Upload data file"), card_body(fileInput("upload", "Ordinal data", accept = c(".csv"))),
   card_body(fileInput("upload_cts", "Continuous data", accept = c(".csv")))),
   card(card_header("Dummy data"), card_body("For those with no data wishing to test the app, you can select these to test with."),
-  card_body(actionButton("dummy_ordinal", "Dummy Ordinal data", icon = icon("chart-column"))),
-  card_body(actionButton("dummy_continuous", "Dummy Continuous data", icon = icon("chart-line"))))
-  ))),
+  card_body(input_switch("dummy_ordinal", "Dummy Ordinal data")),
+  card_body(input_switch("dummy_continuous", "Dummy Continuous data")))
+  )),
+  tableOutput("table")),
   navbarMenu("Ordinal",
 ############################################################################################################ A UI
             tabPanel("GraphA", tabName = "GraphA", icon = icon("sun"),
@@ -417,23 +418,25 @@ output$continuous_cons <- renderUI({
 #############################################################################################################Graph A
   #Import the data
   ordinal_data <- reactive({
-    if (req(input$upload)) {
-          read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
+    if (input$dummy_ordinal == FALSE) {
+      req(input$upload)
+        read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
+          
     }
-    else if (req(input$dummy_ordinal)) {
+    else if (input$dummy_ordinal == TRUE) {
           read.csv("DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")[, -1]
 }
 })
 
   #Update the selection boxes based on dataset
   observe({
-    req(input$upload)
+    req(input$upload) 
     ordinal_data <- ordinal_data()
     numdose <- unique(ordinal_data$dose)
     updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
   })
-
-  observeEvent(input$dummy_ordinal,{
+  observe({
+    req(input$dummy_ordinal) 
     ordinal_data <- ordinal_data()
     numdose <- unique(ordinal_data$dose)
     updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
@@ -471,11 +474,7 @@ output$continuous_cons <- renderUI({
                                  scale_ggsurvfit() + add_risktable()})
 
 ################################################ graph B
-#Import the data
-ordinal_data <- reactive({
-  ordinal_data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
-  ordinal_data
-})
+
 
 #Update the selection boxes based on dataset
 observe({
