@@ -497,6 +497,27 @@ observe({
   toxic <- unique(data$toxicity)
   updateSelectInput(session, "toxicB", label = "Toxicity of interest", choices = toxic, selected = NULL)
 })
+####### for dummy data
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  numdose <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseB", label = "Dosage", choices = numdose, selected = NULL)
+})
+
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  tpoint <- unique(data$timepoint)
+  updateSliderInput(session, "tpointB", label = "Final timepoint of interest", max = length(tpoint)-1)
+})
+
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  toxic <- unique(data$toxicity)
+  updateSelectInput(session, "toxicB", label = "Toxicity of interest", choices = toxic, selected = NULL)
+})
 
 #Define the relevant variables
 no_doseb <- reactive({
@@ -1152,6 +1173,27 @@ observe({
   toxic <- unique(data$toxicity)
   updateCheckboxGroupInput(session, "toxicH", label = "Toxicity of interest", choices = toxic, selected = NULL)
 })
+####### Dummy 
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  numdose <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseH", label = "Dosage", choices = numdose, selected = NULL)
+})
+
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  tpoint <- unique(data$timepoint)
+  updateSliderInput(session, "tpointH", label = "Start and endpoint for comparison", max = length(tpoint)-1)
+})
+
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  toxic <- unique(data$toxicity)
+  updateCheckboxGroupInput(session, "toxicH", label = "Toxicity of interest", choices = toxic, selected = NULL)
+})
 
 #Define the relevant variables
 no_doseH <- reactive({
@@ -1361,6 +1403,27 @@ observe({
 
 observe({
   req(input$upload)
+  data <- ordinal_data()
+  toxic <- unique(data$toxicity)
+  updateCheckboxGroupInput(session, "toxicI", label = "Toxicity of interest", choices = toxic, selected = NULL)
+})
+############# for the dummy set 
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  numdose <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseI", label = "Dosage", choices = numdose, selected = NULL)
+})
+
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  tpoint <- unique(data$timepoint)
+  updateSliderInput(session, "tpointI", label = "Final timepoint of interest", max = length(tpoint)-1)
+})
+
+observe({
+  req(input$dummy_ordinal)
   data <- ordinal_data()
   toxic <- unique(data$toxicity)
   updateCheckboxGroupInput(session, "toxicI", label = "Toxicity of interest", choices = toxic, selected = NULL)
