@@ -16,12 +16,10 @@ ui <- div(page_navbar(
   ############################################################################################# Information 
   tabPanel("Overview", icon = icon("house"),
   h1("OPTIMISE-AR"),
-  h3("Background"),
-  p("Recently, there has been an increasing interest in the use of PRO data to supplement assessment of tolerability in early phase dose-finding trials."),
-  p("However, there are no guidelines on how analysis should be conducted or what visualisations should be made."),
-  p("This app aims to provide and easy to use platform to assist in analysis and visualisations using current recommended methods."),
+  card(card_body(
   h3("Work-flow"),
-  p("this section will be updated when there is a more clear workflow approach"),
+  p("this section will be updated when there is a more clear workflow approach"))),
+  card(card_body(
   h3("About the graphs"),
   page_navbar(
     title = "Select data type",
@@ -37,21 +35,21 @@ ui <- div(page_navbar(
       )
     ),
     nav_panel("Ordinal",
-    layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
-      card(card_header("Graph"), imageOutput("about_ordinal"), full_screen = TRUE),
+    layout_columns(col_widths = c(9, 3), fillable = TRUE, fill = TRUE,
+      card(card_header("Graph"), imageOutput("about_ordinal", width = "auto"), full_screen = TRUE, fill = TRUE),
       card(card_header("Information"),
         card_body(card_title("About"), htmlOutput("ordinal_information_about")),
         card_body(card_title("Advantages"), htmlOutput("ordinal_pros")),
         card_body(card_title("Disadvantages"), htmlOutput("ordinal_cons"))
         ))),
     nav_panel("Continuous",
-    layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
-      card(card_header("Graph"), imageOutput("about_continuous"), full_screen = TRUE),
+    layout_columns(col_widths = c(9, 3), fillable = TRUE, fill = TRUE,
+      card(card_header("Graph"), imageOutput("about_continuous", width = "auto"), full_screen = TRUE, fill = TRUE),
       card(card_header("Information"),
         card_body(card_title("About"), htmlOutput("continuous_information_about")),
         card_body(card_title("Advantages"), htmlOutput("continuous_pros")),
         card_body(card_title("Disadvantages"), htmlOutput("continuous_cons"))
-        ))))),
+        ))))))),
   ####################################################################################################### Data Sorting + Upload
   tabPanel("Data", icon = icon("arrow-up-from-bracket"),
   page_sidebar(
@@ -201,11 +199,19 @@ ui <- div(page_navbar(
       ))),
 ################################################################################################################## description tab
       tabPanel("Description", tabName = "description", icon = icon("book"), h4("About this site"),
-        p("The beginnings of the OPTIMISE-AR app still to be reviewed"),
-        p("Authors: George (Server) and Karrar (UI)"),
-        p("Maintainers: Rachel Alcraft, ICR Scientific Computing")),
+      layout_columns(
+      card(card_header("Background"),card_body(
+        p("Recently, there has been an increasing interest in the use of PRO data to supplement assessment of tolerability in early phase dose-finding trials."),
+        p("However, there are no guidelines on how analysis should be conducted or what visualisations should be made."),
+        p("This app aims to provide and easy to use platform to assist in analysis and visualisations using current recommended methods."))),
+        card(card_header("OPTIMISE-AR"), card_body(
+        p("This is an early public release of the app with a work in progress UI. There are a few known bugs, if you find any additional, please do get in touch so they can be patched."),
+        p("Authors: George Knight, Emily Alger, Karrar Shareiyat"),
+        p("Maintainers: Rachel Alcraft, ICR Scientific Computing"))))),
 ################################################################################################################## Version history
-      tabPanel("Version History", tabName = "history", icon = icon("history"), p("v1.0 - Internal ICR release 20/07/2025")), bg = "DarkSeaGreen"))
+      tabPanel("Version History", tabName = "history", icon = icon("history"), 
+      card(card_header("Versions"),
+      card_body(p("v1.0 - Internal ICR release 06/08/2025")))), bg = "DarkSeaGreen"))
 
 #######################################################################################################################   SERVER SIDE 
 
