@@ -38,7 +38,7 @@ ui <- div(page_navbar(
     ),
     nav_panel("Ordinal",
     layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
-      card(card_header("Graph"), imageOutput("about_ordinal")),
+      card(card_header("Graph"), imageOutput("about_ordinal"), full_screen = TRUE),
       card(card_header("Information"),
         card_body(card_title("About"), htmlOutput("ordinal_information_about")),
         card_body(card_title("Advantages"), htmlOutput("ordinal_pros")),
@@ -46,7 +46,7 @@ ui <- div(page_navbar(
         ))),
     nav_panel("Continuous",
     layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
-      card(card_header("Graph"), imageOutput("about_continuous")),
+      card(card_header("Graph"), imageOutput("about_continuous"), full_screen = TRUE),
       card(card_header("Information"),
         card_body(card_title("About"), htmlOutput("continuous_information_about")),
         card_body(card_title("Advantages"), htmlOutput("continuous_pros")),
@@ -62,8 +62,8 @@ ui <- div(page_navbar(
   card(card_header("Dummy data"), card_body("For those with no data wishing to test the app, you can select these to test with."),
   card_body(input_switch("dummy_ordinal", "Dummy Ordinal data")),
   card_body(input_switch("dummy_continuous", "Dummy Continuous data")))),
-  card(card_header("Ordinal data"), card_body(tableOutput("ordinal_table"))),
-  card(card_header("Continuous data"), card_body(tableOutput("continuous_table"))))),
+  card(card_header("Ordinal data"), card_body(tableOutput("ordinal_table")), max_height = 250),
+  card(card_header("Continuous data"), card_body(tableOutput("continuous_table")), max_height = 250))),
   navbarMenu("Ordinal",
 ############################################################################################################ A UI
             tabPanel("GraphA", tabName = "GraphA", icon = icon("sun"),
@@ -145,104 +145,64 @@ ui <- div(page_navbar(
              tabPanel("GraphD", tabName = "GraphD", icon = icon("moon"), fluidRow(
           textOutput("textHeaderD")
         ),
-        fluidRow(
-          fluidRow(
-            column(3, sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))
-            ),
-          fluidRow(
-            column(4, checkboxGroupInput("numdoseD", label = "Dosage",
-                           choices = NULL))),
-          fluidRow(
-            column(4, uiOutput("select_idD"))
-          ),
-          fluidRow(
-            column(3, selectInput("functioningD", label = "Functioning of interest", choices = NULL))),
-          fluidRow(
-            column(1,  plotOutput("graphD", width = "600px"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadD")
-           )
-        )),############################################################################################################ E UI 
+            page_sidebar(
+          sidebar = sidebar(
+          accordion(
+                    sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+                    checkboxGroupInput("numdoseD", label = "Dosage",choices = NULL),
+                    uiOutput("select_idD"),
+                    selectInput("functioningD", label = "Functioning of interest", choices = NULL),
+                    downloadButton("downloadD"))),
+                    plotOutput("graphD")
+        )),
+############################################################################################################ E UI 
               
              tabPanel("GraphE", tabName = "GraphE", icon = icon("moon"),  fluidRow(
           textOutput("textHeaderE")
         ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseE", label = "Dosage",
-                                                 selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(3, sliderInput("tpointE", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, selectInput("functioningE", label = "Functioning of interest", choices = NULL ))),
-          fluidRow(
-            column(1,  plotOutput("graphE", width = "600px"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadE")
-           )
+         page_sidebar(
+          sidebar = sidebar(
+          accordion(
+            checkboxGroupInput("numdoseE", label = "Dosage", selected = NULL, inline = TRUE),
+            sliderInput("tpointE", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+            selectInput("functioningE", label = "Functioning of interest", choices = NULL ),
+            downloadButton("downloadE"))),
+            plotOutput("graphE")
         )),
-        ############################################################################################################ F UI 
+############################################################################################################ F UI 
            tabPanel("GraphF", tabName = "GraphF", icon = icon("moon"),     fluidRow(
           textOutput("textHeaderF")
         ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseF", label = "Dosage",
-                                                 selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(3, sliderInput("tpointF", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(6,  gt_output("graphF"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadF")
-           ))),
+          page_sidebar(
+          sidebar = sidebar(
+          accordion(
+                   checkboxGroupInput("numdoseF", label = "Dosage",
+                                                 selected = NULL, inline = TRUE),
+          sliderInput("tpointF", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+          checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE),
+          downloadButton("downloadF"))),
+           gt_output("graphF")
+           )),
            ############################################################################################################ G UI 
     
              tabPanel("GraphG", tabName = "GraphG", icon = icon("moon"),          fluidRow(
           textOutput("textHeaderG")
         ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseG", label = "Dosage",
-                                                 selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(3, sliderInput("tpointG", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(1,  plotOutput("graphG", width = "600px"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadG")
-           )
-        )
-      )),################################################################################################################## description tab
+          page_sidebar(
+          sidebar = sidebar(
+          accordion(
+          checkboxGroupInput("numdoseG", label = "Dosage",
+                                                 selected = NULL, inline = TRUE),
+          sliderInput("tpointG", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+          checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE),
+          downloadButton("downloadG"))),
+          plotOutput("graphG")
+      ))),
+################################################################################################################## description tab
       tabPanel("Description", tabName = "description", icon = icon("book"), h4("About this site"),
         p("The beginnings of the OPTIMISE-AR app still to be reviewed"),
         p("Authors: George (Server) and Karrar (UI)"),
         p("Maintainers: Rachel Alcraft, ICR Scientific Computing")),
-################################################################################################################## data info tab
-      tabPanel("Data information page", tabName = "datainfo", icon = icon("book"), h4("About data inputs"),
-              p("Continuous"),
-              p("Ordinal"),
-              p("Test")),
 ################################################################################################################## Version history
       tabPanel("Version History", tabName = "history", icon = icon("history"), p("v1.0 - Internal ICR release 20/07/2025")), bg = "DarkSeaGreen"))
 
