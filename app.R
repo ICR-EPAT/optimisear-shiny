@@ -77,23 +77,23 @@ ui <- div(page_navbar(
                , card(card_header("Download .svg file"), card_body(downloadButton("downloadA")))),
           card(plotOutput("graphA"))
           )),
-  ############################################################################################################ B UI 
+  ############################################################################################################ B UI
             tabPanel("GraphB", tabName = "GraphB", icon = icon("sun"),
           fluidRow(
           textOutput("textHeaderB")
         ),
         page_sidebar(
           sidebar = sidebar(
-          accordion(
+          card(card_header("Variables"), card_body(
                     checkboxGroupInput("numdoseB", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-                    selectInput("toxicB", label = "Toxicity of interest", choices = NULL )
-          ), downloadButton("downloadB"))
+                    selectInput("toxicB", label = "Toxicity of interest", choices = NULL ))
+          ), card(card_header("Download .svg file"), card_body(downloadButton("downloadB"))))
           ,
-          plotOutput("graphB")
+          card(plotOutput("graphB"))
             )),
-############################################################################################################ H UI 
+############################################################################################################ H UI
          
             tabPanel("GraphH", tabName = "GraphH", icon = icon("sun"), 
             fluidRow(
@@ -101,14 +101,14 @@ ui <- div(page_navbar(
         ),
         page_sidebar(
           sidebar = sidebar(
-          accordion(
+          card(card_header("Variables"), card_body(
                     checkboxGroupInput("numdoseH", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1),
-                    accordion_panel("Toxicity of interest", checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL ))
-          ), downloadButton("downloadH"))
-          ,
-          plotOutput("graphH")
+                    checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL )
+          )), 
+          card(card_header("Download .svg file"), card_body(downloadButton("downloadH")))),
+          card(plotOutput("graphH"))
             )),
 ############################################################################################################ I UI
             tabPanel("GraphI", tabName = "GraphI", icon = icon("sun"),
@@ -117,14 +117,14 @@ ui <- div(page_navbar(
         ),
     page_sidebar(
           sidebar = sidebar(
-          accordion(
+          card(card_header("Variables"), card_body(
                     checkboxGroupInput("numdoseI", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointI", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-                    accordion_panel("Toxicity of interest", checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE))
-          ), downloadButton("downloadI"))
-          ,
-          plotOutput("graphI")
+                    checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE))
+          ), 
+          card(card_header("Download .svg file"), card_body(downloadButton("downloadI")))),
+          card(plotOutput("graphI"))
             ))),
   navbarMenu("Continuous",############################################################################################################ C UI 
              tabPanel("GraphC", tabName = "GraphC", icon = icon("moon"),
