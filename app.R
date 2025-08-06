@@ -16,8 +16,10 @@ ui <- div(page_navbar(
   ############################################################################################# Information 
   tabPanel("Overview", icon = icon("house"),
   h1("OPTIMISE-AR"),
+  card(card_body(
   h3("Work-flow"),
-  p("this section will be updated when there is a more clear workflow approach"),
+  p("this section will be updated when there is a more clear workflow approach"))),
+  card(card_body(
   h3("About the graphs"),
   page_navbar(
     title = "Select data type",
@@ -47,7 +49,7 @@ ui <- div(page_navbar(
         card_body(card_title("About"), htmlOutput("continuous_information_about")),
         card_body(card_title("Advantages"), htmlOutput("continuous_pros")),
         card_body(card_title("Disadvantages"), htmlOutput("continuous_cons"))
-        ))))),
+        ))))))),
   ####################################################################################################### Data Sorting + Upload
   tabPanel("Data", icon = icon("arrow-up-from-bracket"),
   page_sidebar(
