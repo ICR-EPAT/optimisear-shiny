@@ -228,35 +228,35 @@ about_continuous <- reactive({input$about_continuous})
 output$about_ordinal <- renderImage({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "GraphA"){
-    list(src = "GraphExamples/graphA.jpeg")
+    list(src = "www/GraphExamples/graphA.jpeg")
   }
   else if (about_ordinal == "GraphB") {
-     list(src = "GraphExamples/graphB.jpeg")
+     list(src = "www/GraphExamples/graphB.jpeg")
   }
   else if (about_ordinal == "GraphH") {
-     list(src = "GraphExamples/graphH.svg")
+     list(src = "www/GraphExamples/graphH.svg")
   }
   else if (about_ordinal == "GraphI") {
-     list(src = "GraphExamples/graphI.svg")
+     list(src = "www/GraphExamples/graphI.svg")
   }
 }, deleteFile = FALSE)
 
 output$about_continuous <- renderImage({
   about_continuous <- about_continuous()
   if (about_continuous == "GraphC"){
-    list(src = "GraphExamples/graphC.jpeg")
+    list(src = "www/GraphExamples/graphC.jpeg")
   }
   else if (about_continuous == "GraphD") {
-     list(src = "GraphExamples/graphD.svg")
+     list(src = "www/GraphExamples/graphD.svg")
   }
   else if (about_continuous == "GraphE") {
-     list(src = "GraphExamples/graphE.svg")
+     list(src = "www/GraphExamples/graphE.svg")
   }
   else if (about_continuous == "GraphF") {
-    list(src = "GraphExamples/graphF.svg")
+    list(src = "www/GraphExamples/graphF.svg")
   }
   else if (about_continuous == "GraphG") {
-    list(src = "GraphExamples/graphG.svg")
+    list(src = "www/GraphExamples/graphG.svg")
   }
 }, deleteFile = FALSE)
 
