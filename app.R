@@ -13,7 +13,7 @@ library(bslib)
 
 ui <- div(page_navbar(
   title = span(tags$img(src = "ICR_logo.png"), "OPTIMISE-AR"),
-  ############################################################################################# Information 
+  ############################################################################################# Information
   tabPanel("Overview", icon = icon("house"),
   h1("OPTIMISE-AR"),
   card(card_body(
@@ -55,7 +55,7 @@ ui <- div(page_navbar(
   card(card_header("How to format data"),
   card_body(
     p("Data must be input as a .csv file with column titles matching the listed below."),
-    p("The first column of data is ignored and can be left as an numbering value."),
+    p("The first column of data is ignored and can be left as a numbering value."),
    layout_columns(
     card(card_header("Ordinal datasets"),
     card_body(
