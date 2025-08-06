@@ -384,7 +384,7 @@ output$continuous_cons <- renderUI({
           
     }
     else if (input$dummy_ordinal == TRUE) {
-          read.csv("DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")[, -1]
+          read.csv("www/DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")[, -1]
 }
 })
 
@@ -599,7 +599,7 @@ continuous_data <- reactive({
         
   }
   else if (input$dummy_continuous == TRUE) {
-        read.csv("DummyData/dummy_continuous.csv", header = TRUE, sep = ",")[, -1]
+        read.csv("www/DummyData/dummy_continuous.csv", header = TRUE, sep = ",")[, -1]
 }
 })
 #### Update the inputs
