@@ -1428,8 +1428,9 @@ output$graphH <- renderPlot({
     theme(
           strip.text.y = element_text(angle = 0)) +
     facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterH)) + #ylim(c(-1, 1)) +
-      scale_fill_manual(values=labels[match(as.numeric(levels(valH$grade_change)), labels[,1]),2],
-                    labels=labels[match(as.numeric(levels(valH$grade_change)), labels[,1]),3])+
+      scale_fill_manual(breaks = labels[,1],
+                    values=labels[,2],
+                    labels=labels[,3])+
     geom_text(aes(y = pos, label = percent), size = 3, color = "black") +
     labs(x = paste0("Dose (N=", paste(ice_n_patH()$n.pat, collapse = "; "), ")"),
          y = "Percentage (%)",
