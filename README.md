@@ -6,7 +6,19 @@ To create an environment, we recommend using mamba. If you don't have mamba inst
 
 **Create the environment**  
 ```bash
-mamba create --name optimisear-shiny r-base=4.3.0 r-devtools r-shinydashboard r-DT r-bslib r-ggplot2
+conda create -n optimisear-shiny -c conda-forge \
+  r-base=4.3.2 \
+  r-shiny \
+  r-ggplot2 \
+  r-shinydashboard \
+  r-dt \
+  r-magrittr \
+  r-dplyr \
+  r-ggsurvfit \
+  r-ggh4x \
+  r-tidyr \
+  r-gt \
+  r-svglite
 ```  
 
 **Activate the environment**  
