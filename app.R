@@ -9,298 +9,206 @@ library(ggh4x)
 library(tidyr)
 library(gt)
 library(svglite)
-#library(bslib)
+library(bslib)
 
-ui <- dashboardPage(
-  title = "shiny",
-  dashboardHeader(title = span(tags$img(src = "ICR_logo.png"),
-                               "OPTIMISE-AR"),
-                  titleWidth = "100%"),
-  dashboardSidebar(
-    sidebarMenu(id = "tabs",
-      menuItem("GraphA", tabName = "GraphA", icon = icon("sun")),
-      menuItem("GraphB", tabName = "GraphB", icon = icon("sun")),
-      menuItem("GraphC", tabName = "GraphC", icon = icon("moon")),
-      menuItem("GraphD", tabName = "GraphD", icon = icon("moon")),
-      menuItem("GraphE", tabName = "GraphE", icon = icon("moon")),
-      menuItem("GraphF", tabName = "GraphF", icon = icon("moon")),
-      menuItem("GraphG", tabName = "GraphG", icon = icon("moon")),
-      menuItem("GraphH", tabName = "GraphH", icon = icon("sun")),
-      menuItem("GraphI", tabName = "GraphI", icon = icon("sun")),
-      menuItem("Description", tabName = "description", icon = icon("book")),
-      menuItem("Version History", tabName = "history", icon = icon("history"))
-    )
-  ),
-  dashboardBody(
-    tags$style(
-      HTML("#alldata {overflow:auto}")
+ui <- div(page_navbar(
+  title = span(tags$img(src = "ICR_logo.png"), "OPTIMISE-AR"),
+  ############################################################################################# Information 
+  tabPanel("Overview", icon = icon("house"),
+  h1("OPTIMISE-AR"),
+  h3("Background"),
+  p("Recently, there has been an increasing interest in the use of PRO data to supplement assessment of tolerability in early phase dose-finding trials."),
+  p("However, there are no guidelines on how analysis should be conducted or what visualisations should be made."),
+  p("This app aims to provide and easy to use platform to assist in analysis and visualisations using current recommended methods."),
+  h3("Work-flow"),
+  p("this section will be updated when there is a more clear workflow approach"),
+  h3("About the graphs"),
+  page_navbar(
+    title = "Select data type",
+    id = "about",
+    sidebar = sidebar(
+      conditionalPanel(
+        "input.about == 'Ordinal'",
+        radioButtons("about_ordinal", label = NULL, choices = c("GraphA", "GraphB", "GraphH", "GraphI"))
+      ),
+      conditionalPanel(
+        "input.about == 'Continuous'",
+        radioButtons("about_continuous", label = NULL, choices = c("GraphC", "GraphD", "GraphE", "GraphF", "GraphG"))
+      )
     ),
-    # this is here to demonstrate that the page can be styled with standard css/html
-    tags$head(tags$style(HTML(
-      ".content-wrapper{background-color:AliceBlue !important; padding:10px; }            
-      .main-header .logo {
-      background-color:DarkSeaGreen !important;
-      text-align:left !important;
-      color:DimGray !important;
-      font-size:28px;}"
-    ))),
-    tabItems(
-      tabItem(tabName = "GraphA",
-        fluidRow(
+    nav_panel("Ordinal",
+    layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
+      card(card_header("Graph"), imageOutput("about_ordinal"), full_screen = TRUE),
+      card(card_header("Information"),
+        card_body(card_title("About"), htmlOutput("ordinal_information_about")),
+        card_body(card_title("Advantages"), htmlOutput("ordinal_pros")),
+        card_body(card_title("Disadvantages"), htmlOutput("ordinal_cons"))
+        ))),
+    nav_panel("Continuous",
+    layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
+      card(card_header("Graph"), imageOutput("about_continuous"), full_screen = TRUE),
+      card(card_header("Information"),
+        card_body(card_title("About"), htmlOutput("continuous_information_about")),
+        card_body(card_title("Advantages"), htmlOutput("continuous_pros")),
+        card_body(card_title("Disadvantages"), htmlOutput("continuous_cons"))
+        ))))),
+  ####################################################################################################### Data Sorting + Upload
+  tabPanel("Data", icon = icon("arrow-up-from-bracket"),
+  page_sidebar(
+    title = "Input data",
+  sidebar = sidebar(
+  card(card_header("Upload data file"), card_body(fileInput("upload", "Ordinal data", accept = c(".csv"))),
+  card_body(fileInput("upload_cts", "Continuous data", accept = c(".csv")))),
+  card(card_header("Dummy data"), card_body("For those with no data wishing to test the app, you can select these to test with."),
+  card_body(input_switch("dummy_ordinal", "Dummy Ordinal data")),
+  card_body(input_switch("dummy_continuous", "Dummy Continuous data")))),
+  card(card_header("Ordinal data"), card_body(tableOutput("ordinal_table")), max_height = 250),
+  card(card_header("Continuous data"), card_body(tableOutput("continuous_table")), max_height = 250))),
+  navbarMenu("Ordinal",
+############################################################################################################ A UI
+            tabPanel("GraphA", tabName = "GraphA", icon = icon("sun"),
+            fluidRow(
           textOutput("textHeaderA")
         ),
-        fluidRow(
+        page_sidebar(
+          sidebar = sidebar(
+          card(card_header("Variables"), card_body(checkboxGroupInput("numdose", label = "Dosage",
+                                                 selected = NULL, inline = TRUE)))
+               , card(card_header("Download .svg file"), card_body(downloadButton("downloadA")))),
+          card(plotOutput("graphA"))
+          )),
+  ############################################################################################################ B UI
+            tabPanel("GraphB", tabName = "GraphB", icon = icon("sun"),
           fluidRow(
-                   column(3,  checkboxGroupInput("numdose", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)), ),
-          fluidRow(
-            column(1,  plotOutput("graphA", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload", "Upload data file", accept = c(".csv"))
-          ),
-           fluidPage(
-             DTOutput("dynamic")
-           ),
-           fluidPage(
-            downloadButton("downloadA")
-           ),
-        )
-      ),
-      ############################################ GRAPH B
-      tabItem(tabName = "GraphB",
-        fluidRow(
           textOutput("textHeaderB")
         ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseB", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)), ),
-          fluidRow(
-            column(3, sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, selectInput("toxicB", label = "Toxicity of interest", choices = NULL ))),
-          fluidRow(
-            column(1,  plotOutput("graphB", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadB")
-           ),
-        )
-      ),
-      ############################################ GRAPH C
-      tabItem(tabName = "GraphC",
-        fluidRow(
-          textOutput("textHeaderC")
-        ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseC", label = "Dosage",
-                                                 selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(3, sliderInput("tpointC", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, selectInput("functioningC", label = "Functioning of interest", choices = NULL ))),
-          fluidRow(
-            column(1,  plotOutput("graphC", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadC")
-           ),
-        )
-      ),
-      ############################################ GRAPH D
-      tabItem(tabName = "GraphD",
-        fluidRow(
-          textOutput("textHeaderD")
-        ),
-        fluidRow(
-          fluidRow(
-            column(3, sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))
-            ),
-          fluidRow(
-            column(4, checkboxGroupInput("numdoseD", label = "Dosage",
-                           choices = NULL))),
-          fluidRow(
-            column(4, uiOutput("select_idD"))
-          ),
-          fluidRow(
-            column(3, selectInput("functioningD", label = "Functioning of interest", choices = NULL))),
-          fluidRow(
-            column(1,  plotOutput("graphD", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadD")
-           ),
-        )
-      ),
-      ############################################ GRAPH E
-      tabItem(tabName = "GraphE",
-        fluidRow(
-          textOutput("textHeaderE")
-        ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseE", label = "Dosage",
-                                                 selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(3, sliderInput("tpointE", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, selectInput("functioningE", label = "Functioning of interest", choices = NULL ))),
-          fluidRow(
-            column(1,  plotOutput("graphE", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadE")
-           ),
-        )
-      ),
-      ########################################################### Graph F
-      tabItem(tabName = "GraphF",
-        fluidRow(
-          textOutput("textHeaderF")
-        ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseF", label = "Dosage",
-                                                 selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(3, sliderInput("tpointF", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(1,  tableOutput("graphF"))
-          ),
-          fluidPage(
-            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadF")
-           ),
-        )
-      ),
-      ########################################################### Graph G
-            tabItem(tabName = "GraphG",
-        fluidRow(
-          textOutput("textHeaderG")
-        ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseG", label = "Dosage",
-                                                 selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(3, sliderInput("tpointG", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(1,  plotOutput("graphG", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload_cts", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadG")
-           ),
-        )
-      ),
-      #########################################################Graph H
-      tabItem(tabName = "GraphH",
-        fluidRow(
+        page_sidebar(
+          sidebar = sidebar(
+          card(card_header("Variables"), card_body(
+                    checkboxGroupInput("numdoseB", label = "Dosage",
+                                                 selected = NULL, inline = TRUE),
+                    sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+                    selectInput("toxicB", label = "Toxicity of interest", choices = NULL ))
+          ), card(card_header("Download .svg file"), card_body(downloadButton("downloadB"))))
+          ,
+          card(plotOutput("graphB"))
+            )),
+############################################################################################################ H UI
+         
+            tabPanel("GraphH", tabName = "GraphH", icon = icon("sun"), 
+            fluidRow(
           textOutput("textHeaderH")
         ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseH", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)), ),
-          fluidRow(
-            column(3, sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1))),
-          fluidRow(
-            column(3, checkboxGroupInput("toxicH", label = "Toxicity of interest", selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(1,  plotOutput("graphH", width = "600px"))
-          ),
-          fluidPage(
-            fileInput("upload", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadH")
-           ),
-        )
-      ),
-      #########################################################Graph I
-      tabItem(tabName = "GraphI",
-        fluidRow(
+        page_sidebar(
+          sidebar = sidebar(
+          card(card_header("Variables"), card_body(
+                    checkboxGroupInput("numdoseH", label = "Dosage",
+                                                 selected = NULL, inline = TRUE),
+                    sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1),
+                    checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL , inline = TRUE)
+          )), 
+          card(card_header("Download .svg file"), card_body(downloadButton("downloadH")))),
+          card(plotOutput("graphH"))
+            )),
+############################################################################################################ I UI
+            tabPanel("GraphI", tabName = "GraphI", icon = icon("sun"),
+            fluidRow(
           textOutput("textHeaderI")
         ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseI", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)), ),
-          fluidRow(
-            column(3, sliderInput("tpointI", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(1,  plotOutput("graphI", width = "600px"))
+    page_sidebar(
+          sidebar = sidebar(
+          card(card_header("Variables"), card_body(
+                    checkboxGroupInput("numdoseI", label = "Dosage",
+                                                 selected = NULL, inline = TRUE),
+                    sliderInput("tpointI", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+                    checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE))
+          ), 
+          card(card_header("Download .svg file"), card_body(downloadButton("downloadI")))),
+          card(plotOutput("graphI"))
+            ))),
+  navbarMenu("Continuous",############################################################################################################ C UI 
+             tabPanel("GraphC", tabName = "GraphC", icon = icon("moon"),
+             fluidRow(
+          textOutput("textHeaderC")
+        ),
+                page_sidebar(
+          sidebar = sidebar(
+          card(card_header("Variables"), card_body(
+                    checkboxGroupInput("numdoseC", label = "Dosage",
+                                                 selected = NULL, inline = TRUE),
+                   sliderInput("tpointC", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+                   selectInput("functioningC", label = "Functioning of interest", choices = NULL ))), 
+                   card(card_header("Download .svg file"), card_body(downloadButton("downloadC")))
           ),
-          fluidPage(
-            fileInput("upload", "Upload data file", accept = c(".csv"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadI")
-           ),
-        )
-      ),
-      ################################################### Description tab
-      tabItem(tabName = "description",
-        h4("About this site"),
+          card(plotOutput("graphC"))
+            )),
+############################################################################################################ D UI 
+             tabPanel("GraphD", tabName = "GraphD", icon = icon("moon"), fluidRow(
+          textOutput("textHeaderD")
+        ),
+            page_sidebar(
+          sidebar = sidebar(
+          card(card_header("Variables"), card_body(
+                    sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+                    checkboxGroupInput("numdoseD", label = "Dosage",choices = NULL),
+                    uiOutput("select_idD"),
+                    selectInput("functioningD", label = "Functioning of interest", choices = NULL))),
+                    card(card_header("Download .svg file"), card_body(downloadButton("downloadD")))),
+                    card(plotOutput("graphD"))
+        )),
+############################################################################################################ E UI 
+              
+             tabPanel("GraphE", tabName = "GraphE", icon = icon("moon"),  fluidRow(
+          textOutput("textHeaderE")
+        ),
+         page_sidebar(
+          sidebar = sidebar(
+          card(card_header("Variables"), card_body(
+            checkboxGroupInput("numdoseE", label = "Dosage", selected = NULL, inline = TRUE),
+            sliderInput("tpointE", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+            selectInput("functioningE", label = "Functioning of interest", choices = NULL ))),
+            card(card_header("Download .svg file"), card_body(downloadButton("downloadE")))),
+            card(plotOutput("graphE"))
+        )),
+############################################################################################################ F UI
+           tabPanel("GraphF", tabName = "GraphF", icon = icon("moon"),     fluidRow(
+          textOutput("textHeaderF")
+        ),
+          page_sidebar(
+          sidebar = sidebar(
+          card(card_header("Variables"), card_body(
+                   checkboxGroupInput("numdoseF", label = "Dosage",
+                                                 selected = NULL, inline = TRUE),
+          sliderInput("tpointF", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+          checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE))),
+          card(card_header("Download .svg file"), card_body(downloadButton("downloadF")))),
+           card(gt_output("graphF"))
+           )),
+           ############################################################################################################ G UI 
+    
+             tabPanel("GraphG", tabName = "GraphG", icon = icon("moon"),          fluidRow(
+          textOutput("textHeaderG")
+        ),
+          page_sidebar(
+          sidebar = sidebar(
+          card(card_header("Variables"), card_body(
+          checkboxGroupInput("numdoseG", label = "Dosage",
+                                                 selected = NULL, inline = TRUE),
+          sliderInput("tpointG", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+          checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE))),
+          card(card_header("Download .svg file"), card_body(downloadButton("downloadG")))),
+          card(plotOutput("graphG"))
+      ))),
+################################################################################################################## description tab
+      tabPanel("Description", tabName = "description", icon = icon("book"), h4("About this site"),
         p("The beginnings of the OPTIMISE-AR app still to be reviewed"),
         p("Authors: George (Server) and Karrar (UI)"),
-        p("Maintainers: Rachel Alcraft, ICR Scientific Computing"),
-      ),
-      tabItem(tabName = "history",
-              p("v1.0 - Internal ICR release 20/07/2025"))
+        p("Maintainers: Rachel Alcraft, ICR Scientific Computing")),
+################################################################################################################## Version history
+      tabPanel("Version History", tabName = "history", icon = icon("history"), p("v1.0 - Internal ICR release 20/07/2025")), bg = "DarkSeaGreen"))
 
-    )
-  ),
-)
-###############################################################################
+#######################################################################################################################   SERVER SIDE 
+
 server <- function(input, output, session) {
   output$textHeaderA <- renderText({"Kaplan-Meier Graph"})
   output$textHeaderB <- renderText({"Proportional severity of doses across timepoints plot"})
@@ -311,16 +219,182 @@ server <- function(input, output, session) {
   output$textHeaderG <- renderText({"Mean change in functionalities plot"})
   output$textHeaderH <- renderText({"Butterfly plot"})
   output$textHeaderI <- renderText({"Toxicity % plot"})
+  ############################################################################################Overview page 
+about_ordinal <- reactive({input$about_ordinal})
+about_continuous <- reactive({input$about_continuous})
+
+
+############################################# GRAPH IMAGE
+output$about_ordinal <- renderImage({
+  about_ordinal <- about_ordinal()
+  if (about_ordinal == "GraphA"){
+    list(src = "GraphExamples/graphA.jpeg")
+  }
+  else if (about_ordinal == "GraphB") {
+     list(src = "GraphExamples/graphB.jpeg")
+  }
+  else if (about_ordinal == "GraphH") {
+     list(src = "GraphExamples/graphH.svg")
+  }
+  else if (about_ordinal == "GraphI") {
+     list(src = "GraphExamples/graphI.svg")
+  }
+}, deleteFile = FALSE)
+
+output$about_continuous <- renderImage({
+  about_continuous <- about_continuous()
+  if (about_continuous == "GraphC"){
+    list(src = "GraphExamples/graphC.jpeg")
+  }
+  else if (about_continuous == "GraphD") {
+     list(src = "GraphExamples/graphD.svg")
+  }
+  else if (about_continuous == "GraphE") {
+     list(src = "GraphExamples/graphE.svg")
+  }
+  else if (about_continuous == "GraphF") {
+    list(src = "GraphExamples/graphF.svg")
+  }
+  else if (about_continuous == "GraphG") {
+    list(src = "GraphExamples/graphG.svg")
+  }
+}, deleteFile = FALSE)
+
+#####################################################GRAPH INFO
+
+output$ordinal_information_about <- renderUI({
+  about_ordinal <- about_ordinal()
+  if (about_ordinal == "GraphA"){
+    HTML("The Kaplan-Meier graph shows the survival percentage over time across dosages.<br>For this graph, we assume a change from baseline of 3 to represent an event.<br> <br> This app allows you to select: <br>- Dose levels")
+  }
+  else if (about_ordinal == "GraphB") {
+     html("Graph B shows the proportion of patients at each severity across time on a given dose.<br> <br> This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Toxicity of interest")
+  }
+  else if (about_ordinal == "GraphH") {
+     html("Graph H is a butterfly plot, it allows you to compare the change in severity grades between two timepoints for a dose and toxicity of interest.<br> <br> This app allows you to select: <br>- Dose levels <br>- Start timepoint <br>- Final timepoint <br>- Toxicities of interest")
+  }
+  else if (about_ordinal == "GraphI") {
+     html("Graph I shows the percentage of patients at each severity for a given dose level, timepoint and SAE. The graph also shows the number of patients who reported. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Toxicities of interest")
+  }
+})
+
+output$continuous_information_about <- renderUI({
+  about_continuous <- about_continuous()
+  if (about_continuous == "GraphC"){
+    html("Graph C shows the mean change from baseline functioning across time given dose level and a functionality of interest. The graph includes 95% confidence intervals for each timepoint.<br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionality of interest")
+  }
+  else if (about_continuous == "GraphD") {
+     html("Graph D allows viewing of individual patients trends in functionality across time. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionality of interest <br> - Patient IDs ")
+  }
+  else if (about_continuous == "GraphE") {
+     html("Graph E creates boxplots for the tolerability based on scores in functionality categories. This allows you to compare between times and doses with a fixed functionality type. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionality of interest")
+  }
+  else if (about_continuous == "GraphF") {
+    html("Graph F outputs a table which shows: <br> - Mean change from baseline <br> - Standard error <br> - Number of reported patients <br> These are calculated for a fixed time period from the baseline for selected functionalities and doses. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionalities of interest")
+  }
+  else if (about_continuous == "GraphG") {
+    html("Graph G shows the mean change from baseline to a fixed timepoint given a fuctioning category with 95% confidence intervals. Doses can be compared with each other and multiple functioning categories may be shown. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionalities of interest ")
+  }
+})
+
+############################################################# GRAPH PROS
+output$ordinal_pros <- renderUI({
+  about_ordinal <- about_ordinal()
+  if (about_ordinal == "GraphA"){
+    HTML("- Easily compare selected doses <br> - Provides a table with number of patients")
+  }
+  else if (about_ordinal == "GraphB") {
+    HTML("B <br> -pro 1 <br> -pro 2 <br> -pro 3")
+  }
+  else if (about_ordinal == "GraphH") {
+    HTML("H <br> -pro 1 <br> -pro 2 <br> -pro 3")
+  }
+  else if (about_ordinal == "GraphI") {
+     HTML("I <br> -pro 1 <br> -pro 2 <br> -pro 3")
+  }
+})
+output$continuous_pros <- renderUI({
+  about_continuous <- about_continuous()
+  if (about_continuous == "GraphC"){
+     HTML("C <br> -pro 1 <br> -pro 2 <br> -pro 3")
+  }
+  else if (about_continuous == "GraphD") {
+     HTML("D <br> -pro 1 <br> -pro 2 <br> -pro 3")
+  }
+  else if (about_continuous == "GraphE") {
+     HTML("E <br> -pro 1 <br> -pro 2 <br> -pro 3")
+  }
+  else if (about_continuous == "GraphF") {
+     HTML("F <br> -pro 1 <br> -pro 2 <br> -pro 3")
+  }
+  else if (about_continuous == "GraphG") {
+     HTML("G <br> -pro 1 <br> -pro 2 <br> -pro 3")
+  }
+})
+
+
+############################################################ GRAPH CONS
+output$ordinal_cons <- renderUI({
+  about_ordinal <- about_ordinal()
+  if (about_ordinal == "GraphA"){
+     HTML("- Currently only allows baseline change of 3 as an event <br> - Missing patients aren't denoted on graph")
+  }
+  else if (about_ordinal == "GraphB") {
+     HTML("B <br> -con 1 <br> -con 2 <br> -con 3")
+  }
+  else if (about_ordinal == "GraphH") {
+     HTML("H <br> -con 1 <br> -con 2 <br> -con 3")
+  }
+  else if (about_ordinal == "GraphI") {
+    HTML("I <br> -con 1 <br> -con 2 <br> -con 3")
+  }
+})
+output$continuous_cons <- renderUI({
+  about_continuous <- about_continuous()
+  if (about_continuous == "GraphC"){
+    HTML("C <br> -con 1 <br> -con 2 <br> -con 3")
+  }
+  else if (about_continuous == "GraphD") {
+     HTML("D <br> -con 1 <br> -con 2 <br> -con 3")
+  }
+  else if (about_continuous == "GraphE") {
+     HTML("E <br> -con 1 <br> -con 2 <br> -con 3")
+  }
+  else if (about_continuous == "GraphF") {
+    HTML("F <br> -con 1 <br> -con 2 <br> -con 3")
+  }
+  else if (about_continuous == "GraphG") {
+    HTML("G <br> -con 1 <br> -con 2 <br> -con 3")
+  }
+})
+
+
+#############################################################################################################Graph A
   #Import the data
   ordinal_data <- reactive({
-    req(input$upload)
-    ordinal_data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
-    ordinal_data
-  })
+    if (input$dummy_ordinal == FALSE) {
+      req(input$upload)
+        read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
+          
+    }
+    else if (input$dummy_ordinal == TRUE) {
+          read.csv("DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")[, -1]
+}
+})
+
+output$ordinal_table <- renderTable(ordinal_data())
+
+output$continuous_table <- renderTable(continuous_data())
 
   #Update the selection boxes based on dataset
   observe({
     req(input$upload)
+    ordinal_data <- ordinal_data()
+    numdose <- unique(ordinal_data$dose)
+    updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
+  })
+  observe({
+    req(input$dummy_ordinal) 
     ordinal_data <- ordinal_data()
     numdose <- unique(ordinal_data$dose)
     updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
@@ -333,7 +407,6 @@ server <- function(input, output, session) {
                        as.numeric(input$numdose)})
   #Filter the data
   summary_df <- reactive({
-                          req(input$upload)
                           req(input$numdose)
                           ordinal_data <- ordinal_data()
                           ordinal_data <- ordinal_data %>% filter(dose %in% no_dose())
@@ -352,7 +425,6 @@ server <- function(input, output, session) {
                           summary_df})
 
   output$graphA <- renderPlot({
-                               req(input$upload)
                                survfit2(Surv(time, event) ~ dose, data = summary_df()) %>%
                                  ggsurvfit(linewidth = 1.5) +
                                  add_censor_mark() +
@@ -360,12 +432,7 @@ server <- function(input, output, session) {
                                  scale_ggsurvfit() + add_risktable()})
 
 ################################################ graph B
-#Import the data
-ordinal_data <- reactive({
-  req(input$upload)
-  ordinal_data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
-  ordinal_data
-})
+
 
 #Update the selection boxes based on dataset
 observe({
@@ -384,6 +451,27 @@ observe({
 
 observe({
   req(input$upload)
+  data <- ordinal_data()
+  toxic <- unique(data$toxicity)
+  updateSelectInput(session, "toxicB", label = "Toxicity of interest", choices = toxic, selected = NULL)
+})
+####### for dummy data
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  numdose <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseB", label = "Dosage", choices = numdose, selected = NULL)
+})
+
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  tpoint <- unique(data$timepoint)
+  updateSliderInput(session, "tpointB", label = "Final timepoint of interest", max = length(tpoint)-1)
+})
+
+observe({
+  req(input$dummy_ordinal)
   data <- ordinal_data()
   toxic <- unique(data$toxicity)
   updateSelectInput(session, "toxicB", label = "Toxicity of interest", choices = toxic, selected = NULL)
@@ -409,7 +497,6 @@ toxic <- reactive({
 prop <- reactive({
   req(input$numdoseB)
   req(input$tpointB)
-  req(input$upload)
   ordinal_data <- ordinal_data()
   ordinal_data$grade[is.na(ordinal_data$grade)] <- "Unreported"
 
@@ -459,7 +546,6 @@ prop <- reactive({
 #Graph labels
 
 no_patient <- reactive({
-  req(input$upload)
   req(input$numdoseB)
   ordinal_data <- ordinal_data()
   no_pat <- ordinal_data %>%
@@ -472,7 +558,6 @@ no_patient <- reactive({
 
 #Graph output
 output$graphB <- renderPlot({
-  req(input$upload)
   prop <- prop()
   no_dose <- no_doseb()
   no_patient <- no_patient()
@@ -502,11 +587,15 @@ output$graphB <- renderPlot({
 ################################################################################## GRAPH C
 #### Import the data
 continuous_data <- reactive({
-  req(input$upload_cts)
-  continuous_data <- read.csv(input$upload_cts$datapath, header = TRUE, sep = ",")[, -1]
-  continuous_data
+  if (input$dummy_continuous == FALSE) {
+    req(input$upload_cts)
+      read.csv(input$upload_cts$datapath, header = TRUE, sep = ",")[, -1]
+        
+  }
+  else if (input$dummy_continuous == TRUE) {
+        read.csv("DummyData/dummy_continuous.csv", header = TRUE, sep = ",")[, -1]
+}
 })
-
 #### Update the inputs
 observe({
   req(input$upload_cts)
@@ -528,8 +617,30 @@ observe({
   func <- unique(data$functioning)
   updateSelectInput(session, "functioningC", label = "Functionality of interest", choices = func, selected = NULL)
 })
+########## For the dummy set 
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  numdoseC <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseC", label = "Dosage", choices = numdoseC, selected = NULL)
+})
 
-#### Reactive Defining 
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  tpointC <- unique(data$timepoint)
+  updateSliderInput(session, "tpointC", label = "Final timepoint of interest", max = length(tpointC)-1)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateSelectInput(session, "functioningC", label = "Functionality of interest", choices = func, selected = NULL)
+})
+
+
+#### Reactive Defining
 #Define the relevant variables
 no_doseC <- reactive({
                       req(input$numdoseC)
@@ -547,7 +658,6 @@ func_C <- reactive({
 
 #### Data Filtering
 continuous_data_filtered <- reactive({
-  req(input$upload_cts)
   req(input$functioningC)
   continuous_data <- continuous_data()
   continuous_data <- continuous_data %>% filter(functioning == func_C()) %>% dplyr::select(-functioning)# %>% filter(!is.na(score))
@@ -555,7 +665,6 @@ continuous_data_filtered <- reactive({
 })
 
 diffC <- reactive({
-  req(input$upload_cts)
   req(input$functioningC)
   continuous_data_f <- continuous_data_filtered()
   continuous_data_f <- continuous_data_f %>%
@@ -566,7 +675,6 @@ diffC <- reactive({
 })
 
 summaryC <- reactive({
-  req(input$upload_cts)
   diff <- diffC()
   diff <- diff %>%
     group_by(dose, timepoint) %>%
@@ -580,7 +688,6 @@ pd <- position_dodge(width = 0.2)
 
 #### FIGURE GENERATION
 output$graphC <- renderPlot({
-  req(input$upload_cts)
   summaryC() %>%
     ggplot(
            aes(x = as.factor(timepoint),
@@ -596,7 +703,7 @@ output$graphC <- renderPlot({
     xlab("Timepoint") +
     ylab(paste0(
                 "Mean change from baseline across timepoints (with 95% CI) \n 
-                for EORTC QLQ-C30 Global status score for functioning",
+                for EORTC QLQ-C30 Global status score for functioning ",
                 func_C())) +
     scale_fill_manual(name = "Threshold", values = c("palegreen1", "red"), label = c("Improvement", "Worsening")) +
     geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = 30),
@@ -627,6 +734,27 @@ observe({
 
 observe({
   req(input$upload_cts)
+  data <- continuous_data()
+  numdoseD <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseD", choices = numdoseD, selected = NULL)
+})
+####### for dummy set 
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  tpointD <- unique(data$timepoint)
+  updateSliderInput(session, "tpointD", label = "Final timepoint of interest", max = length(tpointD) - 1)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateSelectInput(session, "functioningD", label = "Functionality of interest", choices = func, selected = NULL)
+})
+
+observe({
+  req(input$dummy_continuous)
   data <- continuous_data()
   numdoseD <- unique(data$dose)
   updateCheckboxGroupInput(session, "numdoseD", choices = numdoseD, selected = NULL)
@@ -720,6 +848,28 @@ observe({
   updateSelectInput(session, "functioningE", label = "Functionality of interest", choices = func, selected = NULL)
 })
 
+########### for dummy set 
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  numdoseE <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseE", label = "Dosage", choices = numdoseE, selected = NULL)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  tpointE <- unique(data$timepoint)
+  updateSliderInput(session, "tpointE", label = "Final timepoint of interest", max = length(tpointE) - 1)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateSelectInput(session, "functioningE", label = "Functionality of interest", choices = func, selected = NULL)
+})
+
 
 #### Reactive Defining 
 #Define the relevant variables
@@ -739,7 +889,6 @@ func_E <- reactive({
 
 #### Data Filtering
 data_E <- reactive({
-  req(input$upload_cts)
   req(input$functioningD)
   continuous_data <- continuous_data()
   continuous_data <- continuous_data %>% filter(functioning == func_E()) %>% dplyr::select(-functioning)
@@ -751,7 +900,6 @@ data_E <- reactive({
 })
 
 output$graphE <- renderPlot({
-  req(input$upload_cts)
   continuous_data <- data_E()
   ggplot(continuous_data, aes(x = as.factor(timepoint), y = score, fill = as.factor(dose))) +
     labs(fill = "Dose level") +
@@ -783,6 +931,27 @@ observe({
 
 observe({
   req(input$upload_cts)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateCheckboxGroupInput(session, "functioningF", label = "Functionality of interest", choices = func, selected = NULL)
+})
+##### for dummy set
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  numdoseF <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseF", label = "Dosage", choices = numdoseF, selected = NULL)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  tpointF <- unique(data$timepoint)
+  updateSliderInput(session, "tpointF", label = "Final timepoint of interest", max = length(tpointF) - 1)
+})
+
+observe({
+  req(input$dummy_continuous)
   data <- continuous_data()
   func <- unique(data$functioning)
   updateCheckboxGroupInput(session, "functioningF", label = "Functionality of interest", choices = func, selected = NULL)
@@ -849,19 +1018,32 @@ sum.dfF <- reactive({
               se = sd(score, na.rm = TRUE) / sqrt(non_na_count), .groups = "keep")
   sum.df <- sum.df %>% mutate(l.ci = mean - (1.96 * se))
   sum.df <- sum.df %>% mutate(u.ci = mean + (1.96 * se))
+  sum.df <- sum.df %>% ungroup(dose)
   sum.df
 })
 
-labellerF <- function(dose) {
-  return(paste0("Dose ", no_doseF(), " (N=?????)"))
+
+sum.df.widerF <- reactive({
+  sum.dfF() %>% pivot_wider(id_cols = functioning, names_from = dose, values_from = c(mean,se,non_na_count))
+})
+
+sum.df.wider.gtF <- reactive({
+  sum.df.wider.gt <- sum.df.widerF() %>% gt() %>%
+  tab_header(title = paste0("Change from baseline to timepoint ", final_tF())) %>%
+   tab_stubhead(label = "Functioning")
+   for (i in unique(sum.dfF()$dose)){
+      sum.df.wider.gt <- sum.df.wider.gt %>%
+      tab_spanner(label = paste0("Dose ", i), columns = ends_with(as.character(!!i)))
+      sum.df.wider.gt <- sum.df.wider.gt %>% cols_label(starts_with("mean") ~ "Mean",
+                                                        starts_with("se") ~ "Standard Error",
+                                                        starts_with("non_na_count") ~ "Number Reported")
 }
+  sum.df.wider.gt <- sum.df.wider.gt %>% opt_stylize(style = 5, color = "blue")
+  sum.df.wider.gt
+})
 
 
-output$graphF <- renderTable(
-  data <- #################### ensure format is good
-  data %>%
-    gt()# %>%
-    )
+output$graphF <- render_gt(sum.df.wider.gtF())
 
 
 
@@ -889,6 +1071,27 @@ observe({
   updateCheckboxGroupInput(session, "functioningG", label = "Functionality of interest", choices = func, selected = NULL)
 })
 
+########### for dummy set
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  numdoseG <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseG", label = "Dosage", choices = numdoseG, selected = NULL)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  tpointG <- unique(data$timepoint)
+  updateSliderInput(session, "tpointG", label = "Final timepoint of interest", max = length(tpointG) - 1)
+})
+
+observe({
+  req(input$dummy_continuous)
+  data <- continuous_data()
+  func <- unique(data$functioning)
+  updateCheckboxGroupInput(session, "functioningG", label = "Functionality of interest", choices = func, selected = NULL)
+})
 
 #### Reactive Defining 
 #Define the relevant variables
@@ -916,7 +1119,6 @@ no_patientG <- reactive({
 })
 
 continuous_data_filteredG <- reactive({
-  req(input$upload_cts)
   continuous_data_filtered <- continuous_data() %>%
   filter(dose %in% no_doseG()) %>%
   filter(functioning %in% func_G())
@@ -924,7 +1126,6 @@ continuous_data_filteredG <- reactive({
 })
 
 ice_n_pat <- reactive({
-  req(input$upload_cts)
   continuous_data <- continuous_data_filteredG()
   ice_n_pat <- continuous_data %>%
   group_by(dose, id) %>%
@@ -937,7 +1138,6 @@ ice_n_pat <- reactive({
 })
 
 dfG <- reactive({
-  req(input$upload_cts)
   endT <- final_tG()
   endT<- as.character(endT)
   tp_end <- sym(paste0("tp_", endT))
@@ -1034,11 +1234,32 @@ observe({
   req(input$upload)
   data <- ordinal_data()
   tpoint <- unique(data$timepoint)
-  updateSliderInput(session, "tpointH", label = "Final timepoint of interest", max = length(tpoint)-1)
+  updateSliderInput(session, "tpointH", label = "Start and endpoint for comparison", max = length(tpoint)-1)
 })
 
 observe({
   req(input$upload)
+  data <- ordinal_data()
+  toxic <- unique(data$toxicity)
+  updateCheckboxGroupInput(session, "toxicH", label = "Toxicity of interest", choices = toxic, selected = NULL)
+})
+####### Dummy 
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  numdose <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseH", label = "Dosage", choices = numdose, selected = NULL)
+})
+
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  tpoint <- unique(data$timepoint)
+  updateSliderInput(session, "tpointH", label = "Start and endpoint for comparison", max = length(tpoint)-1)
+})
+
+observe({
+  req(input$dummy_ordinal)
   data <- ordinal_data()
   toxic <- unique(data$toxicity)
   updateCheckboxGroupInput(session, "toxicH", label = "Toxicity of interest", choices = toxic, selected = NULL)
@@ -1256,6 +1477,27 @@ observe({
   toxic <- unique(data$toxicity)
   updateCheckboxGroupInput(session, "toxicI", label = "Toxicity of interest", choices = toxic, selected = NULL)
 })
+############# for the dummy set 
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  numdose <- unique(data$dose)
+  updateCheckboxGroupInput(session, "numdoseI", label = "Dosage", choices = numdose, selected = NULL)
+})
+
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  tpoint <- unique(data$timepoint)
+  updateSliderInput(session, "tpointI", label = "Final timepoint of interest", max = length(tpoint)-1)
+})
+
+observe({
+  req(input$dummy_ordinal)
+  data <- ordinal_data()
+  toxic <- unique(data$toxicity)
+  updateCheckboxGroupInput(session, "toxicI", label = "Toxicity of interest", choices = toxic, selected = NULL)
+})
 
 #Define the relevant variables
 no_doseI <- reactive({
@@ -1389,7 +1631,7 @@ output$downloadF <- downloadHandler(
     paste0("Graph-F", Sys.Date(), ".svg")
   },
   content = function(file){
-    ggsave(file, plot = last_plot(), device = "svg")
+    ggsave(file, plot = as_gtable(sum.df.wider.gtF()), device = "svg")
   }
 )
 output$downloadG <- downloadHandler(
