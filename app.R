@@ -169,7 +169,7 @@ ui <- div(page_navbar(
             downloadButton("downloadE"))),
             plotOutput("graphE")
         )),
-############################################################################################################ F UI 
+############################################################################################################ F UI
            tabPanel("GraphF", tabName = "GraphF", icon = icon("moon"),     fluidRow(
           textOutput("textHeaderF")
         ),
@@ -639,7 +639,7 @@ observe({
 })
 
 
-#### Reactive Defining 
+#### Reactive Defining
 #Define the relevant variables
 no_doseC <- reactive({
                       req(input$numdoseC)
@@ -1630,7 +1630,7 @@ output$downloadF <- downloadHandler(
     paste0("Graph-F", Sys.Date(), ".svg")
   },
   content = function(file){
-    ggsave(file, plot = last_plot(), device = "svg")
+    ggsave(file, plot = as_gtable(sum.df.wider.gtF()), device = "svg")
   }
 )
 output$downloadG <- downloadHandler(
