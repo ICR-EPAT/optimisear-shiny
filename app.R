@@ -52,6 +52,23 @@ ui <- div(page_navbar(
         ))))))),
   ####################################################################################################### Data Sorting + Upload
   tabPanel("Data", icon = icon("arrow-up-from-bracket"),
+  card(card_header("How to format data"),
+  card_body(
+    p("Data must be input as a .csv file with column titles matching the listed below."),
+    p("The first column of data is ignored and can be left as an numbering value."),
+   layout_columns(
+    card(card_header("Ordinal datasets"),
+    card_body(
+      h5("Required columns, {column name} and [input types]:"),
+      p("- Dose Level, {dose}, [numeric]"),
+      p("- next (as a [datatype])"),
+    )),
+    card(card_header("Continuous datasets"),
+    card_body(
+       h5("Required columns and input types:"),
+       p("- Dose Level, {dose}, [numeric]"),
+    ))
+  ))),
   page_sidebar(
     title = "Input data",
   sidebar = sidebar(
@@ -200,7 +217,7 @@ ui <- div(page_navbar(
 ################################################################################################################## description tab
       tabPanel("Description", tabName = "description", icon = icon("book"), h4("About this site"),
       layout_columns(
-      card(card_header("Background"),card_body(
+      card(card_header("Background"), card_body(
         p("Recently, there has been an increasing interest in the use of PRO data to supplement assessment of tolerability in early phase dose-finding trials."),
         p("However, there are no guidelines on how analysis should be conducted or what visualisations should be made."),
         p("This app aims to provide and easy to use platform to assist in analysis and visualisations using current recommended methods."))),
