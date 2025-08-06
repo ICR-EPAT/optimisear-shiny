@@ -73,8 +73,9 @@ ui <- div(page_navbar(
         page_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(checkboxGroupInput("numdose", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)))),
-          plotOutput("graphA")
+                                                 selected = NULL, inline = TRUE)))
+               , card(card_header("Download .svg file"), card_body(downloadButton("downloadA")))),
+          card(plotOutput("graphA"))
           )),
   ############################################################################################################ B UI 
             tabPanel("GraphB", tabName = "GraphB", icon = icon("sun"),
