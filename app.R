@@ -540,7 +540,6 @@ prop <- reactive({
   prop$grade <- as.factor(prop$grade)
   prop$dose <- as.factor(prop$dose)
   prop$timepoint <- as.factor(prop$timepoint)
-
   prop$dose <- factor(prop$dose, levels = no_doseb())
   prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))
   prop <- prop %>% filter(dose %in% no_doseb())
@@ -574,7 +573,8 @@ output$graphB <- renderPlot({
                  fill = as.factor(grade)),
              stat = "identity",
              position = "stack") +
-    scale_fill_manual(values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "grey", "grey30")),
+    scale_fill_manual(breaks = rev(c(1:5, "Unreported", "Discontinued")),
+                      values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "grey", "grey30")),
                       labels = rev(
                         c("None", "Mild", "Moderate", "Severe", "Very Severe", "Unreported", "Discontinued")
                       ),
@@ -1582,7 +1582,8 @@ output$graphI <- renderPlot({
   propI() %>% ggplot(aes(fill = base_adj, x = dose, y = proportion * 100)) +
     geom_bar(position = "stack", stat = "identity") + coord_flip() +
     facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterI)) +
-    scale_fill_manual(values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "darkgrey")),
+    scale_fill_manual(breaks = rev(c(1:5, "Unreported")),
+                      values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "darkgrey")),
                       labels = rev(c("None", "Mild", "Moderate", "Severe", "Very Severe", "Unreported")),
                       guide = guide_legend(reverse = TRUE)) +
     labs(x = paste0("Dose (N=", paste(ice_n_patI()$n.pat, collapse = "; "), ")"),
