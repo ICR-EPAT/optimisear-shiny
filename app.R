@@ -188,25 +188,17 @@ ui <- div(page_navbar(
              tabPanel("GraphG", tabName = "GraphG", icon = icon("moon"),          fluidRow(
           textOutput("textHeaderG")
         ),
-        fluidRow(
-          fluidRow(
-                   column(3,  checkboxGroupInput("numdoseG", label = "Dosage",
-                                                 selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(3, sliderInput("tpointG", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))),
-          fluidRow(
-            column(3, checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE))),
-          fluidRow(
-            column(1,  plotOutput("graphG", width = "600px"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadG")
-           )
-        )
-      )),################################################################################################################## description tab
+          page_sidebar(
+          sidebar = sidebar(
+          accordion(
+          checkboxGroupInput("numdoseG", label = "Dosage",
+                                                 selected = NULL, inline = TRUE),
+          sliderInput("tpointG", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+          checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE),
+          downloadButton("downloadG"))),
+          plotOutput("graphG")
+      ))),
+################################################################################################################## description tab
       tabPanel("Description", tabName = "description", icon = icon("book"), h4("About this site"),
         p("The beginnings of the OPTIMISE-AR app still to be reviewed"),
         p("Authors: George (Server) and Karrar (UI)"),
