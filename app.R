@@ -16,12 +16,10 @@ ui <- div(page_navbar(
   ############################################################################################# Information 
   tabPanel("Overview", icon = icon("house"),
   h1("OPTIMISE-AR"),
-  h3("Background"),
-  p("Recently, there has been an increasing interest in the use of PRO data to supplement assessment of tolerability in early phase dose-finding trials."),
-  p("However, there are no guidelines on how analysis should be conducted or what visualisations should be made."),
-  p("This app aims to provide and easy to use platform to assist in analysis and visualisations using current recommended methods."),
+  card(card_body(
   h3("Work-flow"),
-  p("this section will be updated when there is a more clear workflow approach"),
+  p("this section will be updated when there is a more clear workflow approach"))),
+  card(card_body(
   h3("About the graphs"),
   page_navbar(
     title = "Select data type",
@@ -37,21 +35,21 @@ ui <- div(page_navbar(
       )
     ),
     nav_panel("Ordinal",
-    layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
-      card(card_header("Graph"), imageOutput("about_ordinal"), full_screen = TRUE),
+    layout_columns(col_widths = c(9, 3), fillable = TRUE, fill = TRUE,
+      card(card_header("Graph"), imageOutput("about_ordinal", width = "auto"), full_screen = TRUE, fill = TRUE),
       card(card_header("Information"),
         card_body(card_title("About"), htmlOutput("ordinal_information_about")),
         card_body(card_title("Advantages"), htmlOutput("ordinal_pros")),
         card_body(card_title("Disadvantages"), htmlOutput("ordinal_cons"))
         ))),
     nav_panel("Continuous",
-    layout_column_wrap(width = NULL, style = css(grid_template_columns = "3fr 1fr"),
-      card(card_header("Graph"), imageOutput("about_continuous"), full_screen = TRUE),
+    layout_columns(col_widths = c(9, 3), fillable = TRUE, fill = TRUE,
+      card(card_header("Graph"), imageOutput("about_continuous", width = "auto"), full_screen = TRUE, fill = TRUE),
       card(card_header("Information"),
         card_body(card_title("About"), htmlOutput("continuous_information_about")),
         card_body(card_title("Advantages"), htmlOutput("continuous_pros")),
         card_body(card_title("Disadvantages"), htmlOutput("continuous_cons"))
-        ))))),
+        ))))))),
   ####################################################################################################### Data Sorting + Upload
   tabPanel("Data", icon = icon("arrow-up-from-bracket"),
   page_sidebar(
@@ -201,11 +199,19 @@ ui <- div(page_navbar(
       ))),
 ################################################################################################################## description tab
       tabPanel("Description", tabName = "description", icon = icon("book"), h4("About this site"),
-        p("The beginnings of the OPTIMISE-AR app still to be reviewed"),
-        p("Authors: George (Server) and Karrar (UI)"),
-        p("Maintainers: Rachel Alcraft, ICR Scientific Computing")),
+      layout_columns(
+      card(card_header("Background"),card_body(
+        p("Recently, there has been an increasing interest in the use of PRO data to supplement assessment of tolerability in early phase dose-finding trials."),
+        p("However, there are no guidelines on how analysis should be conducted or what visualisations should be made."),
+        p("This app aims to provide and easy to use platform to assist in analysis and visualisations using current recommended methods."))),
+        card(card_header("OPTIMISE-AR"), card_body(
+        p("This is an early public release of the app with a work in progress UI. There are a few known bugs, if you find any additional, please do get in touch so they can be patched."),
+        p("Authors: George Knight, Emily Alger, Karrar Shareiyat"),
+        p("Maintainers: Rachel Alcraft, ICR Scientific Computing"))))),
 ################################################################################################################## Version history
-      tabPanel("Version History", tabName = "history", icon = icon("history"), p("v1.0 - Internal ICR release 20/07/2025")), bg = "DarkSeaGreen"))
+      tabPanel("Version History", tabName = "history", icon = icon("history"), 
+      card(card_header("Versions"),
+      card_body(p("v1.0 - Internal ICR release 06/08/2025")))), bg = "DarkSeaGreen"))
 
 #######################################################################################################################   SERVER SIDE 
 
@@ -534,7 +540,6 @@ prop <- reactive({
   prop$grade <- as.factor(prop$grade)
   prop$dose <- as.factor(prop$dose)
   prop$timepoint <- as.factor(prop$timepoint)
-
   prop$dose <- factor(prop$dose, levels = no_doseb())
   prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))
   prop <- prop %>% filter(dose %in% no_doseb())
@@ -568,7 +573,8 @@ output$graphB <- renderPlot({
                  fill = as.factor(grade)),
              stat = "identity",
              position = "stack") +
-    scale_fill_manual(values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "grey", "grey30")),
+    scale_fill_manual(breaks = rev(c(1:5, "Unreported", "Discontinued")),
+                      values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "grey", "grey30")),
                       labels = rev(
                         c("None", "Mild", "Moderate", "Severe", "Very Severe", "Unreported", "Discontinued")
                       ),
@@ -1422,8 +1428,9 @@ output$graphH <- renderPlot({
     theme(
           strip.text.y = element_text(angle = 0)) +
     facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterH)) + #ylim(c(-1, 1)) +
-      scale_fill_manual(values=labels[match(as.numeric(levels(valH$grade_change)), labels[,1]),2],
-                    labels=labels[match(as.numeric(levels(valH$grade_change)), labels[,1]),3])+
+      scale_fill_manual(breaks = labels[,1],
+                    values=labels[,2],
+                    labels=labels[,3])+
     geom_text(aes(y = pos, label = percent), size = 3, color = "black") +
     labs(x = paste0("Dose (N=", paste(ice_n_patH()$n.pat, collapse = "; "), ")"),
          y = "Percentage (%)",
@@ -1576,7 +1583,8 @@ output$graphI <- renderPlot({
   propI() %>% ggplot(aes(fill = base_adj, x = dose, y = proportion * 100)) +
     geom_bar(position = "stack", stat = "identity") + coord_flip() +
     facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterI)) +
-    scale_fill_manual(values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "darkgrey")),
+    scale_fill_manual(breaks = rev(c(1:5, "Unreported")),
+                      values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "darkgrey")),
                       labels = rev(c("None", "Mild", "Moderate", "Severe", "Very Severe", "Unreported")),
                       guide = guide_legend(reverse = TRUE)) +
     labs(x = paste0("Dose (N=", paste(ice_n_patI()$n.pat, collapse = "; "), ")"),
