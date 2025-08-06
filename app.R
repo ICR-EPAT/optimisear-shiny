@@ -105,7 +105,7 @@ ui <- div(page_navbar(
                     checkboxGroupInput("numdoseH", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1),
-                    checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL )
+                    checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL , inline = TRUE)
           )), 
           card(card_header("Download .svg file"), card_body(downloadButton("downloadH")))),
           card(plotOutput("graphH"))
@@ -133,14 +133,14 @@ ui <- div(page_navbar(
         ),
                 page_sidebar(
           sidebar = sidebar(
-          accordion(
+          card(card_header("Variables"), card_body(
                     checkboxGroupInput("numdoseC", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                    sliderInput("tpointC", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-                   selectInput("functioningC", label = "Functioning of interest", choices = NULL )
-          , downloadButton("downloadC"))
+                   selectInput("functioningC", label = "Functioning of interest", choices = NULL ))), 
+                   card(card_header("Download .svg file"), card_body(downloadButton("downloadC")))
           ),
-          plotOutput("graphC")
+          card(plotOutput("graphC"))
             )),
 ############################################################################################################ D UI 
              tabPanel("GraphD", tabName = "GraphD", icon = icon("moon"), fluidRow(
@@ -148,13 +148,13 @@ ui <- div(page_navbar(
         ),
             page_sidebar(
           sidebar = sidebar(
-          accordion(
+          card(card_header("Variables"), card_body(
                     sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                     checkboxGroupInput("numdoseD", label = "Dosage",choices = NULL),
                     uiOutput("select_idD"),
-                    selectInput("functioningD", label = "Functioning of interest", choices = NULL),
-                    downloadButton("downloadD"))),
-                    plotOutput("graphD")
+                    selectInput("functioningD", label = "Functioning of interest", choices = NULL))),
+                    card(card_header("Download .svg file"), card_body(downloadButton("downloadD")))),
+                    card(plotOutput("graphD"))
         )),
 ############################################################################################################ E UI 
               
@@ -163,12 +163,12 @@ ui <- div(page_navbar(
         ),
          page_sidebar(
           sidebar = sidebar(
-          accordion(
+          card(card_header("Variables"), card_body(
             checkboxGroupInput("numdoseE", label = "Dosage", selected = NULL, inline = TRUE),
             sliderInput("tpointE", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-            selectInput("functioningE", label = "Functioning of interest", choices = NULL ),
-            downloadButton("downloadE"))),
-            plotOutput("graphE")
+            selectInput("functioningE", label = "Functioning of interest", choices = NULL ))),
+            card(card_header("Download .svg file"), card_body(downloadButton("downloadE")))),
+            card(plotOutput("graphE"))
         )),
 ############################################################################################################ F UI
            tabPanel("GraphF", tabName = "GraphF", icon = icon("moon"),     fluidRow(
@@ -176,13 +176,13 @@ ui <- div(page_navbar(
         ),
           page_sidebar(
           sidebar = sidebar(
-          accordion(
+          card(card_header("Variables"), card_body(
                    checkboxGroupInput("numdoseF", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
           sliderInput("tpointF", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-          checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE),
-          downloadButton("downloadF"))),
-           gt_output("graphF")
+          checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE))),
+          card(card_header("Download .svg file"), card_body(downloadButton("downloadF")))),
+           card(gt_output("graphF"))
            )),
            ############################################################################################################ G UI 
     
@@ -191,13 +191,13 @@ ui <- div(page_navbar(
         ),
           page_sidebar(
           sidebar = sidebar(
-          accordion(
+          card(card_header("Variables"), card_body(
           checkboxGroupInput("numdoseG", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
           sliderInput("tpointG", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-          checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE),
-          downloadButton("downloadG"))),
-          plotOutput("graphG")
+          checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE))),
+          card(card_header("Download .svg file"), card_body(downloadButton("downloadG")))),
+          card(plotOutput("graphG"))
       ))),
 ################################################################################################################## description tab
       tabPanel("Description", tabName = "description", icon = icon("book"), h4("About this site"),
