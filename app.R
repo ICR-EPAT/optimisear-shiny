@@ -61,9 +61,9 @@ ui <- div(page_navbar(
   card_body(fileInput("upload_cts", "Continuous data", accept = c(".csv")))),
   card(card_header("Dummy data"), card_body("For those with no data wishing to test the app, you can select these to test with."),
   card_body(input_switch("dummy_ordinal", "Dummy Ordinal data")),
-  card_body(input_switch("dummy_continuous", "Dummy Continuous data")))
-  )),
-  tableOutput("table")),
+  card_body(input_switch("dummy_continuous", "Dummy Continuous data")))),
+  card(card_header("Ordinal data"), card_body(tableOutput("ordinal_table"))),
+  card(card_header("Continuous data"), card_body(tableOutput("continuous_table"))))),
   navbarMenu("Ordinal",
 ############################################################################################################ A UI
             tabPanel("GraphA", tabName = "GraphA", icon = icon("sun"),
@@ -421,9 +421,13 @@ output$continuous_cons <- renderUI({
 }
 })
 
+output$ordinal_table <- renderTable(ordinal_data())
+
+output$continuous_table <- renderTable(continuous_data())
+
   #Update the selection boxes based on dataset
   observe({
-    req(input$upload) 
+    req(input$upload)
     ordinal_data <- ordinal_data()
     numdose <- unique(ordinal_data$dose)
     updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
