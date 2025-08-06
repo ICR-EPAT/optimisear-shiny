@@ -145,28 +145,17 @@ ui <- div(page_navbar(
              tabPanel("GraphD", tabName = "GraphD", icon = icon("moon"), fluidRow(
           textOutput("textHeaderD")
         ),
-        fluidRow(
-          fluidRow(
-            column(3, sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1))
-            ),
-          fluidRow(
-            column(4, checkboxGroupInput("numdoseD", label = "Dosage",
-                           choices = NULL))),
-          fluidRow(
-            column(4, uiOutput("select_idD"))
-          ),
-          fluidRow(
-            column(3, selectInput("functioningD", label = "Functioning of interest", choices = NULL))),
-          fluidRow(
-            column(1,  plotOutput("graphD", width = "600px"))
-          ),
-          fluidPage(
-            DTOutput("dynamic")
-          ),
-           fluidPage(
-            downloadButton("downloadD")
-           )
-        )),############################################################################################################ E UI 
+            page_sidebar(
+          sidebar = sidebar(
+          accordion(
+                    sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+                    checkboxGroupInput("numdoseD", label = "Dosage",choices = NULL),
+                    uiOutput("select_idD"),
+                    selectInput("functioningD", label = "Functioning of interest", choices = NULL),
+                    downloadButton("downloadD"))),
+                    plotOutput("graphD")
+        )),
+############################################################################################################ E UI 
               
              tabPanel("GraphE", tabName = "GraphE", icon = icon("moon"),  fluidRow(
           textOutput("textHeaderE")
