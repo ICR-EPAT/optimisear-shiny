@@ -238,11 +238,6 @@ ui <- div(page_navbar(
         p("The beginnings of the OPTIMISE-AR app still to be reviewed"),
         p("Authors: George (Server) and Karrar (UI)"),
         p("Maintainers: Rachel Alcraft, ICR Scientific Computing")),
-################################################################################################################## data info tab
-      tabPanel("Data information page", tabName = "datainfo", icon = icon("book"), h4("About data inputs"),
-              p("Continuous"),
-              p("Ordinal"),
-              p("Test")),
 ################################################################################################################## Version history
       tabPanel("Version History", tabName = "history", icon = icon("history"), p("v1.0 - Internal ICR release 20/07/2025")), bg = "DarkSeaGreen"))
 
