@@ -416,11 +416,12 @@ output$continuous_cons <- renderUI({
   ordinal_data <- reactive({
     if (input$dummy_ordinal == FALSE) {
       req(input$upload)
-        read.csv(input$upload$datapath, header = TRUE, sep = ",")
-          
+       data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")
+       data <- data %>% select(id, toxicity, grade, timepoint, dose, time_last_report)
+       data
     }
     else if (input$dummy_ordinal == TRUE) {
-          read.csv("www/DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")
+          read.csv("www/DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")[,-1]
 }
 })
 
@@ -436,7 +437,7 @@ output$continuous_table <- renderTable(continuous_data())
     updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
   })
   observe({
-    req(input$dummy_ordinal) 
+    req(input$dummy_ordinal)
     ordinal_data <- ordinal_data()
     numdose <- unique(ordinal_data$dose)
     updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
@@ -488,7 +489,7 @@ observe({
   req(input$upload)
   data <- ordinal_data()
   tpoint <- unique(data$timepoint)
-  updateSliderInput(session, "tpointB", label = "Final timepoint of interest", max = length(tpoint)-1)
+  updateSliderInput(session, "tpointB", label = "Final timepoint of interest", max = length(tpoint) - 1)
 })
 
 observe({
@@ -531,7 +532,7 @@ final_t <- reactive({
 
 toxic <- reactive({
   req(input$toxicB)
-  as.numeric(input$toxicB)
+  input$toxicB
 })
 
 #Filter the data
@@ -631,11 +632,13 @@ output$graphB <- renderPlot({
 continuous_data <- reactive({
   if (input$dummy_continuous == FALSE) {
     req(input$upload_cts)
-      read.csv(input$upload_cts$datapath, header = TRUE, sep = ",")
+      data <- read.csv(input$upload_cts$datapath, header = TRUE, sep = ",")
+      data <- data %>% select(score, id, functioning, score, timepoint, dose)
+      data
         
   }
   else if (input$dummy_continuous == TRUE) {
-        read.csv("www/DummyData/dummy_continuous.csv", header = TRUE, sep = ",")
+        read.csv("www/DummyData/dummy_continuous.csv", header = TRUE, sep = ",")[,-1]
 }
 })
 #### Update the inputs
@@ -650,7 +653,7 @@ observe({
   req(input$upload_cts)
   data <- continuous_data()
   tpointC <- unique(data$timepoint)
-  updateSliderInput(session, "tpointC", label = "Final timepoint of interest", max = length(tpointC)-1)
+  updateSliderInput(session, "tpointC", label = "Final timepoint of interest", max = length(tpointC) - 1)
 })
 
 observe({
@@ -695,7 +698,7 @@ final_tC <- reactive({
 
 func_C <- reactive({
   req(input$functioningC)
-  as.numeric(input$functioningC)
+  input$functioningC
 })
 
 #### Data Filtering
@@ -815,7 +818,7 @@ final_tD <- reactive({
 
 func_D <- reactive({
   req(input$functioningD)
-  as.numeric(input$functioningD)
+  input$functioningD
 })
 
 #### ID specific UI
@@ -829,7 +832,7 @@ output$select_idD <- renderUI({
 
 idD <- reactive({
   req(input$select_idD)
-  as.numeric(input$select_idD)
+  input$select_idD
 })
 
 #### Filter data
@@ -926,7 +929,7 @@ final_tE <- reactive({
 
 func_E <- reactive({
     req(input$functioningE)
-    as.numeric(input$functioningE)
+    input$functioningE
 })
 
 #### Data Filtering
@@ -1012,13 +1015,15 @@ final_tF <- reactive({
 
 func_F <- reactive({
   req(input$functioningF)
-  as.numeric(input$functioningF)
+  as.character(input$functioningF)
 })
 
 ###Filter and sort data
 
 continuous_data_filteredF <- reactive({
-  filtered <- continuous_data() %>%
+  filtered <- continuous_data()
+  filtered$functioning <- as.character(filtered$functioning)
+  filtered <- filtered %>%
     filter(dose %in% no_doseF()) %>%
     filter(functioning %in% func_F()) %>%
     filter(timepoint %in% c(0, final_tF()))
@@ -1040,6 +1045,7 @@ ice_n_patF <- reactive({
 dfF <- reactive({
   finalT <- as.symbol(paste0("tp_", final_tF()))
   df <- continuous_data_filteredF() %>%
+    group_by(functioning) %>%
     pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_") %>%
     mutate(score = as.numeric(!!finalT - tp_0)) %>%
     dplyr::select(id, score, dose, functioning)
@@ -1148,7 +1154,7 @@ final_tG <- reactive({
 
 func_G <- reactive({
     req(input$functioningG)
-    as.numeric(input$functioningG)
+    input$functioningG
 })
 
 ####Filtering
@@ -1161,7 +1167,9 @@ no_patientG <- reactive({
 })
 
 continuous_data_filteredG <- reactive({
-  continuous_data_filtered <- continuous_data() %>%
+  continuous_data <- continuous_data()
+  continuous_data$functioning <- as.character(continuous_data$functioning)
+  continuous_data_filtered <- continuous_data %>%
   filter(dose %in% no_doseG()) %>%
   filter(functioning %in% func_G())
   continuous_data_filtered
@@ -1319,7 +1327,7 @@ times_H <- reactive({
 
 toxicH <- reactive({
   req(input$toxicH)
-  as.numeric(input$toxicH)
+ input$toxicH
 })
 
 
@@ -1554,7 +1562,7 @@ times_I <- reactive({
 
 toxicI <- reactive({
   req(input$toxicI)
-  as.numeric(input$toxicI)
+  input$toxicI
 })
 
 
