@@ -13,7 +13,7 @@ library(bslib)
 
 ui <- div(page_navbar(
   title = span(tags$img(src = "ICR_logo.png"), "OPTIMISE-AR"),
-  ############################################################################################# Information 
+  ############################################################################################# Information
   tabPanel("Overview", icon = icon("house"),
   h1("OPTIMISE-AR"),
   card(card_body(
@@ -52,6 +52,34 @@ ui <- div(page_navbar(
         ))))))),
   ####################################################################################################### Data Sorting + Upload
   tabPanel("Data", icon = icon("arrow-up-from-bracket"),
+  card(card_header(strong("How to format data")),
+  card_body(
+    p("Data must be input as a .csv file with column titles matching the listed below."),
+    p("Any columns not fitting the format will be ignored - if not all columns are provided, the app may not run."),
+    p("- If a patient doesn't report at a specific timepoint, do not enter any data."),
+    p("- If a patient partially responds to a questionnaire at a timepoint, enter all data and use NA in place of an unreported score or grade."),
+    p("For an example of data, you can toggle the dummy data on - please note to use your own data, the dummy dataset must be toggled off."),
+   layout_columns(
+    card(card_header(strong("Ordinal datasets")),
+    card_body(
+      p(strong("Required columns, {column name} and [input types]:")),
+      p("- Patient ID, {id}, [numeric]"),
+      p("- Toxicity type, {toxicity}, [numeric - looking to allow characters in new version]"),
+      p("- Grade of response, {grade}, [1,2,3,4,5]"),
+      p("- Timepoint of current report, {timepoint}, [numeric - must begin with timepoint 0]"),
+      p("- Dose Level, {dose}, [numeric]"),
+      p("- Final reported time by the patient, {time_last_report}, [numeric]"),
+    )),
+    card(card_header(strong("Continuous datasets")),
+    card_body(
+       p(strong("Required columns and input types:")),
+       p("- Patient ID, {id}, [numeric]"),
+       p("- Functionality characteristic, {functioning}, [numeric - looking to allow characters in new version]"),
+       p("- Score in the functionality category, {score}, [numeric]"),
+       p("- Timepoint of current report, {timepoint}, [numeric- must begin with timepoint 0]"),
+       p("- Dose Level, {dose}, [numeric]"),
+    ))
+  ))),
   page_sidebar(
     title = "Input data",
   sidebar = sidebar(
@@ -200,7 +228,7 @@ ui <- div(page_navbar(
 ################################################################################################################## description tab
       tabPanel("Description", tabName = "description", icon = icon("book"), h4("About this site"),
       layout_columns(
-      card(card_header("Background"),card_body(
+      card(card_header("Background"), card_body(
         p("Recently, there has been an increasing interest in the use of PRO data to supplement assessment of tolerability in early phase dose-finding trials."),
         p("However, there are no guidelines on how analysis should be conducted or what visualisations should be made."),
         p("This app aims to provide and easy to use platform to assist in analysis and visualisations using current recommended methods."))),
@@ -380,11 +408,11 @@ output$continuous_cons <- renderUI({
   ordinal_data <- reactive({
     if (input$dummy_ordinal == FALSE) {
       req(input$upload)
-        read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
+        read.csv(input$upload$datapath, header = TRUE, sep = ",")
           
     }
     else if (input$dummy_ordinal == TRUE) {
-          read.csv("www/DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")[, -1]
+          read.csv("www/DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")
 }
 })
 
@@ -595,11 +623,11 @@ output$graphB <- renderPlot({
 continuous_data <- reactive({
   if (input$dummy_continuous == FALSE) {
     req(input$upload_cts)
-      read.csv(input$upload_cts$datapath, header = TRUE, sep = ",")[, -1]
+      read.csv(input$upload_cts$datapath, header = TRUE, sep = ",")
         
   }
   else if (input$dummy_continuous == TRUE) {
-        read.csv("www/DummyData/dummy_continuous.csv", header = TRUE, sep = ",")[, -1]
+        read.csv("www/DummyData/dummy_continuous.csv", header = TRUE, sep = ",")
 }
 })
 #### Update the inputs
