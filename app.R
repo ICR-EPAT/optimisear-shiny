@@ -56,6 +56,7 @@ ui <- div(page_navbar(
   card_body(
     p("Data must be input as a .csv file with column titles matching the listed below."),
     p("The first column of data is ignored and can be left as a numbering value."),
+    p("For an example of data, you can toggle the dummy data on - please note to use your own data, the dummy dataset must be toggled off."),
    layout_columns(
     card(card_header("Ordinal datasets"),
     card_body(
@@ -397,11 +398,11 @@ output$continuous_cons <- renderUI({
   ordinal_data <- reactive({
     if (input$dummy_ordinal == FALSE) {
       req(input$upload)
-        read.csv(input$upload$datapath, header = TRUE, sep = ",")[, -1]
+        read.csv(input$upload$datapath, header = TRUE, sep = ",")
           
     }
     else if (input$dummy_ordinal == TRUE) {
-          read.csv("www/DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")[, -1]
+          read.csv("www/DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")
 }
 })
 
@@ -612,11 +613,11 @@ output$graphB <- renderPlot({
 continuous_data <- reactive({
   if (input$dummy_continuous == FALSE) {
     req(input$upload_cts)
-      read.csv(input$upload_cts$datapath, header = TRUE, sep = ",")[, -1]
+      read.csv(input$upload_cts$datapath, header = TRUE, sep = ",")
         
   }
   else if (input$dummy_continuous == TRUE) {
-        read.csv("www/DummyData/dummy_continuous.csv", header = TRUE, sep = ",")[, -1]
+        read.csv("www/DummyData/dummy_continuous.csv", header = TRUE, sep = ",")
 }
 })
 #### Update the inputs
