@@ -52,21 +52,27 @@ ui <- div(page_navbar(
         ))))))),
   ####################################################################################################### Data Sorting + Upload
   tabPanel("Data", icon = icon("arrow-up-from-bracket"),
-  card(card_header("How to format data"),
+  card(card_header(strong("How to format data")),
   card_body(
     p("Data must be input as a .csv file with column titles matching the listed below."),
-    p("The first column of data is ignored and can be left as a numbering value."),
+    p("Any columns not fitting the format will be ignored - if not all columns are provided, the app may not run."),
+    p("- If a patient doesn't report at a specific timepoint, do not enter any data."),
+    p("- If a patient partially responds to a questionnaire at a timepoint, enter all data and use NA in place of an unreported score or grade."),
     p("For an example of data, you can toggle the dummy data on - please note to use your own data, the dummy dataset must be toggled off."),
    layout_columns(
-    card(card_header("Ordinal datasets"),
+    card(card_header(strong("Ordinal datasets")),
     card_body(
-      h5("Required columns, {column name} and [input types]:"),
+      p(strong("Required columns, {column name} and [input types]:")),
+      p("- Patient ID, {id}, [numeric]"),
+      p("- Toxicity type, {toxicity}, [numeric - looking to allow characters in new version]"),
+      p("- Grade of response, {grade}, [1,2,3,4,5]"),
+      p("- Timepoint of current report, {timepoint}, [numeric - must begin with timepoint 0]"),
       p("- Dose Level, {dose}, [numeric]"),
-      p("- next (as a [datatype])"),
+      p("- Final reported time by the patient, {time_last_report}, [numeric]"),
     )),
-    card(card_header("Continuous datasets"),
+    card(card_header(strong("Continuous datasets")),
     card_body(
-       h5("Required columns and input types:"),
+       p(strong("Required columns and input types:")),
        p("- Dose Level, {dose}, [numeric]"),
     ))
   ))),
