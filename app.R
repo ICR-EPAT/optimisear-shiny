@@ -18,7 +18,15 @@ ui <- div(page_navbar(
   h1("OPTIMISE-AR"),
   card(card_body(
   h3("Work-flow"),
-  p("this section will be updated when there is a more clear workflow approach"))),
+  p("1. Identify the type of data  (Ordinal/Continuous)"),
+  p("2. Read about the graph choices on this page"),
+  p("3. Go to the data tab"),
+  p("- Read about how to format data"),
+  p("- Format data and upload OR select the dummy datasets"),
+  p("4. Select relevant graphs under the Ordinal or Continuous dropdown"),
+  p("5. Adjust the variables to suit your required outputs"),
+  p("6. Click download to export any relevant graphs as a .svg file")
+  )),
   card(card_body(
   h3("About the graphs"),
   page_navbar(
