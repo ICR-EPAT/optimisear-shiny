@@ -73,6 +73,10 @@ ui <- div(page_navbar(
     card(card_header(strong("Continuous datasets")),
     card_body(
        p(strong("Required columns and input types:")),
+       p("- Patient ID, {id}, [numeric]"),
+       p("- Functionality characteristic, {functioning}, [numeric - looking to allow characters in new version]"),
+       p("- Score in the functionality category, {score}, [numeric]"),
+       p("- Timepoint of current report, {timepoint}, [numeric- must begin with timepoint 0]"),
        p("- Dose Level, {dose}, [numeric]"),
     ))
   ))),
