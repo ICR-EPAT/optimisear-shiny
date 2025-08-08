@@ -143,6 +143,7 @@ ui <- div(page_navbar(
              id = "popB",
              placement = "right",
              textInput("titleB", label = NULL, placeholder = "Enter graph title"),
+             sliderInput("titlesizeB", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              actionButton("updateB", "Update")
           )), card_body(plotOutput("graphB")))
             )),
@@ -506,8 +507,9 @@ editA <- eventReactive(input$updateA,{
   list(title = input$titleA,
   titlesize = input$titlesizeA)
 })
-titleB <- eventReactive(input$updateB,{
-  input$titleB
+editB <- eventReactive(input$updateB,{
+  list(title = input$titleB,
+  titlesize = input$titlesizeB)
 })
 titleC <- eventReactive(input$updateC,{
   input$titleC
@@ -751,7 +753,7 @@ output$graphB <- renderPlot({
          y = "Proportion",
          fill = "Severity Grade")
           if (isTruthy(input$updateB)){
-                                  g + ggtitle(titleB())
+                                  g + ggtitle(editB()$title) + theme(plot.title = element_text(size = editB()$titlesize, face = "bold"))
                                 }
                                 else {
                                   g
