@@ -53,7 +53,7 @@ ui <- div(page_navbar(
         card_body(card_title("Disadvantages"), htmlOutput("ordinal_cons"))
         ))),
     nav_panel("Continuous", fillable = TRUE,
-    layout_columns(col_widths = c(9, 3), height = "800px",
+    layout_columns(col_widths = c(9, 3), height = "900px",
       card(card_header("Graph"), card_body(imageOutput("about_continuous", height = "800px")), full_screen = TRUE, fill = TRUE),
       card(card_header("Information"),
         card_body(card_title("About"), htmlOutput("continuous_information_about")),
@@ -272,7 +272,7 @@ about_continuous <- reactive({input$about_continuous})
 output$about_ordinal <- renderImage({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "GraphA"){
-    list(src = "www/GraphExamples/graphA.jpeg", height = "800px")
+    list(src = "www/GraphExamples/graphA.jpeg")
   }
   else if (about_ordinal == "GraphB") {
      list(src = "www/GraphExamples/graphB.jpeg", height = "800px")
@@ -291,16 +291,16 @@ output$about_continuous <- renderImage({
     list(src = "www/GraphExamples/graphC.jpeg")
   }
   else if (about_continuous == "GraphD") {
-     list(src = "www/GraphExamples/graphD.svg")
+     list(src = "www/GraphExamples/graphD.svg", height = "800px")
   }
   else if (about_continuous == "GraphE") {
-     list(src = "www/GraphExamples/graphE.svg")
+     list(src = "www/GraphExamples/graphE.svg", height = "800px")
   }
   else if (about_continuous == "GraphF") {
-    list(src = "www/GraphExamples/graphF.svg")
+    list(src = "www/GraphExamples/graphF.svg", height = "800px")
   }
   else if (about_continuous == "GraphG") {
-    list(src = "www/GraphExamples/graphG.svg")
+    list(src = "www/GraphExamples/graphG.svg", height = "800px")
   }
 }, deleteFile = FALSE)
 
