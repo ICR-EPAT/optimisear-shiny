@@ -28,10 +28,12 @@ ui <- div(page_navbar(
   p("6. Click download to export any relevant graphs as a .svg file")
   )),
   card(card_body(
-  h3("About the graphs"),
+  h3("About the graphs")),
+  card_body(
   page_navbar(
     title = "Select data type",
     id = "about",
+    fillable = TRUE,
     sidebar = sidebar(
       conditionalPanel(
         "input.about == 'Ordinal'",
@@ -42,17 +44,17 @@ ui <- div(page_navbar(
         radioButtons("about_continuous", label = NULL, choices = c("GraphC", "GraphD", "GraphE", "GraphF", "GraphG"))
       )
     ),
-    nav_panel("Ordinal",
-    layout_columns(col_widths = c(9, 3), fillable = TRUE, fill = TRUE,
-      card(card_header("Graph"), imageOutput("about_ordinal", width = "auto"), full_screen = TRUE, fill = TRUE),
-      card(card_header("Information"),
+    nav_panel("Ordinal", fillable = TRUE,
+    layout_columns(col_widths = c(9, 3), height = "900px",
+      card(card_header("Graph"), card_body(imageOutput("about_ordinal"), height = "800px"), full_screen = TRUE, fillable = TRUE),
+      card(card_header("Information"), fill = TRUE,
         card_body(card_title("About"), htmlOutput("ordinal_information_about")),
         card_body(card_title("Advantages"), htmlOutput("ordinal_pros")),
         card_body(card_title("Disadvantages"), htmlOutput("ordinal_cons"))
         ))),
-    nav_panel("Continuous",
-    layout_columns(col_widths = c(9, 3), fillable = TRUE, fill = TRUE,
-      card(card_header("Graph"), imageOutput("about_continuous", width = "auto"), full_screen = TRUE, fill = TRUE),
+    nav_panel("Continuous", fillable = TRUE,
+    layout_columns(col_widths = c(9, 3), height = "900px",
+      card(card_header("Graph"), card_body(imageOutput("about_continuous", height = "800px")), full_screen = TRUE, fill = TRUE),
       card(card_header("Information"),
         card_body(card_title("About"), htmlOutput("continuous_information_about")),
         card_body(card_title("Advantages"), htmlOutput("continuous_pros")),
@@ -160,7 +162,7 @@ ui <- div(page_navbar(
           card(card_header("Download .svg file"), card_body(downloadButton("downloadI")))),
           card(plotOutput("graphI"))
             ))),
-  navbarMenu("Continuous",############################################################################################################ C UI 
+  navbarMenu("Continuous",############################################################################################################ C UI
              tabPanel("GraphC", tabName = "GraphC", icon = icon("moon"),
              fluidRow(
           textOutput("textHeaderC")
@@ -176,7 +178,7 @@ ui <- div(page_navbar(
           ),
           card(plotOutput("graphC"))
             )),
-############################################################################################################ D UI 
+############################################################################################################ D UI
              tabPanel("GraphD", tabName = "GraphD", icon = icon("moon"), fluidRow(
           textOutput("textHeaderD")
         ),
@@ -190,7 +192,7 @@ ui <- div(page_navbar(
                     card(card_header("Download .svg file"), card_body(downloadButton("downloadD")))),
                     card(plotOutput("graphD"))
         )),
-############################################################################################################ E UI 
+############################################################################################################ E UI
               
              tabPanel("GraphE", tabName = "GraphE", icon = icon("moon"),  fluidRow(
           textOutput("textHeaderE")
@@ -273,13 +275,13 @@ output$about_ordinal <- renderImage({
     list(src = "www/GraphExamples/graphA.jpeg")
   }
   else if (about_ordinal == "GraphB") {
-     list(src = "www/GraphExamples/graphB.jpeg")
+     list(src = "www/GraphExamples/graphB.jpeg", height = "800px")
   }
   else if (about_ordinal == "GraphH") {
-     list(src = "www/GraphExamples/graphH.svg")
+     list(src = "www/GraphExamples/graphH.svg", height = "800px")
   }
   else if (about_ordinal == "GraphI") {
-     list(src = "www/GraphExamples/graphI.svg")
+     list(src = "www/GraphExamples/graphI.svg", height = "800px")
   }
 }, deleteFile = FALSE)
 
@@ -289,16 +291,16 @@ output$about_continuous <- renderImage({
     list(src = "www/GraphExamples/graphC.jpeg")
   }
   else if (about_continuous == "GraphD") {
-     list(src = "www/GraphExamples/graphD.svg")
+     list(src = "www/GraphExamples/graphD.svg", height = "800px")
   }
   else if (about_continuous == "GraphE") {
-     list(src = "www/GraphExamples/graphE.svg")
+     list(src = "www/GraphExamples/graphE.svg", height = "800px")
   }
   else if (about_continuous == "GraphF") {
-    list(src = "www/GraphExamples/graphF.svg")
+    list(src = "www/GraphExamples/graphF.svg", height = "800px")
   }
   else if (about_continuous == "GraphG") {
-    list(src = "www/GraphExamples/graphG.svg")
+    list(src = "www/GraphExamples/graphG.svg", height = "800px")
   }
 }, deleteFile = FALSE)
 
