@@ -169,6 +169,7 @@ ui <- div(page_navbar(
              id = "popH",
              placement = "right",
              textInput("titleH", label = NULL, placeholder = "Enter graph title"),
+             sliderInput("titlesizeH", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("subtitleH", label = NULL, placeholder = "Enter subgraph label"),
              actionButton("updateH", "Update")
           )), card_body(plotOutput("graphH")))
@@ -526,8 +527,10 @@ titleF <- eventReactive(input$updateF,{
 titleG <- eventReactive(input$updateG,{
   input$titleG
 })
-titleH <- eventReactive(input$updateH,{
-  input$titleH
+editH <- eventReactive(input$updateH,{
+  list(title = input$titleH,
+  titlesize = input$titlesizeH,
+  subtitle = input$subtitleH)
 })
 titleI <- eventReactive(input$updateI,{
   input$titleI
@@ -1625,14 +1628,54 @@ output$graphH <- renderPlot({
   valH <- valH()
   arrowdfH <- arrowdfH()
   arrowdf.revH <- arrowdf.revH()
-  formatterH <- function(toxic = toxic) {paste0("Symptomatic Adverse Event ", toxic)}
   g <- ggplot(valH %>% subset(toxicity %in% toxic), aes(x = dose, y = proportion, fill = grade_change, group = dose)) +
     geom_bar(stat = "identity", position = "stack") +
     coord_flip() +
     scale_y_continuous(labels = abs, breaks = c(0), limits = c(-1, 1)) +
     theme_minimal(base_size = 15) +
     theme(
-          strip.text.y = element_text(angle = 0)) +
+          strip.text.y = element_text(angle = 0))
+
+        if (isTruthy(input$updateH)){
+          formatterH <- function(toxic = toxic) {paste(editH()$subtitle, toxic, sep = " ")}
+                                  g + facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterH)) + #ylim(c(-1, 1)) +
+      scale_fill_manual(breaks = labels[,1],
+                    values=labels[,2],
+                    labels=labels[,3])+
+    geom_text(aes(y = pos, label = percent), size = 3, color = "black") +
+    labs(x = paste0("Dose (N=", paste(ice_n_patH()$n.pat, collapse = "; "), ")"),
+         y = "Percentage (%)",
+         fill = "Change in Severity ") +
+    # scale_y_continuous(breaks = c(0), limits = c(-1, 1)) +
+    geom_hline(yintercept = 0, color = "grey", size = 1) +
+    geom_segment(data = arrowdfH,
+                 aes(x = x, xend = xend, y = y, yend = yend),
+                 colour = "darkgrey",
+                 size = 0.8,
+                 arrow = arrow(type = "closed", length = unit(0.1, "inches")),
+                 inherit.aes = FALSE) +
+    scale_x_discrete(expand = expansion(mult = c(1.5, 0))) +
+    geom_segment(data = arrowdf.revH,
+                 aes(x = x, xend = xend, y = y, yend = yend),
+                 colour = "darkgrey",
+                 size = 0.8,
+                 arrow = arrow(type = "closed", length = unit(0.1, "inches")),
+                 inherit.aes = FALSE) +
+    geom_text(data = data.frame(x = -0.25, y = 0.5, label = "Improvement"), aes(x = x, y = y, label = label),
+              inherit.aes = FALSE) +
+    geom_text(data = data.frame(x = -0.25, y = -0.5, label = "Worsening"),
+    aes(x = x, y = y, label = label),
+              inherit.aes = FALSE) +
+    geom_text(
+      data = missing_H() %>% filter(toxicity %in% toxic),
+      aes(x = dose, y = loc, label = label, group = dose),  # 'toxicity' must also be in 'missing'
+      inherit.aes = FALSE,
+      vjust = -0.5
+    ) + ggtitle(editH()$title) + theme(plot.title = element_text(size = editH()$titlesize, face = "bold"))
+                                }
+                                else {
+                                  formatterH <- function(toxic = toxic) {paste0("Symptomatic Adverse Event ", toxic)}
+                                  g +
     facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterH)) + #ylim(c(-1, 1)) +
       scale_fill_manual(breaks = labels[,1],
                     values=labels[,2],
@@ -1667,11 +1710,6 @@ output$graphH <- renderPlot({
       inherit.aes = FALSE,
       vjust = -0.5
     )
-        if (isTruthy(input$updateH)){
-                                  g + ggtitle(titleH())
-                                }
-                                else {
-                                  g
                                 }
 })
 ################################################################################################## Graph I 
