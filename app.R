@@ -221,6 +221,7 @@ ui <- div(page_navbar(
              id = "popC",
              placement = "right",
              textInput("titleC", label = NULL, placeholder = "Enter graph title"),
+             sliderInput("titlesizeC", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_C", label = NULL, placeholder = "Enter y-axis label"),
              sliderInput("improveC", label = "Start and endpoint for improvement", min = 0, max = 100, value = c(10, 30), step = 5),
              sliderInput("worseC", label = "Start and endpoint for worsening", min = -100, max = 0, value = c(-30, -10), step = 5),
@@ -248,6 +249,7 @@ ui <- div(page_navbar(
              id = "popD",
              placement = "right",
              textInput("titleD", label = NULL, placeholder = "Enter graph title"),
+             sliderInput("titlesizeD", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_D", label = NULL, placeholder = "Enter y-axis label"),
              sliderInput("rangeD", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
              actionButton("updateD", "Update")
@@ -272,6 +274,7 @@ ui <- div(page_navbar(
              id = "popE",
              placement = "right",
              textInput("titleE", label = NULL, placeholder = "Enter graph title"),
+             sliderInput("titlesizeE", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_E", label = NULL, placeholder = "Enter y-axis label"),
              sliderInput("rangeE", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
              actionButton("updateE", "Update")
@@ -319,6 +322,7 @@ ui <- div(page_navbar(
              id = "popG",
              placement = "right",
              textInput("titleG", label = NULL, placeholder = "Enter graph title"),
+             sliderInput("titlesizeG", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_G", label = NULL, placeholder = "Enter y-axis label"),
              sliderInput("improveG", label = "Start and endpoint for improvement", min = 0, max = 100, value = c(10, 30), step = 5),
              sliderInput("worseG", label = "Start and endpoint for worsening", min = -100, max = 0, value = c(-30, -10), step = 5),
@@ -513,20 +517,24 @@ editB <- eventReactive(input$updateB,{
   list(title = input$titleB,
   titlesize = input$titlesizeB)
 })
-titleC <- eventReactive(input$updateC,{
-  input$titleC
+editC <- eventReactive(input$updateC,{
+  list(title = input$titleC,
+  titlesize = input$titlesizeC)
 })
-titleD <- eventReactive(input$updateD,{
-  input$titleD
+editD <- eventReactive(input$updateD,{
+  list(title = input$titleD,
+  titlesize = input$titlesizeD)
 })
-titleE <- eventReactive(input$updateE,{
-  input$titleE
+editE <- eventReactive(input$updateE,{
+ list(title = input$titleE,
+  titlesize = input$titlesizeE)
 })
 titleF <- eventReactive(input$updateF,{
   input$titleF
 })
-titleG <- eventReactive(input$updateG,{
-  input$titleG
+editG <- eventReactive(input$updateG,{
+  list(title = input$titleG,
+  titlesize = input$titlesizeG)
 })
 editH <- eventReactive(input$updateH,{
   list(title = input$titleH,
@@ -901,7 +909,7 @@ output$graphC <- renderPlot({
     geom_text(data = data.frame(x = 1.6, y = -17, label = "Worsening"), aes(x = x, y = y, label = label),
               inherit.aes = FALSE)
                if (isTruthy(input$updateC)){
-                                  g + ggtitle(titleC())
+                                  g + ggtitle(editC()$title) + theme(plot.title = element_text(size = editC()$titlesize, face = "bold"))
                                 }
                                 else {
                                   g
@@ -1014,7 +1022,7 @@ output$graphD <- renderPlot({
         x = "Timepoint",
         color = "Patient (Dose)")
          if (isTruthy(input$updateD)){
-                                  g + ggtitle(titleD())
+                                  g + ggtitle(editD()$title) + theme(plot.title = element_text(size = editD()$titlesize, face = "bold"))
                                 }
                                 else {
                                   g
@@ -1108,7 +1116,7 @@ output$graphE <- renderPlot({
     scale_x_discrete(expand = expansion(add = c(2, 0))) +
     geom_text(aes(x = -0.45, y = 90, label = "Better \n tolerability"))
      if (isTruthy(input$updateE)){
-                                  g + ggtitle(titleE())
+                                  g + ggtitle(editE()$title) + theme(plot.title = element_text(size = editE()$titlesize, face = "bold"))
                                 }
                                 else {
                                   g
@@ -1431,7 +1439,7 @@ output$graphG <- renderPlot({
    geom_text(data = arrowdf, aes(x = 2, y = -22, label = "Worsening"),
               inherit.aes = FALSE)
       if (isTruthy(input$updateG)){
-                                  g + ggtitle(titleG())
+                                  g + ggtitle(editG()$title) + theme(plot.title = element_text(size = editG()$titlesize, face = "bold"))
                                 }
                                 else {
                                   g
