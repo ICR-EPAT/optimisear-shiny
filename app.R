@@ -219,7 +219,7 @@ ui <- div(page_navbar(
              textInput("titleC", label = NULL, placeholder = "Enter graph title"),
              textInput("ylab_C", label = NULL, placeholder = "Enter y-axis label"),
              sliderInput("improveC", label = "Start and endpoint for improvement", min = 0, max = 100, value = c(10, 30), step = 5),
-             sliderInput("worseC", label = "Start and endpoint for worsening", min = -100, max = 0, value = c(-10, 30), step = 5),
+             sliderInput("worseC", label = "Start and endpoint for worsening", min = -100, max = 0, value = c(-30, -10), step = 5),
              sliderInput("impTextC", label = "Position of Improvement text", min = 0, max = 100, value = 18, step = 2),
              sliderInput("worTextC", label = "Position of Worsening text", min = -100, max = 0, value = -18, step = 2),
              actionButton("updateC", "Update")
@@ -317,7 +317,7 @@ ui <- div(page_navbar(
              textInput("titleG", label = NULL, placeholder = "Enter graph title"),
              textInput("ylab_G", label = NULL, placeholder = "Enter y-axis label"),
              sliderInput("improveG", label = "Start and endpoint for improvement", min = 0, max = 100, value = c(10, 30), step = 5),
-             sliderInput("worseG", label = "Start and endpoint for worsening", min = -100, max = 0, value = c(-10, 30), step = 5),
+             sliderInput("worseG", label = "Start and endpoint for worsening", min = -100, max = 0, value = c(-30, -10), step = 5),
              sliderInput("impTextG", label = "Position of Improvement text", min = 0, max = 100, value = 18, step = 2),
              sliderInput("worTextG", label = "Position of Worsening text", min = -100, max = 0, value = -18, step = 2),
              actionButton("updateG", "Update")
@@ -499,8 +499,35 @@ output$continuous_cons <- renderUI({
     HTML("G <br> -con 1 <br> -con 2 <br> -con 3")
   }
 })
+################################################################################################################ Server side for graph editors
 
-
+titleA <- eventReactive(input$updateA,{
+  input$titleA
+})
+titleB <- eventReactive(input$updateB,{
+  input$titleB
+})
+titleC <- eventReactive(input$updateC,{
+  input$titleC
+})
+titleD <- eventReactive(input$updateD,{
+  input$titleD
+})
+titleE <- eventReactive(input$updateE,{
+  input$titleE
+})
+titleF <- eventReactive(input$updateF,{
+  input$titleF
+})
+titleG <- eventReactive(input$updateG,{
+  input$titleG
+})
+titleH <- eventReactive(input$updateH,{
+  input$titleH
+})
+titleI <- eventReactive(input$updateI,{
+  input$titleI
+})
 #############################################################################################################Graph A
   #Import the data
   ordinal_data <- reactive({
@@ -558,11 +585,17 @@ output$continuous_table <- renderTable(continuous_data())
                           summary_df})
 
   output$graphA <- renderPlot({
-                               survfit2(Surv(time, event) ~ dose, data = summary_df()) %>%
+                               g <- survfit2(Surv(time, event) ~ dose, data = summary_df()) %>%
                                  ggsurvfit(linewidth = 1.5) +
                                  add_censor_mark() +
                                  add_confidence_interval() +
-                                 scale_ggsurvfit() + add_risktable()})
+                                 scale_ggsurvfit() + add_risktable()
+                                if (isTruthy(input$updateA)){
+                                  g + ggtitle(titleA())
+                                }
+                                else {
+                                  g
+                                }})
 
 ################################################ graph B
 
@@ -694,7 +727,7 @@ output$graphB <- renderPlot({
   no_dose <- no_doseb()
   no_patient <- no_patient()
   formatter <- function(no_dose, no_pat = no_patient) { paste0("Dose level ", no_dose, " (N=", no_pat, ")")}
-  prop %>% filter(toxicity == toxic()) %>% ggplot(aes(x = as.factor(timepoint))) +
+  g <- prop %>% filter(toxicity == toxic()) %>% ggplot(aes(x = as.factor(timepoint))) +
     geom_bar(aes(x = as.factor(timepoint),
                  y = proportion,
                  fill = as.factor(grade)),
@@ -715,6 +748,12 @@ output$graphB <- renderPlot({
     labs(x = "Timepoint",
          y = "Proportion",
          fill = "Severity Grade")
+          if (isTruthy(input$updateB)){
+                                  g + ggtitle(titleB())
+                                }
+                                else {
+                                  g
+                                }
 })
 
 ################################################################################## GRAPH C
@@ -764,7 +803,7 @@ observe({
   req(input$dummy_continuous)
   data <- continuous_data()
   tpointC <- unique(data$timepoint)
-  updateSliderInput(session, "tpointC", label = "Final timepoint of interest", max = length(tpointC)-1)
+  updateSliderInput(session, "tpointC", label = "Final timepoint of interest", max = length(tpointC) - 1)
 })
 
 observe({
@@ -823,7 +862,7 @@ pd <- position_dodge(width = 0.2)
 
 #### FIGURE GENERATION
 output$graphC <- renderPlot({
-  summaryC() %>%
+  g <- summaryC() %>%
     ggplot(
            aes(x = as.factor(timepoint),
                y = mean, group = as.factor(dose), shape = as.factor(dose), colour = as.factor(dose))) +
@@ -851,6 +890,12 @@ output$graphC <- renderPlot({
               inherit.aes = FALSE) +
     geom_text(data = data.frame(x = 1.6, y = -17, label = "Worsening"), aes(x = x, y = y, label = label),
               inherit.aes = FALSE)
+               if (isTruthy(input$updateC)){
+                                  g + ggtitle(titleC())
+                                }
+                                else {
+                                  g
+                                }
 })
 ############################################################################################# GRAPH D
 observe({
@@ -948,7 +993,7 @@ labels_D <- reactive({
 output$graphD <- renderPlot({
   data <- continuous_data_filteredD()
   data$dose <- as.factor(data$dose)
-  ggplot(data = data, aes(x = as.factor(timepoint),
+  g <- ggplot(data = data, aes(x = as.factor(timepoint),
                           y = score, group = id, colour = labels_D(), linetype = dose)) +
       geom_line(size = 0.9) +
       labs(linetype = "Dose") +
@@ -958,6 +1003,12 @@ output$graphD <- renderPlot({
         y = paste0("Score in functionality ", func_D()),
         x = "Timepoint",
         color = "Patient (Dose)")
+         if (isTruthy(input$updateD)){
+                                  g + ggtitle(titleD())
+                                }
+                                else {
+                                  g
+                                }
 })
 
 
@@ -1036,7 +1087,7 @@ data_E <- reactive({
 
 output$graphE <- renderPlot({
   continuous_data <- data_E()
-  ggplot(continuous_data, aes(x = as.factor(timepoint), y = score, fill = as.factor(dose))) +
+  g <- ggplot(continuous_data, aes(x = as.factor(timepoint), y = score, fill = as.factor(dose))) +
     labs(fill = "Dose level") +
     geom_boxplot() +
     theme_minimal(base_size = 14) +
@@ -1046,6 +1097,12 @@ output$graphE <- renderPlot({
                                                                 length = unit(0.1, "inches"))) + ylim(c(0, 100)) +
     scale_x_discrete(expand = expansion(add = c(2, 0))) +
     geom_text(aes(x = -0.45, y = 90, label = "Better \n tolerability"))
+     if (isTruthy(input$updateE)){
+                                  g + ggtitle(titleE())
+                                }
+                                else {
+                                  g
+                                }
 })
 ############################################################## Graph F
 
@@ -1167,7 +1224,6 @@ sum.df.widerF <- reactive({
 
 sum.df.wider.gtF <- reactive({
   sum.df.wider.gt <- sum.df.widerF() %>% gt() %>%
-  tab_header(title = paste0("Change from baseline to timepoint ", final_tF())) %>%
    tab_stubhead(label = "Functioning")
    for (i in unique(sum.dfF()$dose)){
       sum.df.wider.gt <- sum.df.wider.gt %>%
@@ -1177,7 +1233,12 @@ sum.df.wider.gtF <- reactive({
                                                         starts_with("non_na_count") ~ "Number Reported")
 }
   sum.df.wider.gt <- sum.df.wider.gt %>% opt_stylize(style = 5, color = "blue")
-  sum.df.wider.gt
+   if (isTruthy(input$updateF)){
+                                  sum.df.wider.gt %>% tab_header(title = paste0(titleF()))
+                                }
+                                else {
+                                  sum.df.wider.gt
+                                }
 })
 
 
@@ -1330,7 +1391,7 @@ output$graphG <- renderPlot({
   no_patient <- unlist(no_patientG()[2])
   no_patient <- paste(no_patient, collapse = ";")
   formatterG <- function(end = end_t) {paste0("Functioning ", func_G())}
-  data.frame(sum.dfG()) %>% ggplot(aes(x = custom_x, y = mean, colour = as.factor(dose))) +
+  g <- data.frame(sum.dfG()) %>% ggplot(aes(x = custom_x, y = mean, colour = as.factor(dose))) +
   geom_point(size = 3) +
   scale_color_discrete(name = "Dose level") +
   geom_errorbar(aes(ymin = l.ci, ymax = u.ci), width = 0.2, size = 1.2) +
@@ -1359,6 +1420,13 @@ output$graphG <- renderPlot({
               inherit.aes = FALSE) +
    geom_text(data = arrowdf, aes(x = 2, y = -22, label = "Worsening"),
               inherit.aes = FALSE)
+      if (isTruthy(input$updateG)){
+                                  g + ggtitle(titleG())
+                                }
+                                else {
+                                  g
+                                }
+        
 })
 
 ################################################################################ Graph H
@@ -1554,7 +1622,7 @@ output$graphH <- renderPlot({
   arrowdfH <- arrowdfH()
   arrowdf.revH <- arrowdf.revH()
   formatterH <- function(toxic = toxic) {paste0("Symptomatic Adverse Event ", toxic)}
-  ggplot(valH %>% subset(toxicity %in% toxic), aes(x = dose, y = proportion, fill = grade_change, group = dose)) +
+  g <- ggplot(valH %>% subset(toxicity %in% toxic), aes(x = dose, y = proportion, fill = grade_change, group = dose)) +
     geom_bar(stat = "identity", position = "stack") +
     coord_flip() +
     scale_y_continuous(labels = abs, breaks = c(0), limits = c(-1, 1)) +
@@ -1595,6 +1663,12 @@ output$graphH <- renderPlot({
       inherit.aes = FALSE,
       vjust = -0.5
     )
+        if (isTruthy(input$updateH)){
+                                  g + ggtitle(titleH())
+                                }
+                                else {
+                                  g
+                                }
 })
 ################################################################################################## Graph I 
 #Update the selection boxes based on dataset
@@ -1714,7 +1788,7 @@ output$graphI <- renderPlot({
   formatterI <- function(SAE = toxicI()) {
     paste0("Symptomatic adverse event ", SAE)
   }
-  propI() %>% ggplot(aes(fill = base_adj, x = dose, y = proportion * 100)) +
+  g <- propI() %>% ggplot(aes(fill = base_adj, x = dose, y = proportion * 100)) +
     geom_bar(position = "stack", stat = "identity") + coord_flip() +
     facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterI)) +
     scale_fill_manual(breaks = rev(c(1:5, "Unreported")),
@@ -1726,6 +1800,12 @@ output$graphI <- renderPlot({
           fill = "Severity Grade") +
     theme(
           strip.text.y = element_text(angle = 0))
+              if (isTruthy(input$updateI)){
+                                  g + ggtitle(titleI())
+                                }
+                                else {
+                                  g
+                                }
 })
 ##########################################################Download buttons 
 output$downloadA <- downloadHandler(
@@ -1800,6 +1880,5 @@ output$downloadI <- downloadHandler(
     ggsave(file, plot = last_plot(), device = "svg")
   }
 )
-####################################### Graph re-labelling UI
 }
 shinyApp(ui, server)
