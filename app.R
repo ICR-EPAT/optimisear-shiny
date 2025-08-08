@@ -117,7 +117,7 @@ ui <- div(page_navbar(
              title = "Graph Editor",
              id = "popA",
              placement = "right",
-             textInput("titleA", "Enter graph title"),
+             textInput("titleA", label = NULL, placeholder = "Enter graph title"),
              actionButton("updateA", "Update")
           )), card_body(plotOutput("graphA")))
           )),
@@ -132,10 +132,18 @@ ui <- div(page_navbar(
                     checkboxGroupInput("numdoseB", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-                    selectInput("toxicB", label = "Toxicity of interest", choices = NULL ))
+                    selectInput("toxicB", label = "Toxicity of interest", choices = NULL))
           ), card(card_header("Download .svg file"), card_body(downloadButton("downloadB"))))
           ,
-          card(plotOutput("graphB"))
+          card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("editB", "Edit", value = FALSE, icon = icon("pencil-square")),
+             title = "Graph Editor",
+             id = "popB",
+             placement = "right",
+             textInput("titleB", label = NULL, placeholder = "Enter graph title"),
+             actionButton("updateB", "Update")
+          )), card_body(plotOutput("graphB")))
             )),
 ############################################################################################################ H UI
          
@@ -152,7 +160,16 @@ ui <- div(page_navbar(
                     checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL , inline = TRUE)
           )), 
           card(card_header("Download .svg file"), card_body(downloadButton("downloadH")))),
-          card(plotOutput("graphH"))
+          card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("editH", "Edit", value = FALSE, icon = icon("pencil-square")),
+             title = "Graph Editor",
+             id = "popH",
+             placement = "right",
+             textInput("titleH", label = NULL, placeholder = "Enter graph title"),
+             textInput("subtitleH", label = NULL, placeholder = "Enter subgraph label"),
+             actionButton("updateH", "Update")
+          )), card_body(plotOutput("graphH")))
             )),
 ############################################################################################################ I UI
             tabPanel("GraphI", tabName = "GraphI", icon = icon("sun"),
@@ -168,7 +185,16 @@ ui <- div(page_navbar(
                     checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE))
           ), 
           card(card_header("Download .svg file"), card_body(downloadButton("downloadI")))),
-          card(plotOutput("graphI"))
+          card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("editI", "Edit", value = FALSE, icon = icon("pencil-square")),
+             title = "Graph Editor",
+             id = "popI",
+             placement = "right",
+             textInput("titleI", label = NULL, placeholder = "Enter graph title"),
+             textInput("subtitleI", label = NULL, placeholder = "Enter subgraph label"),
+             actionButton("updateI", "Update")
+          )), card_body(plotOutput("graphI")))
             ))),
   navbarMenu("Continuous",############################################################################################################ C UI
              tabPanel("GraphC", tabName = "GraphC", icon = icon("moon"),
@@ -184,7 +210,20 @@ ui <- div(page_navbar(
                    selectInput("functioningC", label = "Functioning of interest", choices = NULL ))), 
                    card(card_header("Download .svg file"), card_body(downloadButton("downloadC")))
           ),
-          card(plotOutput("graphC"))
+          card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("editC", "Edit", value = FALSE, icon = icon("pencil-square")),
+             title = "Graph Editor",
+             id = "popC",
+             placement = "right",
+             textInput("titleC", label = NULL, placeholder = "Enter graph title"),
+             textInput("ylab_C", label = NULL, placeholder = "Enter y-axis label"),
+             sliderInput("improveC", label = "Start and endpoint for improvement", min = 0, max = 100, value = c(10, 30), step = 5),
+             sliderInput("worseC", label = "Start and endpoint for worsening", min = -100, max = 0, value = c(-10, 30), step = 5),
+             sliderInput("impTextC", label = "Position of Improvement text", min = 0, max = 100, value = 18, step = 2),
+             sliderInput("worTextC", label = "Position of Worsening text", min = -100, max = 0, value = -18, step = 2),
+             actionButton("updateC", "Update")
+          )), card_body(plotOutput("graphC")))
             )),
 ############################################################################################################ D UI
              tabPanel("GraphD", tabName = "GraphD", icon = icon("moon"), fluidRow(
@@ -198,7 +237,17 @@ ui <- div(page_navbar(
                     uiOutput("select_idD"),
                     selectInput("functioningD", label = "Functioning of interest", choices = NULL))),
                     card(card_header("Download .svg file"), card_body(downloadButton("downloadD")))),
-                    card(plotOutput("graphD"))
+                    card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("editD", "Edit", value = FALSE, icon = icon("pencil-square")),
+             title = "Graph Editor",
+             id = "popD",
+             placement = "right",
+             textInput("titleD", label = NULL, placeholder = "Enter graph title"),
+             textInput("ylab_D", label = NULL, placeholder = "Enter y-axis label"),
+             sliderInput("rangeD", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
+             actionButton("updateD", "Update")
+          )), card_body(plotOutput("graphD")))
         )),
 ############################################################################################################ E UI
               
@@ -210,9 +259,19 @@ ui <- div(page_navbar(
           card(card_header("Variables"), card_body(
             checkboxGroupInput("numdoseE", label = "Dosage", selected = NULL, inline = TRUE),
             sliderInput("tpointE", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-            selectInput("functioningE", label = "Functioning of interest", choices = NULL ))),
+            selectInput("functioningE", label = "Functioning of interest", choices = NULL))),
             card(card_header("Download .svg file"), card_body(downloadButton("downloadE")))),
-            card(plotOutput("graphE"))
+            card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("editE", "Edit", value = FALSE, icon = icon("pencil-square")),
+             title = "Graph Editor",
+             id = "popE",
+             placement = "right",
+             textInput("titleE", label = NULL, placeholder = "Enter graph title"),
+             textInput("ylab_E", label = NULL, placeholder = "Enter y-axis label"),
+             sliderInput("rangeE", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
+             actionButton("updateE", "Update")
+          )), card_body(plotOutput("graphE")))
         )),
 ############################################################################################################ F UI
            tabPanel("GraphF", tabName = "GraphF", icon = icon("moon"),     fluidRow(
@@ -226,7 +285,15 @@ ui <- div(page_navbar(
           sliderInput("tpointF", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
           checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE))),
           card(card_header("Download .svg file"), card_body(downloadButton("downloadF")))),
-           card(gt_output("graphF"))
+           card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("editF", "Edit", value = FALSE, icon = icon("pencil-square")),
+             title = "Graph Editor",
+             id = "popB",
+             placement = "right",
+             textInput("titleF", label = NULL, placeholder = "Enter table title"),
+             actionButton("updateF", "Update")
+          )), card_body(gt_output("graphF")))
            )),
            ############################################################################################################ G UI 
     
@@ -241,7 +308,20 @@ ui <- div(page_navbar(
           sliderInput("tpointG", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
           checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE))),
           card(card_header("Download .svg file"), card_body(downloadButton("downloadG")))),
-          card(plotOutput("graphG"))
+          card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("editG", "Edit", value = FALSE, icon = icon("pencil-square")),
+             title = "Graph Editor",
+             id = "popG",
+             placement = "right",
+             textInput("titleG", label = NULL, placeholder = "Enter graph title"),
+             textInput("ylab_G", label = NULL, placeholder = "Enter y-axis label"),
+             sliderInput("improveG", label = "Start and endpoint for improvement", min = 0, max = 100, value = c(10, 30), step = 5),
+             sliderInput("worseG", label = "Start and endpoint for worsening", min = -100, max = 0, value = c(-10, 30), step = 5),
+             sliderInput("impTextG", label = "Position of Improvement text", min = 0, max = 100, value = 18, step = 2),
+             sliderInput("worTextG", label = "Position of Worsening text", min = -100, max = 0, value = -18, step = 2),
+             actionButton("updateG", "Update")
+          )), card_body(plotOutput("graphG")))
       ))),
 ################################################################################################################## description tab
       tabPanel("Description", tabName = "description", icon = icon("book"), h4("About this site"),
@@ -255,7 +335,7 @@ ui <- div(page_navbar(
         p("Authors: George Knight, Emily Alger, Karrar Shareiyat"),
         p("Maintainers: Rachel Alcraft, ICR Scientific Computing"))))),
 ################################################################################################################## Version history
-      tabPanel("Version History", tabName = "history", icon = icon("history"), 
+      tabPanel("Version History", tabName = "history", icon = icon("history"),
       card(card_header("Versions"),
       card_body(p("v1.0 - Internal ICR release 06/08/2025")))), bg = "DarkSeaGreen"))
 
@@ -271,7 +351,7 @@ server <- function(input, output, session) {
   output$textHeaderG <- renderText({"Mean change in functionalities plot"})
   output$textHeaderH <- renderText({"Butterfly plot"})
   output$textHeaderI <- renderText({"Toxicity % plot"})
-  ############################################################################################Overview page 
+  ############################################################################################Overview page
 about_ordinal <- reactive({input$about_ordinal})
 about_continuous <- reactive({input$about_continuous})
 
