@@ -111,7 +111,15 @@ ui <- div(page_navbar(
           card(card_header("Variables"), card_body(checkboxGroupInput("numdose", label = "Dosage",
                                                  selected = NULL, inline = TRUE)))
                , card(card_header("Download .svg file"), card_body(downloadButton("downloadA")))),
-          card(plotOutput("graphA"))
+          card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("editA", "Edit", value = FALSE, icon = icon("pencil-square")),
+             title = "Graph Editor",
+             id = "popA",
+             placement = "right",
+             textInput("titleA", "Enter graph title"),
+             actionButton("updateA", "Update")
+          )), card_body(plotOutput("graphA")))
           )),
   ############################################################################################################ B UI
             tabPanel("GraphB", tabName = "GraphB", icon = icon("sun"),
@@ -1712,5 +1720,6 @@ output$downloadI <- downloadHandler(
     ggsave(file, plot = last_plot(), device = "svg")
   }
 )
+####################################### Graph re-labelling UI
 }
 shinyApp(ui, server)
