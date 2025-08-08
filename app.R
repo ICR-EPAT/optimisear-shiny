@@ -195,6 +195,7 @@ ui <- div(page_navbar(
              id = "popI",
              placement = "right",
              textInput("titleI", label = NULL, placeholder = "Enter graph title"),
+             sliderInput("titlesizeI", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("subtitleI", label = NULL, placeholder = "Enter subgraph label"),
              actionButton("updateI", "Update")
           )), card_body(plotOutput("graphI")))
@@ -532,8 +533,10 @@ editH <- eventReactive(input$updateH,{
   titlesize = input$titlesizeH,
   subtitle = input$subtitleH)
 })
-titleI <- eventReactive(input$updateI,{
-  input$titleI
+editI <- eventReactive(input$updateI,{
+    list(title = input$titleI,
+  titlesize = input$titlesizeI,
+  subtitle = input$subtitleI)
 })
 #############################################################################################################Graph A
   #Import the data
@@ -1827,11 +1830,26 @@ ice_n_patI <- reactive({
 
 #Final figure
 output$graphI <- renderPlot({
-  formatterI <- function(SAE = toxicI()) {
-    paste0("Symptomatic adverse event ", SAE)
-  }
   g <- propI() %>% ggplot(aes(fill = base_adj, x = dose, y = proportion * 100)) +
-    geom_bar(position = "stack", stat = "identity") + coord_flip() +
+    geom_bar(position = "stack", stat = "identity") + coord_flip()
+              if (isTruthy(input$updateI)){
+                formatterI <- function(SAE = toxicI()) {paste(editI()$subtitle, SAE, sep = " ")}
+                                  g +
+    facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterI)) +
+    scale_fill_manual(breaks = rev(c(1:5, "Unreported")),
+                      values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "darkgrey")),
+                      labels = rev(c("None", "Mild", "Moderate", "Severe", "Very Severe", "Unreported")),
+                      guide = guide_legend(reverse = TRUE)) +
+    labs(x = paste0("Dose (N=", paste(ice_n_patI()$n.pat, collapse = "; "), ")"),
+          y = "Percentage (%)",
+          fill = "Severity Grade") +
+    theme(
+          strip.text.y = element_text(angle = 0)) +
+                                  ggtitle(editI()$title) + theme(plot.title = element_text(size = editI()$titlesize, face = "bold"))
+                                }
+                                else {
+                                  formatterI <- function(SAE = toxicI()) {paste0("Symptomatic adverse event ", SAE)}
+                                  g +
     facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterI)) +
     scale_fill_manual(breaks = rev(c(1:5, "Unreported")),
                       values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "darkgrey")),
@@ -1842,11 +1860,6 @@ output$graphI <- renderPlot({
           fill = "Severity Grade") +
     theme(
           strip.text.y = element_text(angle = 0))
-              if (isTruthy(input$updateI)){
-                                  g + ggtitle(titleI())
-                                }
-                                else {
-                                  g
                                 }
 })
 ##########################################################Download buttons 
