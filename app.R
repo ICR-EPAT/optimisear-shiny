@@ -118,6 +118,7 @@ ui <- div(page_navbar(
              id = "popA",
              placement = "right",
              textInput("titleA", label = NULL, placeholder = "Enter graph title"),
+             sliderInput("titlesizeA", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              actionButton("updateA", "Update")
           )), card_body(plotOutput("graphA")))
           )),
@@ -147,7 +148,7 @@ ui <- div(page_navbar(
             )),
 ############################################################################################################ H UI
          
-            tabPanel("GraphH", tabName = "GraphH", icon = icon("sun"), 
+            tabPanel("GraphH", tabName = "GraphH", icon = icon("sun"),
             fluidRow(
           textOutput("textHeaderH")
         ),
@@ -207,7 +208,7 @@ ui <- div(page_navbar(
                     checkboxGroupInput("numdoseC", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                    sliderInput("tpointC", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-                   selectInput("functioningC", label = "Functioning of interest", choices = NULL ))), 
+                   selectInput("functioningC", label = "Functioning of interest", choices = NULL))),
                    card(card_header("Download .svg file"), card_body(downloadButton("downloadC")))
           ),
           card(card_header(class = "d-inline-flex justify-content-end",
@@ -501,8 +502,9 @@ output$continuous_cons <- renderUI({
 })
 ################################################################################################################ Server side for graph editors
 
-titleA <- eventReactive(input$updateA,{
-  input$titleA
+editA <- eventReactive(input$updateA,{
+  list(title = input$titleA,
+  titlesize = input$titlesizeA)
 })
 titleB <- eventReactive(input$updateB,{
   input$titleB
@@ -591,7 +593,7 @@ output$continuous_table <- renderTable(continuous_data())
                                  add_confidence_interval() +
                                  scale_ggsurvfit() + add_risktable()
                                 if (isTruthy(input$updateA)){
-                                  g + ggtitle(titleA())
+                                  g + ggtitle(editA()$title) + theme(plot.title = element_text(size = editA()$titlesize, face = "bold"))
                                 }
                                 else {
                                   g
