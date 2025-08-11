@@ -25,6 +25,7 @@ ui <- div(page_navbar(
   p("- Format data and upload OR select the dummy datasets"),
   p("4. Select relevant graphs under the Ordinal or Continuous dropdown"),
   p("5. Adjust the variables to suit your required outputs"),
+  p("- Use the edit button to make changes to graphs where necessary"),
   p("6. Click download to export any relevant graphs as a .svg file")
   )),
   card(card_body(
