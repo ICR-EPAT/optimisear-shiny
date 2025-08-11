@@ -657,7 +657,7 @@ output$continuous_table <- renderTable(continuous_data())
   #Define the relevant variables
   no_dose <- reactive({
                        req(input$numdose)
-                       as.numeric(input$numdose)})
+                       input$numdose})
   #Filter the data
   summary_df <- reactive({
                           req(input$numdose)
@@ -739,11 +739,11 @@ observe({
 #Define the relevant variables
 no_doseb <- reactive({
                      req(input$numdoseB)
-                     as.numeric(input$numdoseB)})
+                     input$numdoseB})
 
 final_t <- reactive({
   req(input$tpointB)
-  as.numeric(input$tpointB)
+  input$tpointB
 })
 
 toxic <- reactive({
@@ -911,11 +911,11 @@ observe({
 #Define the relevant variables
 no_doseC <- reactive({
                       req(input$numdoseC)
-                      as.numeric(input$numdoseC)})
+                      input$numdoseC})
 
 final_tC <- reactive({
   req(input$tpointC)
-  as.numeric(input$tpointC)
+  input$tpointC
 })
 
 func_C <- reactive({
@@ -1067,11 +1067,11 @@ observe({
 #Define the relevant variables
 no_doseD <- reactive({
                       req(input$numdoseD)
-                      as.numeric(input$numdoseD)})
+                      input$numdoseD})
 
 final_tD <- reactive({
   req(input$tpointD)
-  as.numeric(input$tpointD)
+  input$tpointD
 })
 
 func_D <- reactive({
@@ -1196,11 +1196,11 @@ observe({
 #Define the relevant variables
 no_doseE <- reactive({
                       req(input$numdoseE)
-                      as.numeric(input$numdoseE)})
+                      input$numdoseE})
 
 final_tE <- reactive({
   req(input$tpointE)
-  as.numeric(input$tpointE)
+  input$tpointE
 })
 
 func_E <- reactive({
@@ -1301,11 +1301,11 @@ observe({
 #Define the relevant variables
 no_doseF <- reactive({
                       req(input$numdoseF)
-                      as.numeric(input$numdoseF)})
+                      input$numdoseF})
 
 final_tF <- reactive({
   req(input$tpointF)
-  as.numeric(input$tpointF)
+  input$tpointF
 })
 
 func_F <- reactive({
@@ -1444,11 +1444,11 @@ observe({
 #Define the relevant variables
 no_doseG <- reactive({
                       req(input$numdoseG)
-                      as.numeric(input$numdoseG)})
+                      input$numdoseG})
 
 final_tG <- reactive({
   req(input$tpointG)
-  as.numeric(input$tpointG)
+  input$tpointG
 })
 
 func_G <- reactive({
@@ -1663,11 +1663,11 @@ observe({
 #Define the relevant variables
 no_doseH <- reactive({
                      req(input$numdoseH)
-                     as.numeric(input$numdoseH)})
+                     input$numdoseH})
 
 times_H <- reactive({
   req(input$tpointH)
-  as.numeric(input$tpointH)
+  input$tpointH
 })
 
 toxicH <- reactive({
@@ -1946,11 +1946,11 @@ observe({
 #Define the relevant variables
 no_doseI <- reactive({
                      req(input$numdoseI)
-                     as.numeric(input$numdoseI)})
+                     input$numdoseI})
 
 times_I <- reactive({
   req(input$tpointI)
-  as.numeric(input$tpointI)
+  input$tpointI
 })
 
 toxicI <- reactive({
