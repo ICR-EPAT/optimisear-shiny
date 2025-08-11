@@ -68,8 +68,9 @@ ui <- div(page_navbar(
   card_body(
     p("Data must be input as a .csv file with column titles matching the listed below."),
     p("Any columns not fitting the format will be ignored - if not all columns are provided, the app may not run."),
-    p("- If a patient doesn't report at a specific timepoint, do not enter any data."),
+    p("- If a patient experiences an intercurrent event (e.g. discontinuation or death), do not enter any data."),
     p("- If a patient partially responds to a questionnaire at a timepoint, enter all data and use NA in place of an unreported score or grade."),
+    p("- If a patient recieves treatment and does not complete a questionnaire at that timepoint, fill in all scores or grades as NA"),
     p("For an example of data, you can toggle the dummy data on - please note to use your own data, the dummy dataset must be toggled off."),
    layout_columns(
     card(card_header(strong("Ordinal datasets")),
@@ -495,7 +496,7 @@ output$continuous_information_about <- renderUI({
   }
 })
 
-############################################################# GRAPH PROS
+############################################################# GRAPH Editor 
 output$ordinal_pros <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "graphA"){
@@ -531,7 +532,7 @@ output$continuous_pros <- renderUI({
 })
 
 
-############################################################ GRAPH CONS
+############################################################ GRAPH CONSIDERATIONS
 output$ordinal_cons <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "graphA"){
