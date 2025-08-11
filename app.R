@@ -901,6 +901,8 @@ output$graphC <- renderPlot({
     editC <- editC()
     impbound <- editC$imp_bound
     worbound <- editC$wor_bound
+    worse_text <- max(editC$wor_text, worbound[1])
+    improve_text <- min(editC$imp_text, impbound[2])
     summaryC %>%
     ggplot(
            aes(x = as.factor(timepoint),
@@ -922,9 +924,9 @@ output$graphC <- renderPlot({
     geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = worbound[1]),
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches"))) +
-    geom_text(data = data.frame(x = 1.6, y = editC$imp_text, label = "Improvement"), aes(x = x, y = y, label = label),
+    geom_text(data = data.frame(x = 1.6, y = improve_text, label = "Improvement"), aes(x = x, y = y, label = label),
               inherit.aes = FALSE) +
-    geom_text(data = data.frame(x = 1.6, y = editC$wor_text, label = "Worsening"), aes(x = x, y = y, label = label),
+    geom_text(data = data.frame(x = 1.6, y = worse_text, label = "Worsening"), aes(x = x, y = y, label = label),
               inherit.aes = FALSE)+ 
               ggtitle(editC()$title) + theme(plot.title = element_text(size = editC()$titlesize, face = "bold"))
                                 }
@@ -1484,6 +1486,8 @@ output$graphG <- renderPlot({
         maxval <- max(dfG()$score, na.rm = TRUE)
         lower <- min(minval, Worbounds[1])
         upper <- max(maxval, Impbounds[2])
+        worse_text <- max(lower, editG$wor_text)
+        improve_text <- min(upper, editG$imp_text)
         thresholds <- data.frame(
   ymin = c(Impbounds[1], lower),
   ymax = c(upper, Worbounds[2]),
@@ -1511,9 +1515,9 @@ output$graphG <- renderPlot({
                aes(x = 0.5, xend = 0.5, y = 0, yend = lower),
                colour = "darkgrey", size = 0.8, arrow = arrow(type="closed",
                                                               length = unit(0.1, "inches"))) +
-   geom_text(data = arrowdf, aes(x = 2, y = editG$imp_text, label = "Improvement"),
+   geom_text(data = arrowdf, aes(x = 2, y = improve_text, label = "Improvement"),
               inherit.aes = FALSE) +
-   geom_text(data = arrowdf, aes(x = 2, y = editG$wor_text, label = "Worsening"),
+   geom_text(data = arrowdf, aes(x = 2, y = worse_text, label = "Worsening"),
               inherit.aes = FALSE) +
               ggtitle(editG$title) + theme(plot.title = element_text(size = editG$titlesize, face = "bold"))
                                 }
