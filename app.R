@@ -324,10 +324,11 @@ ui <- div(page_navbar(
              textInput("titleG", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeG", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_G", label = NULL, placeholder = "Enter y-axis label"),
-             sliderInput("improveG", label = "Start and endpoint for improvement", min = 0, max = 100, value = c(10, 30), step = 5),
-             sliderInput("worseG", label = "Start and endpoint for worsening", min = -100, max = 0, value = c(-30, -10), step = 5),
-             sliderInput("impTextG", label = "Position of Improvement text", min = 0, max = 100, value = 18, step = 2),
-             sliderInput("worTextG", label = "Position of Worsening text", min = -100, max = 0, value = -18, step = 2),
+             textInput("sublab_G", label = NULL, placeholder = "Enter subgraph label"),
+             sliderInput("improveG", label = "Start and endpoint for improvement", min = 0, max = 100, value = c(10, 25), step = 5),
+             sliderInput("worseG", label = "Start and endpoint for worsening", min = -100, max = 0, value = c(-25, -10), step = 5),
+             sliderInput("impTextG", label = "Position of Improvement text", min = 0, max = 100, value = 22, step = 2),
+             sliderInput("worTextG", label = "Position of Worsening text", min = -100, max = 0, value = -22, step = 2),
              actionButton("updateG", "Update")
           )), card_body(plotOutput("graphG")))
       ))),
@@ -543,7 +544,13 @@ titleF <- eventReactive(input$updateF,{
 })
 editG <- eventReactive(input$updateG,{
   list(title = input$titleG,
-  titlesize = input$titlesizeG)
+  titlesize = input$titlesizeG,
+  y_lab = input$ylab_G,
+  subgraph_lab = input$sublab_G,
+  imp_bound = input$improveG,
+  wor_bound = input$worseG,
+  imp_text = input$impTextG,
+  wor_text = input$worTextG)
 })
 editH <- eventReactive(input$updateH,{
   list(title = input$titleH,
@@ -1425,7 +1432,7 @@ dfG <- reactive({
   df <- continuous_data_filteredG() %>%
   filter(timepoint %in% c(0, as.numeric(endT))) %>%
   pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_") %>%
-  mutate(score = as.numeric(!!tp_end - tp_0)) %>% #################this is an issue
+  mutate(score = as.numeric(!!tp_end - tp_0)) %>%
   dplyr::select(id, score, dose, functioning)
 
   df <- df %>%
@@ -1453,12 +1460,6 @@ sum.dfG <- reactive({
   sum.df
 })
 
-thresholds <- data.frame(
-  ymin = c(10, -25),
-  ymax = c(25, -10),
-  Threshold = factor(c("Improvement", "Worsening"))
-)
-
 
 arrowdf <- reactive({
   first_fn <- as.symbol(as.character((func_G()[1])))
@@ -1470,12 +1471,60 @@ output$graphG <- renderPlot({
   arrowdf <- arrowdf()
   no_patient <- unlist(no_patientG()[2])
   no_patient <- paste(no_patient, collapse = ";")
-  formatterG <- function(end = end_t) {paste0("Functioning ", func_G())}
   g <- data.frame(sum.dfG()) %>% ggplot(aes(x = custom_x, y = mean, colour = as.factor(dose))) +
   geom_point(size = 3) +
   scale_color_discrete(name = "Dose level") +
   geom_errorbar(aes(ymin = l.ci, ymax = u.ci), width = 0.2, size = 1.2) +
-  theme_minimal(base_size = 14) + ylim(c(-25, 25)) +
+  theme_minimal(base_size = 14)
+      if (isTruthy(input$updateG)){
+        editG <- editG()
+        Impbounds <- editG$imp_bound
+        Worbounds <- editG$wor_bound
+        minval <- min(dfG()$score, na.rm = TRUE)
+        maxval <- max(dfG()$score, na.rm = TRUE)
+        lower <- min(minval, Worbounds[1])
+        upper <- max(maxval, Impbounds[2])
+        thresholds <- data.frame(
+  ymin = c(Impbounds[1], lower),
+  ymax = c(upper, Worbounds[2]),
+  Threshold = factor(c("Improvement", "Worsening"))
+)
+ formatterG <- function(end = end_t) {paste(editG$subgraph_lab, func_G(), sep = " ")}
+        g + ylim(c(lower, upper)) +
+  scale_fill_manual(
+    name = "Threshold",
+    values = c("Improvement" = "palegreen1", "Worsening" = "red")
+  ) +
+  geom_rect(data = thresholds,
+            aes(xmin = -Inf, xmax = Inf, ymin = ymin, ymax = ymax, fill = Threshold),
+            alpha = 0.3, inherit.aes = FALSE) +
+    labs(
+    y = paste0(editG$y_lab),
+    x = paste0("Dose (N= ", no_patient, ")")) +
+  facet_wrap(~ as.factor(functioning), nrow = 1,labeller = as_labeller(formatterG), scales = "free_x") +
+  scale_x_discrete(expand = expansion(add = c(1, 1))) +
+  geom_segment(data = arrowdf,
+               aes(x = 0.5, xend = 0.5, y = 0, yend = upper),
+               colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches"))) +
+  geom_segment(data = arrowdf,
+               aes(x = 0.5, xend = 0.5, y = 0, yend = lower),
+               colour = "darkgrey", size = 0.8, arrow = arrow(type="closed",
+                                                              length = unit(0.1, "inches"))) +
+   geom_text(data = arrowdf, aes(x = 2, y = editG$imp_text, label = "Improvement"),
+              inherit.aes = FALSE) +
+   geom_text(data = arrowdf, aes(x = 2, y = editG$wor_text, label = "Worsening"),
+              inherit.aes = FALSE) +
+              ggtitle(editG$title) + theme(plot.title = element_text(size = editG$titlesize, face = "bold"))
+                                }
+                                else {
+                                  thresholds <- data.frame(
+  ymin = c(10, -25),
+  ymax = c(25, -10),
+  Threshold = factor(c("Improvement", "Worsening"))
+)
+ formatterG <- function(end = end_t) {paste0("Functioning ", func_G())}
+                                  g + ylim(c(-25, 25)) +
   scale_fill_manual(
     name = "Threshold",
     values = c("Improvement" = "palegreen1", "Worsening" = "red")
@@ -1500,11 +1549,6 @@ output$graphG <- renderPlot({
               inherit.aes = FALSE) +
    geom_text(data = arrowdf, aes(x = 2, y = -22, label = "Worsening"),
               inherit.aes = FALSE)
-      if (isTruthy(input$updateG)){
-                                  g + ggtitle(editG()$title) + theme(plot.title = element_text(size = editG()$titlesize, face = "bold"))
-                                }
-                                else {
-                                  g
                                 }
         
 })
