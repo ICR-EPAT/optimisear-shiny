@@ -25,6 +25,7 @@ ui <- div(page_navbar(
   p("- Format data and upload OR select the dummy datasets"),
   p("4. Select relevant graphs under the Ordinal or Continuous dropdown"),
   p("5. Adjust the variables to suit your required outputs"),
+  p("- Use the edit button to make changes to graphs where necessary"),
   p("6. Click download to export any relevant graphs as a .svg file")
   )),
   card(card_body(
@@ -111,7 +112,16 @@ ui <- div(page_navbar(
           card(card_header("Variables"), card_body(checkboxGroupInput("numdose", label = "Dosage",
                                                  selected = NULL, inline = TRUE)))
                , card(card_header("Download .svg file"), card_body(downloadButton("downloadA")))),
-          card(plotOutput("graphA"))
+          card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("editA", "Edit", value = FALSE, icon = icon("pencil-square")),
+             title = "Graph Editor",
+             id = "popA",
+             placement = "right",
+             textInput("titleA", label = NULL, placeholder = "Enter graph title"),
+             sliderInput("titlesizeA", label = "Title size", min = 10, max = 50, value = 20, step = 5),
+             actionButton("updateA", "Update")
+          )), card_body(plotOutput("graphA")))
           )),
   ############################################################################################################ B UI
             tabPanel("GraphB", tabName = "GraphB", icon = icon("sun"),
@@ -124,14 +134,23 @@ ui <- div(page_navbar(
                     checkboxGroupInput("numdoseB", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-                    selectInput("toxicB", label = "Toxicity of interest", choices = NULL ))
+                    selectInput("toxicB", label = "Toxicity of interest", choices = NULL))
           ), card(card_header("Download .svg file"), card_body(downloadButton("downloadB"))))
           ,
-          card(plotOutput("graphB"))
+          card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("editB", "Edit", value = FALSE, icon = icon("pencil-square")),
+             title = "Graph Editor",
+             id = "popB",
+             placement = "right",
+             textInput("titleB", label = NULL, placeholder = "Enter graph title"),
+             sliderInput("titlesizeB", label = "Title size", min = 10, max = 50, value = 20, step = 5),
+             actionButton("updateB", "Update")
+          )), card_body(plotOutput("graphB")))
             )),
 ############################################################################################################ H UI
          
-            tabPanel("GraphH", tabName = "GraphH", icon = icon("sun"), 
+            tabPanel("GraphH", tabName = "GraphH", icon = icon("sun"),
             fluidRow(
           textOutput("textHeaderH")
         ),
@@ -144,7 +163,17 @@ ui <- div(page_navbar(
                     checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL , inline = TRUE)
           )), 
           card(card_header("Download .svg file"), card_body(downloadButton("downloadH")))),
-          card(plotOutput("graphH"))
+          card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("editH", "Edit", value = FALSE, icon = icon("pencil-square")),
+             title = "Graph Editor",
+             id = "popH",
+             placement = "right",
+             textInput("titleH", label = NULL, placeholder = "Enter graph title"),
+             sliderInput("titlesizeH", label = "Title size", min = 10, max = 50, value = 20, step = 5),
+             textInput("subtitleH", label = NULL, placeholder = "Enter subgraph label"),
+             actionButton("updateH", "Update")
+          )), card_body(plotOutput("graphH")))
             )),
 ############################################################################################################ I UI
             tabPanel("GraphI", tabName = "GraphI", icon = icon("sun"),
@@ -160,7 +189,17 @@ ui <- div(page_navbar(
                     checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE))
           ), 
           card(card_header("Download .svg file"), card_body(downloadButton("downloadI")))),
-          card(plotOutput("graphI"))
+          card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("editI", "Edit", value = FALSE, icon = icon("pencil-square")),
+             title = "Graph Editor",
+             id = "popI",
+             placement = "right",
+             textInput("titleI", label = NULL, placeholder = "Enter graph title"),
+             sliderInput("titlesizeI", label = "Title size", min = 10, max = 50, value = 20, step = 5),
+             textInput("subtitleI", label = NULL, placeholder = "Enter subgraph label"),
+             actionButton("updateI", "Update")
+          )), card_body(plotOutput("graphI")))
             ))),
   navbarMenu("Continuous",############################################################################################################ C UI
              tabPanel("GraphC", tabName = "GraphC", icon = icon("moon"),
@@ -173,10 +212,24 @@ ui <- div(page_navbar(
                     checkboxGroupInput("numdoseC", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                    sliderInput("tpointC", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-                   selectInput("functioningC", label = "Functioning of interest", choices = NULL ))), 
+                   selectInput("functioningC", label = "Functioning of interest", choices = NULL))),
                    card(card_header("Download .svg file"), card_body(downloadButton("downloadC")))
           ),
-          card(plotOutput("graphC"))
+          card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("editC", "Edit", value = FALSE, icon = icon("pencil-square")),
+             title = "Graph Editor",
+             id = "popC",
+             placement = "right",
+             textInput("titleC", label = NULL, placeholder = "Enter graph title"),
+             sliderInput("titlesizeC", label = "Title size", min = 10, max = 50, value = 20, step = 5),
+             textInput("ylab_C", label = NULL, placeholder = "Enter y-axis label"),
+             sliderInput("improveC", label = "Start and endpoint for improvement", min = 0, max = 100, value = c(10, 30), step = 5),
+             sliderInput("worseC", label = "Start and endpoint for worsening", min = -100, max = 0, value = c(-30, -10), step = 5),
+             sliderInput("impTextC", label = "Position of Improvement text", min = 0, max = 100, value = 18, step = 2),
+             sliderInput("worTextC", label = "Position of Worsening text", min = -100, max = 0, value = -18, step = 2),
+             actionButton("updateC", "Update")
+          )), card_body(plotOutput("graphC")))
             )),
 ############################################################################################################ D UI
              tabPanel("GraphD", tabName = "GraphD", icon = icon("moon"), fluidRow(
@@ -190,7 +243,18 @@ ui <- div(page_navbar(
                     uiOutput("select_idD"),
                     selectInput("functioningD", label = "Functioning of interest", choices = NULL))),
                     card(card_header("Download .svg file"), card_body(downloadButton("downloadD")))),
-                    card(plotOutput("graphD"))
+                    card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("editD", "Edit", value = FALSE, icon = icon("pencil-square")),
+             title = "Graph Editor",
+             id = "popD",
+             placement = "right",
+             textInput("titleD", label = NULL, placeholder = "Enter graph title"),
+             sliderInput("titlesizeD", label = "Title size", min = 10, max = 50, value = 20, step = 5),
+             textInput("ylab_D", label = NULL, placeholder = "Enter y-axis label"),
+             sliderInput("rangeD", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
+             actionButton("updateD", "Update")
+          )), card_body(plotOutput("graphD")))
         )),
 ############################################################################################################ E UI
               
@@ -202,9 +266,20 @@ ui <- div(page_navbar(
           card(card_header("Variables"), card_body(
             checkboxGroupInput("numdoseE", label = "Dosage", selected = NULL, inline = TRUE),
             sliderInput("tpointE", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-            selectInput("functioningE", label = "Functioning of interest", choices = NULL ))),
+            selectInput("functioningE", label = "Functioning of interest", choices = NULL))),
             card(card_header("Download .svg file"), card_body(downloadButton("downloadE")))),
-            card(plotOutput("graphE"))
+            card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("editE", "Edit", value = FALSE, icon = icon("pencil-square")),
+             title = "Graph Editor",
+             id = "popE",
+             placement = "right",
+             textInput("titleE", label = NULL, placeholder = "Enter graph title"),
+             sliderInput("titlesizeE", label = "Title size", min = 10, max = 50, value = 20, step = 5),
+             textInput("ylab_E", label = NULL, placeholder = "Enter y-axis label"),
+             sliderInput("rangeE", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
+             actionButton("updateE", "Update")
+          )), card_body(plotOutput("graphE")))
         )),
 ############################################################################################################ F UI
            tabPanel("GraphF", tabName = "GraphF", icon = icon("moon"),     fluidRow(
@@ -218,7 +293,15 @@ ui <- div(page_navbar(
           sliderInput("tpointF", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
           checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE))),
           card(card_header("Download .svg file"), card_body(downloadButton("downloadF")))),
-           card(gt_output("graphF"))
+           card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("editF", "Edit", value = FALSE, icon = icon("pencil-square")),
+             title = "Graph Editor",
+             id = "popB",
+             placement = "right",
+             textInput("titleF", label = NULL, placeholder = "Enter table title"),
+             actionButton("updateF", "Update")
+          )), card_body(gt_output("graphF")))
            )),
            ############################################################################################################ G UI 
     
@@ -233,7 +316,22 @@ ui <- div(page_navbar(
           sliderInput("tpointG", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
           checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE))),
           card(card_header("Download .svg file"), card_body(downloadButton("downloadG")))),
-          card(plotOutput("graphG"))
+          card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("editG", "Edit", value = FALSE, icon = icon("pencil-square")),
+             title = "Graph Editor",
+             id = "popG",
+             placement = "right",
+             textInput("titleG", label = NULL, placeholder = "Enter graph title"),
+             sliderInput("titlesizeG", label = "Title size", min = 10, max = 50, value = 20, step = 5),
+             textInput("ylab_G", label = NULL, placeholder = "Enter y-axis label"),
+             textInput("sublab_G", label = NULL, placeholder = "Enter subgraph label"),
+             sliderInput("improveG", label = "Start and endpoint for improvement", min = 0, max = 100, value = c(10, 25), step = 5),
+             sliderInput("worseG", label = "Start and endpoint for worsening", min = -100, max = 0, value = c(-25, -10), step = 5),
+             sliderInput("impTextG", label = "Position of Improvement text", min = 0, max = 100, value = 22, step = 2),
+             sliderInput("worTextG", label = "Position of Worsening text", min = -100, max = 0, value = -22, step = 2),
+             actionButton("updateG", "Update")
+          )), card_body(plotOutput("graphG")))
       ))),
 ################################################################################################################## description tab
       tabPanel("Description", tabName = "description", icon = icon("book"), h4("About this site"),
@@ -247,7 +345,7 @@ ui <- div(page_navbar(
         p("Authors: George Knight, Emily Alger, Karrar Shareiyat"),
         p("Maintainers: Rachel Alcraft, ICR Scientific Computing"))))),
 ################################################################################################################## Version history
-      tabPanel("Version History", tabName = "history", icon = icon("history"), 
+      tabPanel("Version History", tabName = "history", icon = icon("history"),
       card(card_header("Versions"),
       card_body(p("v1.0 - Internal ICR release 06/08/2025")))), bg = "DarkSeaGreen"))
 
@@ -263,7 +361,7 @@ server <- function(input, output, session) {
   output$textHeaderG <- renderText({"Mean change in functionalities plot"})
   output$textHeaderH <- renderText({"Butterfly plot"})
   output$textHeaderI <- renderText({"Toxicity % plot"})
-  ############################################################################################Overview page 
+  ############################################################################################Overview page
 about_ordinal <- reactive({input$about_ordinal})
 about_continuous <- reactive({input$about_continuous})
 
@@ -411,8 +509,60 @@ output$continuous_cons <- renderUI({
     HTML("G <br> -con 1 <br> -con 2 <br> -con 3")
   }
 })
+################################################################################################################ Server side for graph editors
 
-
+editA <- eventReactive(input$updateA,{
+  list(title = input$titleA,
+  titlesize = input$titlesizeA)
+})
+editB <- eventReactive(input$updateB,{
+  list(title = input$titleB,
+  titlesize = input$titlesizeB)
+})
+editC <- eventReactive(input$updateC,{
+  list(title = input$titleC,
+  titlesize = input$titlesizeC,
+  y_lab = input$ylab_C,
+  imp_bound = input$improveC,
+  wor_bound = input$worseC,
+  imp_text = input$impTextC,
+  wor_text =input$worTextC)
+})
+editD <- eventReactive(input$updateD,{
+  list(title = input$titleD,
+  titlesize = input$titlesizeD,
+  y_lab = input$ylab_D,
+  range = input$rangeD)
+})
+editE <- eventReactive(input$updateE,{
+ list(title = input$titleE,
+  titlesize = input$titlesizeE,
+  y_lab = input$ylab_E,
+  range = input$rangeE)
+})
+titleF <- eventReactive(input$updateF,{
+  input$titleF
+})
+editG <- eventReactive(input$updateG,{
+  list(title = input$titleG,
+  titlesize = input$titlesizeG,
+  y_lab = input$ylab_G,
+  subgraph_lab = input$sublab_G,
+  imp_bound = input$improveG,
+  wor_bound = input$worseG,
+  imp_text = input$impTextG,
+  wor_text = input$worTextG)
+})
+editH <- eventReactive(input$updateH,{
+  list(title = input$titleH,
+  titlesize = input$titlesizeH,
+  subtitle = input$subtitleH)
+})
+editI <- eventReactive(input$updateI,{
+    list(title = input$titleI,
+  titlesize = input$titlesizeI,
+  subtitle = input$subtitleI)
+})
 #############################################################################################################Graph A
   #Import the data
   ordinal_data <- reactive({
@@ -470,11 +620,17 @@ output$continuous_table <- renderTable(continuous_data())
                           summary_df})
 
   output$graphA <- renderPlot({
-                               survfit2(Surv(time, event) ~ dose, data = summary_df()) %>%
+                               g <- survfit2(Surv(time, event) ~ dose, data = summary_df()) %>%
                                  ggsurvfit(linewidth = 1.5) +
                                  add_censor_mark() +
                                  add_confidence_interval() +
-                                 scale_ggsurvfit() + add_risktable()})
+                                 scale_ggsurvfit() + add_risktable()
+                                if (isTruthy(input$updateA)){
+                                  g + ggtitle(editA()$title) + theme(plot.title = element_text(size = editA()$titlesize, face = "bold"))
+                                }
+                                else {
+                                  g
+                                }})
 
 ################################################ graph B
 
@@ -606,7 +762,7 @@ output$graphB <- renderPlot({
   no_dose <- no_doseb()
   no_patient <- no_patient()
   formatter <- function(no_dose, no_pat = no_patient) { paste0("Dose level ", no_dose, " (N=", no_pat, ")")}
-  prop %>% filter(toxicity == toxic()) %>% ggplot(aes(x = as.factor(timepoint))) +
+  g <- prop %>% filter(toxicity == toxic()) %>% ggplot(aes(x = as.factor(timepoint))) +
     geom_bar(aes(x = as.factor(timepoint),
                  y = proportion,
                  fill = as.factor(grade)),
@@ -627,6 +783,12 @@ output$graphB <- renderPlot({
     labs(x = "Timepoint",
          y = "Proportion",
          fill = "Severity Grade")
+          if (isTruthy(input$updateB)){
+                                  g + ggtitle(editB()$title) + theme(plot.title = element_text(size = editB()$titlesize, face = "bold"))
+                                }
+                                else {
+                                  g
+                                }
 })
 
 ################################################################################## GRAPH C
@@ -676,7 +838,7 @@ observe({
   req(input$dummy_continuous)
   data <- continuous_data()
   tpointC <- unique(data$timepoint)
-  updateSliderInput(session, "tpointC", label = "Final timepoint of interest", max = length(tpointC)-1)
+  updateSliderInput(session, "tpointC", label = "Final timepoint of interest", max = length(tpointC) - 1)
 })
 
 observe({
@@ -735,7 +897,42 @@ pd <- position_dodge(width = 0.2)
 
 #### FIGURE GENERATION
 output$graphC <- renderPlot({
-  summaryC() %>%
+  summaryC <- summaryC()
+  if (isTruthy(input$updateC)){
+    editC <- editC()
+    impbound <- editC$imp_bound
+    worbound <- editC$wor_bound
+    worse_text <- max(editC$wor_text, worbound[1])
+    improve_text <- min(editC$imp_text, impbound[2])
+    summaryC %>%
+    ggplot(
+           aes(x = as.factor(timepoint),
+               y = mean, group = as.factor(dose), shape = as.factor(dose), colour = as.factor(dose))) +
+    geom_ribbon(aes(ymin = impbound[1], ymax = impbound[2], fill = "palegreen1"), alpha = 0.3, colour = NA) +
+    geom_ribbon(aes(ymin = worbound[1], ymax = worbound[2], fill = "red"), alpha = 0.1, colour = NA) +
+    geom_point(position = pd, size=3) + geom_line(size = 1.5) +
+    geom_errorbar(position = pd, aes(ymin = l.ci, ymax = u.ci), width = 0.2, size = 1.2) +
+    theme_minimal(base_size = 14) +
+    guides(shape = guide_legend(title = "Dose"),
+           colour = guide_legend(title = "Dose")) +
+    theme_minimal(base_size = 14) +
+    xlab("Timepoint") +
+    ylab(paste0(editC$y_lab)) +
+    scale_fill_manual(name = "Threshold", values = c("palegreen1", "red"), label = c("Improvement", "Worsening")) +
+    geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = impbound[2]),
+                 colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches"))) +
+    geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = worbound[1]),
+                 colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches"))) +
+    geom_text(data = data.frame(x = 1.6, y = improve_text, label = "Improvement"), aes(x = x, y = y, label = label),
+              inherit.aes = FALSE) +
+    geom_text(data = data.frame(x = 1.6, y = worse_text, label = "Worsening"), aes(x = x, y = y, label = label),
+              inherit.aes = FALSE)+ 
+              ggtitle(editC()$title) + theme(plot.title = element_text(size = editC()$titlesize, face = "bold"))
+                                }
+  else {
+    summaryC %>%
     ggplot(
            aes(x = as.factor(timepoint),
                y = mean, group = as.factor(dose), shape = as.factor(dose), colour = as.factor(dose))) +
@@ -762,7 +959,8 @@ output$graphC <- renderPlot({
     geom_text(data = data.frame(x = 1.6, y = 17, label = "Improvement"), aes(x = x, y = y, label = label),
               inherit.aes = FALSE) +
     geom_text(data = data.frame(x = 1.6, y = -17, label = "Worsening"), aes(x = x, y = y, label = label),
-              inherit.aes = FALSE)
+              inherit.aes = FALSE)  
+                                }
 })
 ############################################################################################# GRAPH D
 observe({
@@ -860,16 +1058,34 @@ labels_D <- reactive({
 output$graphD <- renderPlot({
   data <- continuous_data_filteredD()
   data$dose <- as.factor(data$dose)
-  ggplot(data = data, aes(x = as.factor(timepoint),
+  g <- ggplot(data = data, aes(x = as.factor(timepoint),
                           y = score, group = id, colour = labels_D(), linetype = dose)) +
       geom_line(size = 0.9) +
       labs(linetype = "Dose") +
-      theme_minimal(base_size = 16) + ylim(c(0, 100)) +
+      theme_minimal(base_size = 16)
+         if (isTruthy(input$updateD)){
+          editD <- editD()
+          lims <- editD$range
+          minval <- min(data$score, na.rm = TRUE)
+          maxval <- max(data$score, na.rm = TRUE)
+          lower <- min(c(minval, lims[1]))
+          upper <- max(c(maxval, lims[2]))
+      g + ylim(c(lower, upper)) +
+      geom_point() +
+      labs(
+        y = paste0(editD$y_lab),
+        x = "Timepoint",
+        color = "Patient (Dose)") +
+      ggtitle(editD$title) + theme(plot.title = element_text(size = editD$titlesize, face = "bold"))
+                                }
+                                else {
+                                  g + ylim(c(0, 100)) +
       geom_point() +
       labs(
         y = paste0("Score in functionality ", func_D()),
         x = "Timepoint",
         color = "Patient (Dose)")
+                                }
 })
 
 
@@ -948,16 +1164,35 @@ data_E <- reactive({
 
 output$graphE <- renderPlot({
   continuous_data <- data_E()
-  ggplot(continuous_data, aes(x = as.factor(timepoint), y = score, fill = as.factor(dose))) +
+  g <- ggplot(continuous_data, aes(x = as.factor(timepoint), y = score, fill = as.factor(dose))) +
     labs(fill = "Dose level") +
     geom_boxplot() +
     theme_minimal(base_size = 14) +
-    xlab("Timepoint") + ylab(paste0("Score in category ", func_E())) +
+    xlab("Timepoint")
+     if (isTruthy(input$updateE)){
+      editE <- editE()
+      bounds <- editE$range
+      maxval <- max(continuous_data$score, na.rm = TRUE)
+      minval <- min(continuous_data$score, na.rm = TRUE)
+      lower <- min(c(minval, bounds[1]))
+      upper <- max(c(maxval, bounds[2]))
+      g + ylab(paste0(editE$y_lab)) +
+    geom_segment(aes(x = 0.2, xend = 0.2, y = lower, yend = upper),
+                 colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches"))) + ylim(c(lower, upper)) +
+    scale_x_discrete(expand = expansion(add = c(2, 0))) +
+    geom_text(aes(x = -0.45, y = upper * 0.9, label = "Better \n tolerability"))+
+    ggtitle(editE$title) +
+    theme(plot.title = element_text(size = editE$titlesize, face = "bold"))
+                                }
+                                else {
+                                  g + ylab(paste0("Score in category ", func_E())) +
     geom_segment(aes(x = 0.2, xend = 0.2, y = 0, yend = 100),
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches"))) + ylim(c(0, 100)) +
     scale_x_discrete(expand = expansion(add = c(2, 0))) +
     geom_text(aes(x = -0.45, y = 90, label = "Better \n tolerability"))
+                                }
 })
 ############################################################## Graph F
 
@@ -1079,7 +1314,6 @@ sum.df.widerF <- reactive({
 
 sum.df.wider.gtF <- reactive({
   sum.df.wider.gt <- sum.df.widerF() %>% gt() %>%
-  tab_header(title = paste0("Change from baseline to timepoint ", final_tF())) %>%
    tab_stubhead(label = "Functioning")
    for (i in unique(sum.dfF()$dose)){
       sum.df.wider.gt <- sum.df.wider.gt %>%
@@ -1089,7 +1323,12 @@ sum.df.wider.gtF <- reactive({
                                                         starts_with("non_na_count") ~ "Number Reported")
 }
   sum.df.wider.gt <- sum.df.wider.gt %>% opt_stylize(style = 5, color = "blue")
-  sum.df.wider.gt
+   if (isTruthy(input$updateF)){
+                                  sum.df.wider.gt %>% tab_header(title = paste0(titleF()))
+                                }
+                                else {
+                                  sum.df.wider.gt
+                                }
 })
 
 
@@ -1196,7 +1435,7 @@ dfG <- reactive({
   df <- continuous_data_filteredG() %>%
   filter(timepoint %in% c(0, as.numeric(endT))) %>%
   pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_") %>%
-  mutate(score = as.numeric(!!tp_end - tp_0)) %>% #################this is an issue
+  mutate(score = as.numeric(!!tp_end - tp_0)) %>%
   dplyr::select(id, score, dose, functioning)
 
   df <- df %>%
@@ -1224,12 +1463,6 @@ sum.dfG <- reactive({
   sum.df
 })
 
-thresholds <- data.frame(
-  ymin = c(10, -25),
-  ymax = c(25, -10),
-  Threshold = factor(c("Improvement", "Worsening"))
-)
-
 
 arrowdf <- reactive({
   first_fn <- as.symbol(as.character((func_G()[1])))
@@ -1241,12 +1474,62 @@ output$graphG <- renderPlot({
   arrowdf <- arrowdf()
   no_patient <- unlist(no_patientG()[2])
   no_patient <- paste(no_patient, collapse = ";")
-  formatterG <- function(end = end_t) {paste0("Functioning ", func_G())}
-  data.frame(sum.dfG()) %>% ggplot(aes(x = custom_x, y = mean, colour = as.factor(dose))) +
+  g <- data.frame(sum.dfG()) %>% ggplot(aes(x = custom_x, y = mean, colour = as.factor(dose))) +
   geom_point(size = 3) +
   scale_color_discrete(name = "Dose level") +
   geom_errorbar(aes(ymin = l.ci, ymax = u.ci), width = 0.2, size = 1.2) +
-  theme_minimal(base_size = 14) + ylim(c(-25, 25)) +
+  theme_minimal(base_size = 14)
+      if (isTruthy(input$updateG)){
+        editG <- editG()
+        Impbounds <- editG$imp_bound
+        Worbounds <- editG$wor_bound
+        minval <- min(dfG()$score, na.rm = TRUE)
+        maxval <- max(dfG()$score, na.rm = TRUE)
+        lower <- min(minval, Worbounds[1])
+        upper <- max(maxval, Impbounds[2])
+        worse_text <- max(lower, editG$wor_text)
+        improve_text <- min(upper, editG$imp_text)
+        thresholds <- data.frame(
+  ymin = c(Impbounds[1], lower),
+  ymax = c(upper, Worbounds[2]),
+  Threshold = factor(c("Improvement", "Worsening"))
+)
+ formatterG <- function(end = end_t) {paste(editG$subgraph_lab, func_G(), sep = " ")}
+        g + ylim(c(lower, upper)) +
+  scale_fill_manual(
+    name = "Threshold",
+    values = c("Improvement" = "palegreen1", "Worsening" = "red")
+  ) +
+  geom_rect(data = thresholds,
+            aes(xmin = -Inf, xmax = Inf, ymin = ymin, ymax = ymax, fill = Threshold),
+            alpha = 0.3, inherit.aes = FALSE) +
+    labs(
+    y = paste0(editG$y_lab),
+    x = paste0("Dose (N= ", no_patient, ")")) +
+  facet_wrap(~ as.factor(functioning), nrow = 1,labeller = as_labeller(formatterG), scales = "free_x") +
+  scale_x_discrete(expand = expansion(add = c(1, 1))) +
+  geom_segment(data = arrowdf,
+               aes(x = 0.5, xend = 0.5, y = 0, yend = upper),
+               colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches"))) +
+  geom_segment(data = arrowdf,
+               aes(x = 0.5, xend = 0.5, y = 0, yend = lower),
+               colour = "darkgrey", size = 0.8, arrow = arrow(type="closed",
+                                                              length = unit(0.1, "inches"))) +
+   geom_text(data = arrowdf, aes(x = 2, y = improve_text, label = "Improvement"),
+              inherit.aes = FALSE) +
+   geom_text(data = arrowdf, aes(x = 2, y = worse_text, label = "Worsening"),
+              inherit.aes = FALSE) +
+              ggtitle(editG$title) + theme(plot.title = element_text(size = editG$titlesize, face = "bold"))
+                                }
+                                else {
+                                  thresholds <- data.frame(
+  ymin = c(10, -25),
+  ymax = c(25, -10),
+  Threshold = factor(c("Improvement", "Worsening"))
+)
+ formatterG <- function(end = end_t) {paste0("Functioning ", func_G())}
+                                  g + ylim(c(-25, 25)) +
   scale_fill_manual(
     name = "Threshold",
     values = c("Improvement" = "palegreen1", "Worsening" = "red")
@@ -1271,6 +1554,8 @@ output$graphG <- renderPlot({
               inherit.aes = FALSE) +
    geom_text(data = arrowdf, aes(x = 2, y = -22, label = "Worsening"),
               inherit.aes = FALSE)
+                                }
+        
 })
 
 ################################################################################ Graph H
@@ -1465,14 +1750,54 @@ output$graphH <- renderPlot({
   valH <- valH()
   arrowdfH <- arrowdfH()
   arrowdf.revH <- arrowdf.revH()
-  formatterH <- function(toxic = toxic) {paste0("Symptomatic Adverse Event ", toxic)}
-  ggplot(valH %>% subset(toxicity %in% toxic), aes(x = dose, y = proportion, fill = grade_change, group = dose)) +
+  g <- ggplot(valH %>% subset(toxicity %in% toxic), aes(x = dose, y = proportion, fill = grade_change, group = dose)) +
     geom_bar(stat = "identity", position = "stack") +
     coord_flip() +
     scale_y_continuous(labels = abs, breaks = c(0), limits = c(-1, 1)) +
     theme_minimal(base_size = 15) +
     theme(
-          strip.text.y = element_text(angle = 0)) +
+          strip.text.y = element_text(angle = 0))
+
+        if (isTruthy(input$updateH)){
+          formatterH <- function(toxic = toxic) {paste(editH()$subtitle, toxic, sep = " ")}
+                                  g + facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterH)) + #ylim(c(-1, 1)) +
+      scale_fill_manual(breaks = labels[,1],
+                    values=labels[,2],
+                    labels=labels[,3])+
+    geom_text(aes(y = pos, label = percent), size = 3, color = "black") +
+    labs(x = paste0("Dose (N=", paste(ice_n_patH()$n.pat, collapse = "; "), ")"),
+         y = "Percentage (%)",
+         fill = "Change in Severity ") +
+    # scale_y_continuous(breaks = c(0), limits = c(-1, 1)) +
+    geom_hline(yintercept = 0, color = "grey", size = 1) +
+    geom_segment(data = arrowdfH,
+                 aes(x = x, xend = xend, y = y, yend = yend),
+                 colour = "darkgrey",
+                 size = 0.8,
+                 arrow = arrow(type = "closed", length = unit(0.1, "inches")),
+                 inherit.aes = FALSE) +
+    scale_x_discrete(expand = expansion(mult = c(1.5, 0))) +
+    geom_segment(data = arrowdf.revH,
+                 aes(x = x, xend = xend, y = y, yend = yend),
+                 colour = "darkgrey",
+                 size = 0.8,
+                 arrow = arrow(type = "closed", length = unit(0.1, "inches")),
+                 inherit.aes = FALSE) +
+    geom_text(data = data.frame(x = -0.25, y = 0.5, label = "Improvement"), aes(x = x, y = y, label = label),
+              inherit.aes = FALSE) +
+    geom_text(data = data.frame(x = -0.25, y = -0.5, label = "Worsening"),
+    aes(x = x, y = y, label = label),
+              inherit.aes = FALSE) +
+    geom_text(
+      data = missing_H() %>% filter(toxicity %in% toxic),
+      aes(x = dose, y = loc, label = label, group = dose),  # 'toxicity' must also be in 'missing'
+      inherit.aes = FALSE,
+      vjust = -0.5
+    ) + ggtitle(editH()$title) + theme(plot.title = element_text(size = editH()$titlesize, face = "bold"))
+                                }
+                                else {
+                                  formatterH <- function(toxic = toxic) {paste0("Symptomatic Adverse Event ", toxic)}
+                                  g +
     facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterH)) + #ylim(c(-1, 1)) +
       scale_fill_manual(breaks = labels[,1],
                     values=labels[,2],
@@ -1507,6 +1832,7 @@ output$graphH <- renderPlot({
       inherit.aes = FALSE,
       vjust = -0.5
     )
+                                }
 })
 ################################################################################################## Graph I 
 #Update the selection boxes based on dataset
@@ -1623,11 +1949,26 @@ ice_n_patI <- reactive({
 
 #Final figure
 output$graphI <- renderPlot({
-  formatterI <- function(SAE = toxicI()) {
-    paste0("Symptomatic adverse event ", SAE)
-  }
-  propI() %>% ggplot(aes(fill = base_adj, x = dose, y = proportion * 100)) +
-    geom_bar(position = "stack", stat = "identity") + coord_flip() +
+  g <- propI() %>% ggplot(aes(fill = base_adj, x = dose, y = proportion * 100)) +
+    geom_bar(position = "stack", stat = "identity") + coord_flip()
+              if (isTruthy(input$updateI)){
+                formatterI <- function(SAE = toxicI()) {paste(editI()$subtitle, SAE, sep = " ")}
+                                  g +
+    facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterI)) +
+    scale_fill_manual(breaks = rev(c(1:5, "Unreported")),
+                      values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "darkgrey")),
+                      labels = rev(c("None", "Mild", "Moderate", "Severe", "Very Severe", "Unreported")),
+                      guide = guide_legend(reverse = TRUE)) +
+    labs(x = paste0("Dose (N=", paste(ice_n_patI()$n.pat, collapse = "; "), ")"),
+          y = "Percentage (%)",
+          fill = "Severity Grade") +
+    theme(
+          strip.text.y = element_text(angle = 0)) +
+                                  ggtitle(editI()$title) + theme(plot.title = element_text(size = editI()$titlesize, face = "bold"))
+                                }
+                                else {
+                                  formatterI <- function(SAE = toxicI()) {paste0("Symptomatic adverse event ", SAE)}
+                                  g +
     facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterI)) +
     scale_fill_manual(breaks = rev(c(1:5, "Unreported")),
                       values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "darkgrey")),
@@ -1638,6 +1979,7 @@ output$graphI <- renderPlot({
           fill = "Severity Grade") +
     theme(
           strip.text.y = element_text(angle = 0))
+                                }
 })
 ##########################################################Download buttons 
 output$downloadA <- downloadHandler(
