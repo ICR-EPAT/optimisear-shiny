@@ -534,7 +534,9 @@ editD <- eventReactive(input$updateD,{
 })
 editE <- eventReactive(input$updateE,{
  list(title = input$titleE,
-  titlesize = input$titlesizeE)
+  titlesize = input$titlesizeE,
+  y_lab = input$ylab_E,
+  range = input$rangeE)
 })
 titleF <- eventReactive(input$updateF,{
   input$titleF
@@ -1156,17 +1158,30 @@ output$graphE <- renderPlot({
     labs(fill = "Dose level") +
     geom_boxplot() +
     theme_minimal(base_size = 14) +
-    xlab("Timepoint") + ylab(paste0("Score in category ", func_E())) +
+    xlab("Timepoint")
+     if (isTruthy(input$updateE)){
+      editE <- editE()
+      bounds <- editE$range
+      maxval <- max(continuous_data$score, na.rm = TRUE)
+      minval <- min(continuous_data$score, na.rm = TRUE)
+      lower <- min(c(minval, bounds[1]))
+      upper <- max(c(maxval, bounds[2]))
+      g + ylab(paste0(editE$y_lab)) +
+    geom_segment(aes(x = 0.2, xend = 0.2, y = lower, yend = upper),
+                 colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches"))) + ylim(c(lower, upper)) +
+    scale_x_discrete(expand = expansion(add = c(2, 0))) +
+    geom_text(aes(x = -0.45, y = upper * 0.9, label = "Better \n tolerability"))+
+    ggtitle(editE$title) +
+    theme(plot.title = element_text(size = editE$titlesize, face = "bold"))
+                                }
+                                else {
+                                  g + ylab(paste0("Score in category ", func_E())) +
     geom_segment(aes(x = 0.2, xend = 0.2, y = 0, yend = 100),
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches"))) + ylim(c(0, 100)) +
     scale_x_discrete(expand = expansion(add = c(2, 0))) +
     geom_text(aes(x = -0.45, y = 90, label = "Better \n tolerability"))
-     if (isTruthy(input$updateE)){
-                                  g + ggtitle(editE()$title) + theme(plot.title = element_text(size = editE()$titlesize, face = "bold"))
-                                }
-                                else {
-                                  g
                                 }
 })
 ############################################################## Graph F
