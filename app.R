@@ -91,7 +91,7 @@ ui <- div(page_navbar(
        p("- Dose Level, {dose}, [numeric]"),
     ))
   ))),
-  page_sidebar(
+  layout_sidebar(
     title = "Input data",
   sidebar = sidebar(
   card(card_header("Upload data file"), card_body(fileInput("upload", "Ordinal data", accept = c(".csv"))),
@@ -107,7 +107,7 @@ ui <- div(page_navbar(
             fluidRow(
           textOutput("textHeaderA")
         ),
-        page_sidebar(
+        layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(checkboxGroupInput("numdose", label = "Dosage",
                                                  selected = NULL, inline = TRUE)))
@@ -128,7 +128,7 @@ ui <- div(page_navbar(
           fluidRow(
           textOutput("textHeaderB")
         ),
-        page_sidebar(
+        layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(
                     checkboxGroupInput("numdoseB", label = "Dosage",
@@ -154,13 +154,13 @@ ui <- div(page_navbar(
             fluidRow(
           textOutput("textHeaderH")
         ),
-        page_sidebar(
+        layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(
                     checkboxGroupInput("numdoseH", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1),
-                    checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL , inline = TRUE)
+                    checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL, inline = TRUE)
           )), 
           card(card_header("Download .svg file"), card_body(downloadButton("downloadH")))),
           card(card_header(class = "d-inline-flex justify-content-end",
@@ -181,7 +181,7 @@ ui <- div(page_navbar(
             fluidRow(
           textOutput("textHeaderI")
         ),
-    page_sidebar(
+    layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(
                     checkboxGroupInput("numdoseI", label = "Dosage",
@@ -207,7 +207,7 @@ ui <- div(page_navbar(
              fluidRow(
           textOutput("textHeaderC")
         ),
-                page_sidebar(
+                layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(
                     checkboxGroupInput("numdoseC", label = "Dosage",
@@ -236,7 +236,7 @@ ui <- div(page_navbar(
              tabPanel("GraphD", tabName = "GraphD", icon = icon("moon"), fluidRow(
           textOutput("textHeaderD")
         ),
-            page_sidebar(
+            layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(
                     sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
@@ -262,7 +262,7 @@ ui <- div(page_navbar(
              tabPanel("GraphE", tabName = "GraphE", icon = icon("moon"),  fluidRow(
           textOutput("textHeaderE")
         ),
-         page_sidebar(
+         layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(
             checkboxGroupInput("numdoseE", label = "Dosage", selected = NULL, inline = TRUE),
@@ -286,7 +286,7 @@ ui <- div(page_navbar(
            tabPanel("GraphF", tabName = "GraphF", icon = icon("moon"),     fluidRow(
           textOutput("textHeaderF")
         ),
-          page_sidebar(
+          layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(
                    checkboxGroupInput("numdoseF", label = "Dosage",
@@ -309,7 +309,7 @@ ui <- div(page_navbar(
              tabPanel("GraphG", tabName = "GraphG", icon = icon("moon"),          fluidRow(
           textOutput("textHeaderG")
         ),
-          page_sidebar(
+          layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(
           checkboxGroupInput("numdoseG", label = "Dosage",
