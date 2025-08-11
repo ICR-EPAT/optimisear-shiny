@@ -26,7 +26,8 @@ ui <- div(page_navbar(
   p("4. Select relevant graphs under the Ordinal or Continuous dropdown"),
   p("5. Adjust the variables to suit your required outputs"),
   p("- Use the edit button to make changes to graphs where necessary"),
-  p("6. Click download to export any relevant graphs as a .svg file")
+  p("6. Click download to export any relevant graphs as a .svg file"),
+  p("- Changing the image size in the editor will also adjust the file for download")
   )),
   card(card_body(
   h3("About the graphs")),
@@ -91,7 +92,7 @@ ui <- div(page_navbar(
        p("- Dose Level, {dose}, [numeric]"),
     ))
   ))),
-  page_sidebar(
+  layout_sidebar(
     title = "Input data",
   sidebar = sidebar(
   card(card_header("Upload data file"), card_body(fileInput("upload", "Ordinal data", accept = c(".csv"))),
@@ -107,12 +108,18 @@ ui <- div(page_navbar(
             fluidRow(
           textOutput("textHeaderA")
         ),
-        page_sidebar(
+        layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(checkboxGroupInput("numdose", label = "Dosage",
                                                  selected = NULL, inline = TRUE)))
                , card(card_header("Download .svg file"), card_body(downloadButton("downloadA")))),
           card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("sizeA", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
+            title = "Adjust output size",
+            id = "dimA",
+            sliderInput("widthA", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
+            sliderInput("heightA", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
           popover(
             actionButton("editA", "Edit", value = FALSE, icon = icon("pencil-square")),
              title = "Graph Editor",
@@ -121,14 +128,14 @@ ui <- div(page_navbar(
              textInput("titleA", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeA", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              actionButton("updateA", "Update")
-          )), card_body(plotOutput("graphA")))
+          )), card_body(plotOutput("graphA"), height = 1000), full_screen = TRUE)
           )),
   ############################################################################################################ B UI
             tabPanel("GraphB", tabName = "GraphB", icon = icon("sun"),
           fluidRow(
           textOutput("textHeaderB")
         ),
-        page_sidebar(
+        layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(
                     checkboxGroupInput("numdoseB", label = "Dosage",
@@ -139,6 +146,12 @@ ui <- div(page_navbar(
           ,
           card(card_header(class = "d-inline-flex justify-content-end",
           popover(
+            actionButton("sizeB", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
+            title = "Adjust output size",
+            id = "dimB",
+            sliderInput("widthB", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
+            sliderInput("heightB", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
+          popover(
             actionButton("editB", "Edit", value = FALSE, icon = icon("pencil-square")),
              title = "Graph Editor",
              id = "popB",
@@ -146,7 +159,7 @@ ui <- div(page_navbar(
              textInput("titleB", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeB", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              actionButton("updateB", "Update")
-          )), card_body(plotOutput("graphB")))
+          )), card_body(plotOutput("graphB"), height = 1000), full_screen = TRUE)
             )),
 ############################################################################################################ H UI
          
@@ -154,16 +167,22 @@ ui <- div(page_navbar(
             fluidRow(
           textOutput("textHeaderH")
         ),
-        page_sidebar(
+        layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(
                     checkboxGroupInput("numdoseH", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1),
-                    checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL , inline = TRUE)
+                    checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL, inline = TRUE)
           )), 
           card(card_header("Download .svg file"), card_body(downloadButton("downloadH")))),
           card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("sizeH", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
+            title = "Adjust output size",
+            id = "dimH",
+            sliderInput("widthH", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
+            sliderInput("heightH", "Adjust graph height", value = 800, min = 300, max = 2000, step = 100, width = "400px")),
           popover(
             actionButton("editH", "Edit", value = FALSE, icon = icon("pencil-square")),
              title = "Graph Editor",
@@ -171,16 +190,17 @@ ui <- div(page_navbar(
              placement = "right",
              textInput("titleH", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeH", label = "Title size", min = 10, max = 50, value = 20, step = 5),
+             sliderInput("unrep_positionH", label = "Unreported text position", min = -1, max = 1, value = 0.7, step = 0.1),
              textInput("subtitleH", label = NULL, placeholder = "Enter subgraph label"),
              actionButton("updateH", "Update")
-          )), card_body(plotOutput("graphH")))
+          )), card_body(plotOutput("graphH"), height = 1000), full_screen = TRUE)
             )),
 ############################################################################################################ I UI
             tabPanel("GraphI", tabName = "GraphI", icon = icon("sun"),
             fluidRow(
           textOutput("textHeaderI")
         ),
-    page_sidebar(
+    layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(
                     checkboxGroupInput("numdoseI", label = "Dosage",
@@ -191,6 +211,12 @@ ui <- div(page_navbar(
           card(card_header("Download .svg file"), card_body(downloadButton("downloadI")))),
           card(card_header(class = "d-inline-flex justify-content-end",
           popover(
+            actionButton("sizeI", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
+            title = "Adjust output size",
+            id = "dimI",
+            sliderInput("widthI", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
+            sliderInput("heightI", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
+          popover(
             actionButton("editI", "Edit", value = FALSE, icon = icon("pencil-square")),
              title = "Graph Editor",
              id = "popI",
@@ -199,14 +225,14 @@ ui <- div(page_navbar(
              sliderInput("titlesizeI", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("subtitleI", label = NULL, placeholder = "Enter subgraph label"),
              actionButton("updateI", "Update")
-          )), card_body(plotOutput("graphI")))
+          )), card_body(plotOutput("graphI"), height = 1000), full_screen = TRUE)
             ))),
   navbarMenu("Continuous",############################################################################################################ C UI
              tabPanel("GraphC", tabName = "GraphC", icon = icon("moon"),
              fluidRow(
           textOutput("textHeaderC")
         ),
-                page_sidebar(
+                layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(
                     checkboxGroupInput("numdoseC", label = "Dosage",
@@ -216,6 +242,12 @@ ui <- div(page_navbar(
                    card(card_header("Download .svg file"), card_body(downloadButton("downloadC")))
           ),
           card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("sizeC", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
+            title = "Adjust output size",
+            id = "dimC",
+            sliderInput("widthC", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
+            sliderInput("heightC", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
           popover(
             actionButton("editC", "Edit", value = FALSE, icon = icon("pencil-square")),
              title = "Graph Editor",
@@ -229,13 +261,13 @@ ui <- div(page_navbar(
              sliderInput("impTextC", label = "Position of Improvement text", min = 0, max = 100, value = 18, step = 2),
              sliderInput("worTextC", label = "Position of Worsening text", min = -100, max = 0, value = -18, step = 2),
              actionButton("updateC", "Update")
-          )), card_body(plotOutput("graphC")))
+          )), card_body(plotOutput("graphC"), height = 1000), full_screen = TRUE)
             )),
 ############################################################################################################ D UI
              tabPanel("GraphD", tabName = "GraphD", icon = icon("moon"), fluidRow(
           textOutput("textHeaderD")
         ),
-            page_sidebar(
+            layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(
                     sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
@@ -244,6 +276,12 @@ ui <- div(page_navbar(
                     selectInput("functioningD", label = "Functioning of interest", choices = NULL))),
                     card(card_header("Download .svg file"), card_body(downloadButton("downloadD")))),
                     card(card_header(class = "d-inline-flex justify-content-end",
+                    popover(
+            actionButton("sizeD", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
+            title = "Adjust output size",
+            id = "dimD",
+            sliderInput("widthD", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
+            sliderInput("heightD", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
           popover(
             actionButton("editD", "Edit", value = FALSE, icon = icon("pencil-square")),
              title = "Graph Editor",
@@ -254,14 +292,14 @@ ui <- div(page_navbar(
              textInput("ylab_D", label = NULL, placeholder = "Enter y-axis label"),
              sliderInput("rangeD", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
              actionButton("updateD", "Update")
-          )), card_body(plotOutput("graphD")))
+          )), card_body(plotOutput("graphD"), height = 1000), full_screen = TRUE)
         )),
 ############################################################################################################ E UI
               
              tabPanel("GraphE", tabName = "GraphE", icon = icon("moon"),  fluidRow(
           textOutput("textHeaderE")
         ),
-         page_sidebar(
+         layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(
             checkboxGroupInput("numdoseE", label = "Dosage", selected = NULL, inline = TRUE),
@@ -269,6 +307,12 @@ ui <- div(page_navbar(
             selectInput("functioningE", label = "Functioning of interest", choices = NULL))),
             card(card_header("Download .svg file"), card_body(downloadButton("downloadE")))),
             card(card_header(class = "d-inline-flex justify-content-end",
+            popover(
+            actionButton("sizeE", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
+            title = "Adjust output size",
+            id = "dimE",
+            sliderInput("widthE", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
+            sliderInput("heightE", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
           popover(
             actionButton("editE", "Edit", value = FALSE, icon = icon("pencil-square")),
              title = "Graph Editor",
@@ -279,13 +323,13 @@ ui <- div(page_navbar(
              textInput("ylab_E", label = NULL, placeholder = "Enter y-axis label"),
              sliderInput("rangeE", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
              actionButton("updateE", "Update")
-          )), card_body(plotOutput("graphE")))
+          )), card_body(plotOutput("graphE"), height = 1000), full_screen = TRUE)
         )),
 ############################################################################################################ F UI
            tabPanel("GraphF", tabName = "GraphF", icon = icon("moon"),     fluidRow(
           textOutput("textHeaderF")
         ),
-          page_sidebar(
+          layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(
                    checkboxGroupInput("numdoseF", label = "Dosage",
@@ -294,6 +338,12 @@ ui <- div(page_navbar(
           checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE))),
           card(card_header("Download .svg file"), card_body(downloadButton("downloadF")))),
            card(card_header(class = "d-inline-flex justify-content-end",
+           popover(
+            actionButton("sizeF", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
+            title = "Adjust output size",
+            id = "dimF",
+            sliderInput("widthF", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
+            sliderInput("heightF", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
           popover(
             actionButton("editF", "Edit", value = FALSE, icon = icon("pencil-square")),
              title = "Graph Editor",
@@ -301,14 +351,14 @@ ui <- div(page_navbar(
              placement = "right",
              textInput("titleF", label = NULL, placeholder = "Enter table title"),
              actionButton("updateF", "Update")
-          )), card_body(gt_output("graphF")))
+          )), card_body(gt_output("graphF"), height = 1000), full_screen = TRUE)
            )),
            ############################################################################################################ G UI 
     
              tabPanel("GraphG", tabName = "GraphG", icon = icon("moon"),          fluidRow(
           textOutput("textHeaderG")
         ),
-          page_sidebar(
+          layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(
           checkboxGroupInput("numdoseG", label = "Dosage",
@@ -317,6 +367,12 @@ ui <- div(page_navbar(
           checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE))),
           card(card_header("Download .svg file"), card_body(downloadButton("downloadG")))),
           card(card_header(class = "d-inline-flex justify-content-end",
+          popover(
+            actionButton("sizeG", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
+            title = "Adjust output size",
+            id = "dimG",
+            sliderInput("widthG", "Adjust graph width", value = 800, min = 300, max = 1600, step = 100, width = "400px"),
+            sliderInput("heightG", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
           popover(
             actionButton("editG", "Edit", value = FALSE, icon = icon("pencil-square")),
              title = "Graph Editor",
@@ -331,7 +387,7 @@ ui <- div(page_navbar(
              sliderInput("impTextG", label = "Position of Improvement text", min = 0, max = 100, value = 22, step = 2),
              sliderInput("worTextG", label = "Position of Worsening text", min = -100, max = 0, value = -22, step = 2),
              actionButton("updateG", "Update")
-          )), card_body(plotOutput("graphG")))
+          )), card_body(plotOutput("graphG"), height = 1000), full_screen = TRUE)
       ))),
 ################################################################################################################## description tab
       tabPanel("Description", tabName = "description", icon = icon("book"), h4("About this site"),
@@ -556,7 +612,8 @@ editG <- eventReactive(input$updateG,{
 editH <- eventReactive(input$updateH,{
   list(title = input$titleH,
   titlesize = input$titlesizeH,
-  subtitle = input$subtitleH)
+  subtitle = input$subtitleH,
+  location = input$unrep_positionH)
 })
 editI <- eventReactive(input$updateI,{
     list(title = input$titleI,
@@ -630,7 +687,7 @@ output$continuous_table <- renderTable(continuous_data())
                                 }
                                 else {
                                   g
-                                }})
+                                }}, height = function() input$heightA, width = function() input$widthA)
 
 ################################################ graph B
 
@@ -789,7 +846,7 @@ output$graphB <- renderPlot({
                                 else {
                                   g
                                 }
-})
+}, height = function() input$heightB, width = function() input$widthB)
 
 ################################################################################## GRAPH C
 #### Import the data
@@ -961,7 +1018,7 @@ output$graphC <- renderPlot({
     geom_text(data = data.frame(x = 1.6, y = -17, label = "Worsening"), aes(x = x, y = y, label = label),
               inherit.aes = FALSE)  
                                 }
-})
+}, height = function() input$heightC, width = function() input$widthC)
 ############################################################################################# GRAPH D
 observe({
   req(input$upload_cts)
@@ -1086,7 +1143,7 @@ output$graphD <- renderPlot({
         x = "Timepoint",
         color = "Patient (Dose)")
                                 }
-})
+}, height = function() input$heightD, width = function() input$widthD)
 
 
 ################################################################################## Graph E
@@ -1193,7 +1250,7 @@ output$graphE <- renderPlot({
     scale_x_discrete(expand = expansion(add = c(2, 0))) +
     geom_text(aes(x = -0.45, y = 90, label = "Better \n tolerability"))
                                 }
-})
+}, height = function() input$heightE, width = function() input$widthE)
 ############################################################## Graph F
 
 #### Update the inputs
@@ -1332,7 +1389,7 @@ sum.df.wider.gtF <- reactive({
 })
 
 
-output$graphF <- render_gt(sum.df.wider.gtF())
+output$graphF <- render_gt(sum.df.wider.gtF(), height = input$heightF, width = input$widthF)
 
 
 
@@ -1556,7 +1613,7 @@ output$graphG <- renderPlot({
               inherit.aes = FALSE)
                                 }
         
-})
+}, height = function() input$heightG, width = function() input$widthG)
 
 ################################################################################ Graph H
 #Update the selection boxes based on dataset
@@ -1669,11 +1726,18 @@ missing_H <- reactive({
   missing <- propH() %>%
     subset(grade_change == "Missing") %>%
     mutate(label = paste0("Unreported: ", round(proportion, 2) * 100, "%"))
+    if (isTruthy(input$updateH)){
+    missing <- cbind(missing, rep(editH()$location, times = nrow(missing)))
+    colnames(missing)[8] <- "loc"
+    levels(missing$dose) <-  dose_labelsH()
+    missing
+    }
+    else{
   missing <- cbind(missing, rep(0.7, times = nrow(missing)))
   colnames(missing)[8] <- "loc"
   levels(missing$dose) <-  dose_labelsH()
   missing
-})
+}})
 
 prop_H_adjusted <- reactive({
   propHadj <- propH()
@@ -1833,7 +1897,7 @@ output$graphH <- renderPlot({
       vjust = -0.5
     )
                                 }
-})
+}, height = function() input$heightH, width = function() input$widthH)
 ################################################################################################## Graph I 
 #Update the selection boxes based on dataset
 observe({
@@ -1980,14 +2044,15 @@ output$graphI <- renderPlot({
     theme(
           strip.text.y = element_text(angle = 0))
                                 }
-})
+}, height = function() input$heightI, width = function() input$widthI)
 ##########################################################Download buttons 
+
 output$downloadA <- downloadHandler(
   filename = function(){
     paste0("Kaplan-Meier", Sys.Date(), ".svg")
   },
   content = function(file){
-    ggsave(file, plot = last_plot(), device = "svg")
+    ggsave(file, plot = last_plot(), device = "svg", height = input$heightA * 4, width = input$widthA * 4, units = "px")
   }
 )
 output$downloadB <- downloadHandler(
@@ -1995,7 +2060,7 @@ output$downloadB <- downloadHandler(
     paste0("Graph-B", Sys.Date(), ".svg")
   },
   content = function(file){
-    ggsave(file, plot = last_plot(), device = "svg")
+    ggsave(file, plot = last_plot(), device = "svg", height = input$heightB * 4, width = input$widthB * 4, units = "px")
   }
 )
 output$downloadC <- downloadHandler(
@@ -2003,7 +2068,7 @@ output$downloadC <- downloadHandler(
     paste0("Graph-C", Sys.Date(), ".svg")
   },
   content = function(file){
-    ggsave(file, plot = last_plot(), device = "svg")
+    ggsave(file, plot = last_plot(), device = "svg", height = input$heightC * 4, width = input$widthC * 4, units = "px")
   }
 )
 output$downloadD <- downloadHandler(
@@ -2011,7 +2076,7 @@ output$downloadD <- downloadHandler(
     paste0("Graph-D", Sys.Date(), ".svg")
   },
   content = function(file){
-    ggsave(file, plot = last_plot(), device = "svg")
+    ggsave(file, plot = last_plot(), device = "svg", height = input$heightD * 4, width = input$widthD * 4, units = "px")
   }
 )
 output$downloadE <- downloadHandler(
@@ -2019,7 +2084,7 @@ output$downloadE <- downloadHandler(
     paste0("Graph-E", Sys.Date(), ".svg")
   },
   content = function(file){
-    ggsave(file, plot = last_plot(), device = "svg")
+    ggsave(file, plot = last_plot(), device = "svg", height = input$heightE * 4, width = input$widthE * 4, units = "px")
   }
 )
 output$downloadF <- downloadHandler(
@@ -2027,7 +2092,7 @@ output$downloadF <- downloadHandler(
     paste0("Graph-F", Sys.Date(), ".svg")
   },
   content = function(file){
-    ggsave(file, plot = as_gtable(sum.df.wider.gtF()), device = "svg")
+    ggsave(file, plot = as_gtable(sum.df.wider.gtF()), device = "svg", height = input$heightF * 4, width = input$widthF * 4, units = "px")
   }
 )
 output$downloadG <- downloadHandler(
@@ -2035,7 +2100,7 @@ output$downloadG <- downloadHandler(
     paste0("Graph-G", Sys.Date(), ".svg")
   },
   content = function(file){
-    ggsave(file, plot = last_plot(), device = "svg")
+    ggsave(file, plot = last_plot(), device = "svg", height = input$heightG * 4, width = input$widthG * 4, units = "px")
   }
 )
 output$downloadH <- downloadHandler(
@@ -2043,7 +2108,7 @@ output$downloadH <- downloadHandler(
     paste0("Graph-H", Sys.Date(), ".svg")
   },
   content = function(file){
-    ggsave(file, plot = last_plot(), device = "svg")
+    ggsave(file, plot = last_plot(), device = "svg", height = input$heightH * 4, width = input$widthH * 4, units = "px")
   }
 )
 output$downloadI <- downloadHandler(
@@ -2051,7 +2116,7 @@ output$downloadI <- downloadHandler(
     paste0("Graph-I", Sys.Date(), ".svg")
   },
   content = function(file){
-    ggsave(file, plot = last_plot(), device = "svg")
+    ggsave(file, plot = last_plot(), device = "svg", height = input$heightI * 4, width = input$widthI * 4, units = "px")
   }
 )
 }
