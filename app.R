@@ -171,6 +171,7 @@ ui <- div(page_navbar(
              placement = "right",
              textInput("titleH", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeH", label = "Title size", min = 10, max = 50, value = 20, step = 5),
+             sliderInput("unrep_positionH", label = "Unreported text position", min = -1, max = 1, value = 0.7, step = 0.1),
              textInput("subtitleH", label = NULL, placeholder = "Enter subgraph label"),
              actionButton("updateH", "Update")
           )), card_body(plotOutput("graphH")))
@@ -556,7 +557,8 @@ editG <- eventReactive(input$updateG,{
 editH <- eventReactive(input$updateH,{
   list(title = input$titleH,
   titlesize = input$titlesizeH,
-  subtitle = input$subtitleH)
+  subtitle = input$subtitleH,
+  location = input$unrep_positionH)
 })
 editI <- eventReactive(input$updateI,{
     list(title = input$titleI,
@@ -1669,11 +1671,18 @@ missing_H <- reactive({
   missing <- propH() %>%
     subset(grade_change == "Missing") %>%
     mutate(label = paste0("Unreported: ", round(proportion, 2) * 100, "%"))
+    if (isTruthy(input$updateH)){
+    missing <- cbind(missing, rep(editH()$location, times = nrow(missing)))
+    colnames(missing)[8] <- "loc"
+    levels(missing$dose) <-  dose_labelsH()
+    missing
+    }
+    else{
   missing <- cbind(missing, rep(0.7, times = nrow(missing)))
   colnames(missing)[8] <- "loc"
   levels(missing$dose) <-  dose_labelsH()
   missing
-})
+}})
 
 prop_H_adjusted <- reactive({
   propHadj <- propH()
