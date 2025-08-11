@@ -39,11 +39,11 @@ ui <- div(page_navbar(
     sidebar = sidebar(
       conditionalPanel(
         "input.about == 'Ordinal'",
-        radioButtons("about_ordinal", label = NULL, choices = c("GraphA", "GraphB", "GraphH", "GraphI"))
+        radioButtons("about_ordinal", label = NULL, choiceValues = c("graphA", "graphB", "graphH", "graphI"), choiceNames =  c("GraphA", "GraphB", "GraphH", "GraphI"))
       ),
       conditionalPanel(
         "input.about == 'Continuous'",
-        radioButtons("about_continuous", label = NULL, choices = c("GraphC", "GraphD", "GraphE", "GraphF", "GraphG"))
+        radioButtons("about_continuous", label = NULL, choiceValues = c("graphC", "graphD", "graphE", "graphF", "graphG"), choiceNames = c("GraphC", "GraphD", "GraphE", "GraphF", "GraphG") )
       )
     ),
     nav_panel("Ordinal", fillable = TRUE,
@@ -104,7 +104,7 @@ ui <- div(page_navbar(
   card(card_header("Continuous data"), card_body(tableOutput("continuous_table")), max_height = 250))),
   navbarMenu("Ordinal",
 ############################################################################################################ A UI
-            tabPanel("GraphA", tabName = "GraphA", icon = icon("sun"),
+            tabPanel("GraphA", icon = icon("sun"),
             fluidRow(
           textOutput("textHeaderA")
         ),
@@ -131,7 +131,7 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphA"), height = 1000), full_screen = TRUE)
           )),
   ############################################################################################################ B UI
-            tabPanel("GraphB", tabName = "GraphB", icon = icon("sun"),
+            tabPanel("GraphB", icon = icon("sun"),
           fluidRow(
           textOutput("textHeaderB")
         ),
@@ -163,7 +163,7 @@ ui <- div(page_navbar(
             )),
 ############################################################################################################ H UI
          
-            tabPanel("GraphH", tabName = "GraphH", icon = icon("sun"),
+            tabPanel("GraphH", icon = icon("sun"),
             fluidRow(
           textOutput("textHeaderH")
         ),
@@ -196,7 +196,7 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphH"), height = 1000), full_screen = TRUE)
             )),
 ############################################################################################################ I UI
-            tabPanel("GraphI", tabName = "GraphI", icon = icon("sun"),
+            tabPanel("GraphI", icon = icon("sun"),
             fluidRow(
           textOutput("textHeaderI")
         ),
@@ -228,7 +228,7 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphI"), height = 1000), full_screen = TRUE)
             ))),
   navbarMenu("Continuous",############################################################################################################ C UI
-             tabPanel("GraphC", tabName = "GraphC", icon = icon("moon"),
+             tabPanel("GraphC", icon = icon("moon"),
              fluidRow(
           textOutput("textHeaderC")
         ),
@@ -264,7 +264,7 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphC"), height = 1000), full_screen = TRUE)
             )),
 ############################################################################################################ D UI
-             tabPanel("GraphD", tabName = "GraphD", icon = icon("moon"), fluidRow(
+             tabPanel("GraphD", icon = icon("moon"), fluidRow(
           textOutput("textHeaderD")
         ),
             layout_sidebar(
@@ -296,7 +296,7 @@ ui <- div(page_navbar(
         )),
 ############################################################################################################ E UI
               
-             tabPanel("GraphE", tabName = "GraphE", icon = icon("moon"),  fluidRow(
+             tabPanel("GraphE", icon = icon("moon"),  fluidRow(
           textOutput("textHeaderE")
         ),
          layout_sidebar(
@@ -326,7 +326,7 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphE"), height = 1000), full_screen = TRUE)
         )),
 ############################################################################################################ F UI
-           tabPanel("GraphF", tabName = "GraphF", icon = icon("moon"),     fluidRow(
+           tabPanel("GraphF", icon = icon("moon"),     fluidRow(
           textOutput("textHeaderF")
         ),
           layout_sidebar(
@@ -355,7 +355,7 @@ ui <- div(page_navbar(
            )),
            ############################################################################################################ G UI 
     
-             tabPanel("GraphG", tabName = "GraphG", icon = icon("moon"),          fluidRow(
+             tabPanel("GraphG", icon = icon("moon"),          fluidRow(
           textOutput("textHeaderG")
         ),
           layout_sidebar(
@@ -425,35 +425,35 @@ about_continuous <- reactive({input$about_continuous})
 ############################################# GRAPH IMAGE
 output$about_ordinal <- renderImage({
   about_ordinal <- about_ordinal()
-  if (about_ordinal == "GraphA"){
+  if (about_ordinal == "graphA"){
     list(src = "www/GraphExamples/graphA.jpeg")
   }
-  else if (about_ordinal == "GraphB") {
+  else if (about_ordinal == "graphB") {
      list(src = "www/GraphExamples/graphB.jpeg", height = "800px")
   }
-  else if (about_ordinal == "GraphH") {
+  else if (about_ordinal == "graphH") {
      list(src = "www/GraphExamples/graphH.svg", height = "800px")
   }
-  else if (about_ordinal == "GraphI") {
+  else if (about_ordinal == "graphI") {
      list(src = "www/GraphExamples/graphI.svg", height = "800px")
   }
 }, deleteFile = FALSE)
 
 output$about_continuous <- renderImage({
   about_continuous <- about_continuous()
-  if (about_continuous == "GraphC"){
+  if (about_continuous == "graphC"){
     list(src = "www/GraphExamples/graphC.jpeg")
   }
-  else if (about_continuous == "GraphD") {
+  else if (about_continuous == "graphD") {
      list(src = "www/GraphExamples/graphD.svg", height = "800px")
   }
-  else if (about_continuous == "GraphE") {
+  else if (about_continuous == "graphE") {
      list(src = "www/GraphExamples/graphE.svg", height = "800px")
   }
-  else if (about_continuous == "GraphF") {
+  else if (about_continuous == "graphF") {
     list(src = "www/GraphExamples/graphF.svg", height = "800px")
   }
-  else if (about_continuous == "GraphG") {
+  else if (about_continuous == "graphG") {
     list(src = "www/GraphExamples/graphG.svg", height = "800px")
   }
 }, deleteFile = FALSE)
@@ -462,35 +462,35 @@ output$about_continuous <- renderImage({
 
 output$ordinal_information_about <- renderUI({
   about_ordinal <- about_ordinal()
-  if (about_ordinal == "GraphA"){
+  if (about_ordinal == "graphA"){
     HTML("The Kaplan-Meier graph shows the survival percentage over time across dosages.<br>For this graph, we assume a change from baseline of 3 to represent an event.<br> <br> This app allows you to select: <br>- Dose levels")
   }
-  else if (about_ordinal == "GraphB") {
+  else if (about_ordinal == "graphB") {
      html("Graph B shows the proportion of patients at each severity across time on a given dose.<br> <br> This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Toxicity of interest")
   }
-  else if (about_ordinal == "GraphH") {
+  else if (about_ordinal == "graphH") {
      html("Graph H is a butterfly plot, it allows you to compare the change in severity grades between two timepoints for a dose and toxicity of interest.<br> <br> This app allows you to select: <br>- Dose levels <br>- Start timepoint <br>- Final timepoint <br>- Toxicities of interest")
   }
-  else if (about_ordinal == "GraphI") {
+  else if (about_ordinal == "graphI") {
      html("Graph I shows the percentage of patients at each severity for a given dose level, timepoint and SAE. The graph also shows the number of patients who reported. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Toxicities of interest")
   }
 })
 
 output$continuous_information_about <- renderUI({
   about_continuous <- about_continuous()
-  if (about_continuous == "GraphC"){
+  if (about_continuous == "graphC"){
     html("Graph C shows the mean change from baseline functioning across time given dose level and a functionality of interest. The graph includes 95% confidence intervals for each timepoint.<br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionality of interest")
   }
-  else if (about_continuous == "GraphD") {
+  else if (about_continuous == "graphD") {
      html("Graph D allows viewing of individual patients trends in functionality across time. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionality of interest <br> - Patient IDs ")
   }
-  else if (about_continuous == "GraphE") {
+  else if (about_continuous == "graphE") {
      html("Graph E creates boxplots for the tolerability based on scores in functionality categories. This allows you to compare between times and doses with a fixed functionality type. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionality of interest")
   }
-  else if (about_continuous == "GraphF") {
+  else if (about_continuous == "graphF") {
     html("Graph F outputs a table which shows: <br> - Mean change from baseline <br> - Standard error <br> - Number of reported patients <br> These are calculated for a fixed time period from the baseline for selected functionalities and doses. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionalities of interest")
   }
-  else if (about_continuous == "GraphG") {
+  else if (about_continuous == "graphG") {
     html("Graph G shows the mean change from baseline to a fixed timepoint given a fuctioning category with 95% confidence intervals. Doses can be compared with each other and multiple functioning categories may be shown. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionalities of interest ")
   }
 })
@@ -498,34 +498,34 @@ output$continuous_information_about <- renderUI({
 ############################################################# GRAPH PROS
 output$ordinal_pros <- renderUI({
   about_ordinal <- about_ordinal()
-  if (about_ordinal == "GraphA"){
+  if (about_ordinal == "graphA"){
     HTML("- Easily compare selected doses <br> - Provides a table with number of patients")
   }
-  else if (about_ordinal == "GraphB") {
+  else if (about_ordinal == "graphB") {
     HTML("B <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
-  else if (about_ordinal == "GraphH") {
+  else if (about_ordinal == "graphH") {
     HTML("H <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
-  else if (about_ordinal == "GraphI") {
+  else if (about_ordinal == "graphI") {
      HTML("I <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
 })
 output$continuous_pros <- renderUI({
   about_continuous <- about_continuous()
-  if (about_continuous == "GraphC"){
+  if (about_continuous == "graphC"){
      HTML("C <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
-  else if (about_continuous == "GraphD") {
+  else if (about_continuous == "graphD") {
      HTML("D <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
-  else if (about_continuous == "GraphE") {
+  else if (about_continuous == "graphE") {
      HTML("E <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
-  else if (about_continuous == "GraphF") {
+  else if (about_continuous == "graphF") {
      HTML("F <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
-  else if (about_continuous == "GraphG") {
+  else if (about_continuous == "graphG") {
      HTML("G <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
 })
@@ -534,34 +534,34 @@ output$continuous_pros <- renderUI({
 ############################################################ GRAPH CONS
 output$ordinal_cons <- renderUI({
   about_ordinal <- about_ordinal()
-  if (about_ordinal == "GraphA"){
+  if (about_ordinal == "graphA"){
      HTML("- Currently only allows baseline change of 3 as an event <br> - Missing patients aren't denoted on graph")
   }
-  else if (about_ordinal == "GraphB") {
+  else if (about_ordinal == "graphB") {
      HTML("B <br> -con 1 <br> -con 2 <br> -con 3")
   }
-  else if (about_ordinal == "GraphH") {
+  else if (about_ordinal == "graphH") {
      HTML("H <br> -con 1 <br> -con 2 <br> -con 3")
   }
-  else if (about_ordinal == "GraphI") {
+  else if (about_ordinal == "graphI") {
     HTML("I <br> -con 1 <br> -con 2 <br> -con 3")
   }
 })
 output$continuous_cons <- renderUI({
   about_continuous <- about_continuous()
-  if (about_continuous == "GraphC"){
+  if (about_continuous == "graphC"){
     HTML("C <br> -con 1 <br> -con 2 <br> -con 3")
   }
-  else if (about_continuous == "GraphD") {
+  else if (about_continuous == "graphD") {
      HTML("D <br> -con 1 <br> -con 2 <br> -con 3")
   }
-  else if (about_continuous == "GraphE") {
+  else if (about_continuous == "graphE") {
      HTML("E <br> -con 1 <br> -con 2 <br> -con 3")
   }
-  else if (about_continuous == "GraphF") {
+  else if (about_continuous == "graphF") {
     HTML("F <br> -con 1 <br> -con 2 <br> -con 3")
   }
-  else if (about_continuous == "GraphG") {
+  else if (about_continuous == "graphG") {
     HTML("G <br> -con 1 <br> -con 2 <br> -con 3")
   }
 })
