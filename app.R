@@ -528,7 +528,9 @@ editC <- eventReactive(input$updateC,{
 })
 editD <- eventReactive(input$updateD,{
   list(title = input$titleD,
-  titlesize = input$titlesizeD)
+  titlesize = input$titlesizeD,
+  y_lab = input$ylab_D,
+  range = input$rangeD)
 })
 editE <- eventReactive(input$updateE,{
  list(title = input$titleE,
@@ -1048,17 +1050,29 @@ output$graphD <- renderPlot({
                           y = score, group = id, colour = labels_D(), linetype = dose)) +
       geom_line(size = 0.9) +
       labs(linetype = "Dose") +
-      theme_minimal(base_size = 16) + ylim(c(0, 100)) +
+      theme_minimal(base_size = 16)
+         if (isTruthy(input$updateD)){
+          editD <- editD()
+          lims <- editD$range
+          minval <- min(data$score, na.rm = TRUE)
+          maxval <- max(data$score, na.rm = TRUE)
+          lower <- min(c(minval, lims[1]))
+          upper <- max(c(maxval, lims[2]))
+      g + ylim(c(lower, upper)) +
+      geom_point() +
+      labs(
+        y = paste0(editD$y_lab),
+        x = "Timepoint",
+        color = "Patient (Dose)") +
+      ggtitle(editD$title) + theme(plot.title = element_text(size = editD$titlesize, face = "bold"))
+                                }
+                                else {
+                                  g + ylim(c(0, 100)) +
       geom_point() +
       labs(
         y = paste0("Score in functionality ", func_D()),
         x = "Timepoint",
         color = "Patient (Dose)")
-         if (isTruthy(input$updateD)){
-                                  g + ggtitle(editD()$title) + theme(plot.title = element_text(size = editD()$titlesize, face = "bold"))
-                                }
-                                else {
-                                  g
                                 }
 })
 
