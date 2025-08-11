@@ -26,7 +26,8 @@ ui <- div(page_navbar(
   p("4. Select relevant graphs under the Ordinal or Continuous dropdown"),
   p("5. Adjust the variables to suit your required outputs"),
   p("- Use the edit button to make changes to graphs where necessary"),
-  p("6. Click download to export any relevant graphs as a .svg file")
+  p("6. Click download to export any relevant graphs as a .svg file"),
+  p("- Changing the image size in the editor will also adjust the file for download")
   )),
   card(card_body(
   h3("About the graphs")),
@@ -181,7 +182,7 @@ ui <- div(page_navbar(
             title = "Adjust output size",
             id = "dimH",
             sliderInput("widthH", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
-            sliderInput("heightH", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
+            sliderInput("heightH", "Adjust graph height", value = 800, min = 300, max = 2000, step = 100, width = "400px")),
           popover(
             actionButton("editH", "Edit", value = FALSE, icon = icon("pencil-square")),
              title = "Graph Editor",
@@ -370,7 +371,7 @@ ui <- div(page_navbar(
             actionButton("sizeG", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
             title = "Adjust output size",
             id = "dimG",
-            sliderInput("widthG", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
+            sliderInput("widthG", "Adjust graph width", value = 800, min = 300, max = 1600, step = 100, width = "400px"),
             sliderInput("heightG", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
           popover(
             actionButton("editG", "Edit", value = FALSE, icon = icon("pencil-square")),
@@ -1388,7 +1389,7 @@ sum.df.wider.gtF <- reactive({
 })
 
 
-output$graphF <- render_gt(sum.df.wider.gtF(), height = function() input$heightF, width = function() input$widthF)
+output$graphF <- render_gt(sum.df.wider.gtF(), height = input$heightF, width = input$widthF)
 
 
 
