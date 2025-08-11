@@ -519,7 +519,12 @@ editB <- eventReactive(input$updateB,{
 })
 editC <- eventReactive(input$updateC,{
   list(title = input$titleC,
-  titlesize = input$titlesizeC)
+  titlesize = input$titlesizeC,
+  y_lab = input$ylab_C,
+  imp_bound = input$improveC,
+  wor_bound = input$worseC,
+  imp_text = input$impTextC,
+  wor_text =input$worTextC)
 })
 editD <- eventReactive(input$updateD,{
   list(title = input$titleD,
@@ -880,7 +885,40 @@ pd <- position_dodge(width = 0.2)
 
 #### FIGURE GENERATION
 output$graphC <- renderPlot({
-  g <- summaryC() %>%
+  summaryC <- summaryC()
+  if (isTruthy(input$updateC)){
+    editC <- editC()
+    impbound <- editC$imp_bound
+    worbound <- editC$wor_bound
+    summaryC %>%
+    ggplot(
+           aes(x = as.factor(timepoint),
+               y = mean, group = as.factor(dose), shape = as.factor(dose), colour = as.factor(dose))) +
+    geom_ribbon(aes(ymin = impbound[1], ymax = impbound[2], fill = "palegreen1"), alpha = 0.3, colour = NA) +
+    geom_ribbon(aes(ymin = worbound[1], ymax = worbound[2], fill = "red"), alpha = 0.1, colour = NA) +
+    geom_point(position = pd, size=3) + geom_line(size = 1.5) +
+    geom_errorbar(position = pd, aes(ymin = l.ci, ymax = u.ci), width = 0.2, size = 1.2) +
+    theme_minimal(base_size = 14) +
+    guides(shape = guide_legend(title = "Dose"),
+           colour = guide_legend(title = "Dose")) +
+    theme_minimal(base_size = 14) +
+    xlab("Timepoint") +
+    ylab(paste0(editC$y_lab)) +
+    scale_fill_manual(name = "Threshold", values = c("palegreen1", "red"), label = c("Improvement", "Worsening")) +
+    geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = impbound[2]),
+                 colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches"))) +
+    geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = worbound[1]),
+                 colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches"))) +
+    geom_text(data = data.frame(x = 1.6, y = editC$imp_text, label = "Improvement"), aes(x = x, y = y, label = label),
+              inherit.aes = FALSE) +
+    geom_text(data = data.frame(x = 1.6, y = editC$wor_text, label = "Worsening"), aes(x = x, y = y, label = label),
+              inherit.aes = FALSE)+ 
+              ggtitle(editC()$title) + theme(plot.title = element_text(size = editC()$titlesize, face = "bold"))
+                                }
+  else {
+    summaryC %>%
     ggplot(
            aes(x = as.factor(timepoint),
                y = mean, group = as.factor(dose), shape = as.factor(dose), colour = as.factor(dose))) +
@@ -907,12 +945,7 @@ output$graphC <- renderPlot({
     geom_text(data = data.frame(x = 1.6, y = 17, label = "Improvement"), aes(x = x, y = y, label = label),
               inherit.aes = FALSE) +
     geom_text(data = data.frame(x = 1.6, y = -17, label = "Worsening"), aes(x = x, y = y, label = label),
-              inherit.aes = FALSE)
-               if (isTruthy(input$updateC)){
-                                  g + ggtitle(editC()$title) + theme(plot.title = element_text(size = editC()$titlesize, face = "bold"))
-                                }
-                                else {
-                                  g
+              inherit.aes = FALSE)  
                                 }
 })
 ############################################################################################# GRAPH D
