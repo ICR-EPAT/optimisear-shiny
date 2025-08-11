@@ -51,16 +51,16 @@ ui <- div(page_navbar(
       card(card_header("Graph"), card_body(imageOutput("about_ordinal"), height = "800px"), full_screen = TRUE, fillable = TRUE),
       card(card_header("Information"), fill = TRUE,
         card_body(card_title("About"), htmlOutput("ordinal_information_about")),
-        card_body(card_title("Advantages"), htmlOutput("ordinal_pros")),
-        card_body(card_title("Disadvantages"), htmlOutput("ordinal_cons"))
+        card_body(card_title("Edit functionality"), htmlOutput("ordinal_edit")),
+        card_body(card_title("Limitations"), htmlOutput("ordinal_lims"))
         ))),
     nav_panel("Continuous", fillable = TRUE,
     layout_columns(col_widths = c(9, 3), height = "900px",
       card(card_header("Graph"), card_body(imageOutput("about_continuous", height = "800px")), full_screen = TRUE, fill = TRUE),
       card(card_header("Information"),
         card_body(card_title("About"), htmlOutput("continuous_information_about")),
-        card_body(card_title("Advantages"), htmlOutput("continuous_pros")),
-        card_body(card_title("Disadvantages"), htmlOutput("continuous_cons"))
+        card_body(card_title("Edit functionality"), htmlOutput("continuous_edit")),
+        card_body(card_title("Limitations"), htmlOutput("continuous_lims"))
         ))))))),
   ####################################################################################################### Data Sorting + Upload
   tabPanel("Data", icon = icon("arrow-up-from-bracket"),
@@ -497,7 +497,7 @@ output$continuous_information_about <- renderUI({
 })
 
 ############################################################# GRAPH Editor 
-output$ordinal_pros <- renderUI({
+output$ordinal_edit <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "graphA"){
     HTML("- Easily compare selected doses <br> - Provides a table with number of patients")
@@ -512,7 +512,7 @@ output$ordinal_pros <- renderUI({
      HTML("I <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
 })
-output$continuous_pros <- renderUI({
+output$continuous_edit <- renderUI({
   about_continuous <- about_continuous()
   if (about_continuous == "graphC"){
      HTML("C <br> -pro 1 <br> -pro 2 <br> -pro 3")
@@ -533,7 +533,7 @@ output$continuous_pros <- renderUI({
 
 
 ############################################################ GRAPH CONSIDERATIONS
-output$ordinal_cons <- renderUI({
+output$ordinal_lims <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "graphA"){
      HTML("- Currently only allows baseline change of 3 as an event <br> - Missing patients aren't denoted on graph")
@@ -548,7 +548,7 @@ output$ordinal_cons <- renderUI({
     HTML("I <br> -con 1 <br> -con 2 <br> -con 3")
   }
 })
-output$continuous_cons <- renderUI({
+output$continuous_lims <- renderUI({
   about_continuous <- about_continuous()
   if (about_continuous == "graphC"){
     HTML("C <br> -con 1 <br> -con 2 <br> -con 3")
