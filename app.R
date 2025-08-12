@@ -249,7 +249,7 @@ ui <- div(page_navbar(
             actionButton("sizeC", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
             title = "Adjust output size",
             id = "dimC",
-            sliderInput("widthC", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
+            sliderInput("widthC", "Adjust graph width", value = 800, min = 300, max = 1600, step = 100, width = "400px"),
             sliderInput("heightC", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
             popover(
             actionButton("editC", "Edit", value = FALSE, icon = icon("pencil-square")),
@@ -289,7 +289,7 @@ ui <- div(page_navbar(
             actionButton("sizeD", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
             title = "Adjust output size",
             id = "dimD",
-            sliderInput("widthD", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
+            sliderInput("widthD", "Adjust graph width", value = 800, min = 300, max = 1600, step = 100, width = "400px"),
             sliderInput("heightD", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
           popover(
             actionButton("editD", "Edit", value = FALSE, icon = icon("pencil-square")),
@@ -325,7 +325,7 @@ ui <- div(page_navbar(
             actionButton("sizeE", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
             title = "Adjust output size",
             id = "dimE",
-            sliderInput("widthE", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
+            sliderInput("widthE", "Adjust graph width", value = 800, min = 300, max = 1600, step = 100, width = "400px"),
             sliderInput("heightE", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
           popover(
             actionButton("editE", "Edit", value = FALSE, icon = icon("pencil-square")),
