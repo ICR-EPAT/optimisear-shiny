@@ -462,10 +462,10 @@ about_continuous <- reactive({input$about_continuous})
 output$about_ordinal <- renderImage({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "graphA"){
-    list(src = "www/GraphExamples/graphA.jpeg")
+    list(src = "www/GraphExamples/graphA.svg")
   }
   else if (about_ordinal == "graphB") {
-     list(src = "www/GraphExamples/graphB.jpeg", height = "800px")
+     list(src = "www/GraphExamples/graphB.svg", height = "800px")
   }
   else if (about_ordinal == "graphH") {
      list(src = "www/GraphExamples/graphH.svg", height = "800px")
