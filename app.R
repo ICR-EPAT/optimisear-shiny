@@ -835,7 +835,7 @@ output$graphB <- renderPlot({
   prop <- prop()
   no_dose <- no_doseb()
   no_patient <- no_patient()
-  formatter <- function(no_dose, no_pat = no_patient) { paste0("Dose level ", no_dose, " (N=", no_pat, ")")}
+  formatter <- function(no_dose, no_pat = no_patient) { paste0("Dose ", no_dose, " (N=", no_pat, ")")}
   g <- prop %>% filter(toxicity == toxic()) %>% ggplot(aes(x = as.factor(timepoint))) +
     geom_bar(aes(x = as.factor(timepoint),
                  y = proportion,
@@ -1249,7 +1249,7 @@ data_E <- reactive({
 output$graphE <- renderPlot({
   continuous_data <- data_E()
   g <- ggplot(continuous_data, aes(x = as.factor(timepoint), y = score, fill = as.factor(dose))) +
-    labs(fill = "Dose level") +
+    labs(fill = "Dose") +
     geom_boxplot() +
     theme_minimal(base_size = 14) +
     xlab("Timepoint")
@@ -1560,7 +1560,7 @@ output$graphG <- renderPlot({
   no_patient <- paste(no_patient, collapse = ";")
   g <- data.frame(sum.dfG()) %>% ggplot(aes(x = custom_x, y = mean, colour = as.factor(dose))) +
   geom_point(size = 3) +
-  scale_color_discrete(name = "Dose level") +
+  scale_color_discrete(name = "Dose") +
   geom_errorbar(aes(ymin = l.ci, ymax = u.ci), width = 0.2, size = 1.2) +
   theme_minimal(base_size = 14)
       if (isTruthy(input$updateG)){
