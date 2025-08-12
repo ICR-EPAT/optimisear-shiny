@@ -251,7 +251,7 @@ ui <- div(page_navbar(
             id = "dimC",
             sliderInput("widthC", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
             sliderInput("heightC", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
-          popover(
+            popover(
             actionButton("editC", "Edit", value = FALSE, icon = icon("pencil-square")),
              title = "Graph Editor",
              id = "popC",
@@ -269,8 +269,8 @@ ui <- div(page_navbar(
              sliderInput("worTextC", label = "Position of Worsening text", min = -100, max = 0, value = -18, step = 2),
              p(strong("Note:")),
              p("If value selected for bounds excludes minimum or maximum of the data, the app will instead set this as the value. This also applies to the text height."),
-             actionButton("updateC", "Update")
-          )), card_body(plotOutput("graphC"), height = 1000), full_screen = TRUE)
+             actionButton("updateC", "Update"))
+          ), card_body(plotOutput("graphC"), height = 1000), full_screen = TRUE)
             )),
 ############################################################################################################ D UI
              tabPanel("GraphD", icon = icon("moon"), fluidRow(
@@ -427,7 +427,17 @@ ui <- div(page_navbar(
 ################################################################################################################## Version history
       tabPanel("Version History", tabName = "history", icon = icon("history"),
       card(card_header("Versions"),
-      card_body(p("v1.0 - Internal ICR release 06/08/2025")))), bg = "DarkSeaGreen"))
+      card_body(p("v1.0 - Internal ICR release 06/08/2025")))), bg = "DarkSeaGreen",
+      ,))
+
+tags$head(tags$style(HTML("
+      .popover {
+        max-height: 1000px;
+        max-width: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+    ")))
 
 #######################################################################################################################   SERVER SIDE 
 
