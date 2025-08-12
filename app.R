@@ -264,7 +264,7 @@ ui <- div(page_navbar(
              sliderInput("impTextC", label = "Position of Improvement text", min = 0, max = 100, value = 18, step = 2),
              sliderInput("worTextC", label = "Position of Worsening text", min = -100, max = 0, value = -18, step = 2),
              p(strong("Note:")),
-             p("If value selected for bounds excludes minimum or maximum of the data, the app will instead set this as the maximum. This also applies to the text height."),
+             p("If value selected for bounds excludes minimum or maximum of the data, the app will instead set this as the value. This also applies to the text height."),
              actionButton("updateC", "Update")
           )), card_body(plotOutput("graphC"), height = 1000), full_screen = TRUE)
             )),
@@ -295,7 +295,10 @@ ui <- div(page_navbar(
              textInput("titleD", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeD", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_D", label = NULL, placeholder = "Enter y-axis label"),
+             textInput("arrowlab_D", label = NULL, placeholder = "Enter arrow label"),
              sliderInput("rangeD", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
+             p(strong("Note:")),
+             p("If value selected for range excludes minimum or maximum of the data, the app will instead set this as the value."),
              actionButton("updateD", "Update")
           )), card_body(plotOutput("graphD"), height = 1000), full_screen = TRUE)
         )),
@@ -326,7 +329,10 @@ ui <- div(page_navbar(
              textInput("titleE", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeE", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_E", label = NULL, placeholder = "Enter y-axis label"),
+             textInput("arrowlab_E", label = NULL, placeholder = "Enter arrow label"),
              sliderInput("rangeE", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
+             p(strong("Note:")),
+             p("If value selected for range excludes minimum or maximum of the data, the app will instead set this as the value."),
              actionButton("updateE", "Update")
           )), card_body(plotOutput("graphE"), height = 1000), full_screen = TRUE)
         )),
@@ -394,7 +400,7 @@ ui <- div(page_navbar(
              sliderInput("impTextG", label = "Position of Improvement text", min = 0, max = 100, value = 22, step = 2),
              sliderInput("worTextG", label = "Position of Worsening text", min = -100, max = 0, value = -22, step = 2),
              p(strong("Note:")),
-             p("If value selected for bounds excludes minimum or maximum of the data, the app will instead set this as the maximum. This also applies to the text height."),
+             p("If value selected for bounds excludes minimum or maximum of the data, the app will instead set this as the value. This also applies to the text height."),
              actionButton("updateG", "Update")
           )), card_body(plotOutput("graphG"), height = 1000), full_screen = TRUE)
       ))),
@@ -597,12 +603,14 @@ editD <- eventReactive(input$updateD,{
   list(title = input$titleD,
   titlesize = input$titlesizeD,
   y_lab = input$ylab_D,
+  arrow_lab = input$arrowlab_D,
   range = input$rangeD)
 })
 editE <- eventReactive(input$updateE,{
  list(title = input$titleE,
   titlesize = input$titlesizeE,
   y_lab = input$ylab_E,
+  arrow_lab = input$arrowlab_E,
   range = input$rangeE)
 })
 titleF <- eventReactive(input$updateF,{
@@ -1146,7 +1154,7 @@ output$graphD <- renderPlot({
       geom_segment(x = 0.2, xend = 0.2, y = lower, yend = upper,
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches")), inherit.aes = FALSE) +
-    geom_text(x = -0.2, y = upper * 0.9, label = "Better \n tolerability", color = "black", inherit.aes = FALSE) +
+    geom_text(x = -0.2, y = upper * 0.9, label = editD$arrow_lab, color = "black", inherit.aes = FALSE) +
     scale_x_discrete(expand = expansion(add = c(2, 0)))
 }
                                 else {
@@ -1257,7 +1265,7 @@ output$graphE <- renderPlot({
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches"))) + ylim(c(lower, upper)) +
     scale_x_discrete(expand = expansion(add = c(2, 0))) +
-    geom_text(aes(x = -0.45, y = upper * 0.9, label = "Better \n tolerability"))+
+    geom_text(aes(x = -0.45, y = upper * 0.9, label = editE$arrow_lab))+
     ggtitle(editE$title) +
     theme(plot.title = element_text(size = editE$titlesize, face = "bold"))
                                 }
