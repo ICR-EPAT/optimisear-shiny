@@ -159,7 +159,8 @@ ui <- div(page_navbar(
              placement = "right",
              textInput("titleB", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeB", label = "Title size", min = 10, max = 50, value = 20, step = 5),
-             textInput("xlab_B", label = NULL, placeholder = "X-axis label"),
+             textInput("xlab_B", label = NULL, placeholder = "Enter x-axis label"),
+             sliderInput("axisSizeB", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
              actionButton("updateB", "Update")
           )), card_body(plotOutput("graphB"), height = 1000), full_screen = TRUE)
             )),
@@ -258,7 +259,8 @@ ui <- div(page_navbar(
              textInput("titleC", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeC", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_C", label = NULL, placeholder = "Enter y-axis label"),
-             textInput("xlab_C", label = NULL, placeholder = "X-axis label"),
+             textInput("xlab_C", label = NULL, placeholder = "Enter x-axis label"),
+             sliderInput("axisSizeC", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
              p(strong("Note:")),
              p("Upper bound for improvement and lower bound for worsening will be taken as range"),
              sliderInput("improveC", label = "Start and endpoint for improvement", min = 0, max = 100, value = c(10, 30), step = 5),
@@ -297,7 +299,8 @@ ui <- div(page_navbar(
              textInput("titleD", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeD", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_D", label = NULL, placeholder = "Enter y-axis label"),
-             textInput("xlab_D", label = NULL, placeholder = "X-axis label"),
+             textInput("xlab_D", label = NULL, placeholder = "Enter x-axis label"),
+             sliderInput("axisSizeD", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
              textInput("arrowlab_D", label = NULL, placeholder = "Enter arrow label"),
              sliderInput("rangeD", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
              p(strong("Note:")),
@@ -332,7 +335,8 @@ ui <- div(page_navbar(
              textInput("titleE", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeE", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_E", label = NULL, placeholder = "Enter y-axis label"),
-             textInput("xlab_E", label = NULL, placeholder = "X-axis label"),
+             textInput("xlab_E", label = NULL, placeholder = "Enter x-axis label"),
+             sliderInput("axisSizeE", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
              textInput("arrowlab_E", label = NULL, placeholder = "Enter arrow label"),
              sliderInput("rangeE", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
              p(strong("Note:")),
@@ -396,6 +400,7 @@ ui <- div(page_navbar(
              textInput("titleG", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeG", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_G", label = NULL, placeholder = "Enter y-axis label"),
+             sliderInput("axisSizeG", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
              textInput("sublab_G", label = NULL, placeholder = "Enter subgraph label"),
              p(strong("Note:")),
              p("Upper bound for improvement and lower bound for worsening will be taken as range"),
@@ -593,23 +598,26 @@ editA <- eventReactive(input$updateA,{
 editB <- eventReactive(input$updateB,{
   list(title = input$titleB,
   titlesize = input$titlesizeB,
-  x_lab = input$xlab_B)
+  x_lab = input$xlab_B,
+  axissize = input$axisSizeB)
 })
 editC <- eventReactive(input$updateC,{
   list(title = input$titleC,
   titlesize = input$titlesizeC,
   y_lab = input$ylab_C,
   x_lab = input$xlab_C,
+  axissize = input$axisSizeC,
   imp_bound = input$improveC,
   wor_bound = input$worseC,
   imp_text = input$impTextC,
-  wor_text =input$worTextC)
+  wor_text = input$worTextC)
 })
 editD <- eventReactive(input$updateD,{
   list(title = input$titleD,
   titlesize = input$titlesizeD,
   y_lab = input$ylab_D,
   x_lab = input$xlab_D,
+  axissize = input$axisSizeD,
   arrow_lab = input$arrowlab_D,
   range = input$rangeD)
 })
@@ -618,6 +626,7 @@ editE <- eventReactive(input$updateE,{
   titlesize = input$titlesizeE,
   y_lab = input$ylab_E,
   x_lab = input$xlab_E,
+  axissize = input$axisSizeE,
   arrow_lab = input$arrowlab_E,
   range = input$rangeE)
 })
@@ -628,6 +637,7 @@ editG <- eventReactive(input$updateG,{
   list(title = input$titleG,
   titlesize = input$titlesizeG,
   y_lab = input$ylab_G,
+  axissize = input$axisSizeG,
   subgraph_lab = input$sublab_G,
   imp_bound = input$improveG,
   wor_bound = input$worseG,
@@ -866,7 +876,7 @@ output$graphB <- renderPlot({
                                   g +
     labs(x = editB()$x_lab,
          y = "Proportion",
-         fill = "Severity Grade")+ ggtitle(editB()$title) + theme(plot.title = element_text(size = editB()$titlesize, face = "bold"))
+         fill = "Severity Grade")+ ggtitle(editB()$title) + theme(plot.title = element_text(size = editB()$titlesize, face = "bold"), axis.title = element_text(size = editB()$axissize))
                                 }
                                 else {
                                   g +
@@ -1013,8 +1023,8 @@ output$graphC <- renderPlot({
     geom_text(data = data.frame(x = 1.6, y = improve_text, label = "Improvement"), aes(x = x, y = y, label = label),
               inherit.aes = FALSE) +
     geom_text(data = data.frame(x = 1.6, y = worse_text, label = "Worsening"), aes(x = x, y = y, label = label),
-              inherit.aes = FALSE)+ 
-              ggtitle(editC()$title) + theme(plot.title = element_text(size = editC()$titlesize, face = "bold"))
+              inherit.aes = FALSE) +
+              ggtitle(editC$title) + theme(plot.title = element_text(size = editC$titlesize, face = "bold"), axis.title = element_text(size = editC$axissize))
                                 }
   else {
     summaryC %>%
@@ -1161,7 +1171,7 @@ output$graphD <- renderPlot({
         y = paste0(editD$y_lab),
         x = editD$x_lab,
         color = "Patient (Dose)") +
-      ggtitle(editD$title) + theme(plot.title = element_text(size = editD$titlesize, face = "bold")) +
+      ggtitle(editD$title) + theme(plot.title = element_text(size = editD$titlesize, face = "bold"), axis.title = element_text(size = editD$axissize)) +
       geom_segment(x = 0.2, xend = 0.2, y = lower, yend = upper,
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches")), inherit.aes = FALSE) +
@@ -1277,7 +1287,7 @@ output$graphE <- renderPlot({
     scale_x_discrete(expand = expansion(add = c(2, 0))) +
     geom_text(aes(x = -0.45, y = upper * 0.9, label = editE$arrow_lab))+
     ggtitle(editE$title) +
-    theme(plot.title = element_text(size = editE$titlesize, face = "bold"))
+    theme(plot.title = element_text(size = editE$titlesize, face = "bold"), axis.title = element_text(size = editE$axissize))
                                 }
                                 else {
                                   g + xlab("Timepoint") + ylab(paste0("Score in category ", func_E())) +
@@ -1614,7 +1624,7 @@ output$graphG <- renderPlot({
               inherit.aes = FALSE) +
    geom_text(data = arrowdf, aes(x = 2, y = worse_text, label = "Worsening"),
               inherit.aes = FALSE) +
-              ggtitle(editG$title) + theme(plot.title = element_text(size = editG$titlesize, face = "bold"))
+              ggtitle(editG$title) + theme(plot.title = element_text(size = editG$titlesize, face = "bold"), axis.title = element_text(size = editG$axissize))
                                 }
                                 else {
                                   thresholds <- data.frame(
