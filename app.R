@@ -159,6 +159,7 @@ ui <- div(page_navbar(
              placement = "right",
              textInput("titleB", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeB", label = "Title size", min = 10, max = 50, value = 20, step = 5),
+             textInput("xlab_B", label = NULL, placeholder = "X-axis label"),
              actionButton("updateB", "Update")
           )), card_body(plotOutput("graphB"), height = 1000), full_screen = TRUE)
             )),
@@ -257,6 +258,7 @@ ui <- div(page_navbar(
              textInput("titleC", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeC", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_C", label = NULL, placeholder = "Enter y-axis label"),
+             textInput("xlab_C", label = NULL, placeholder = "X-axis label"),
              p(strong("Note:")),
              p("Upper bound for improvement and lower bound for worsening will be taken as range"),
              sliderInput("improveC", label = "Start and endpoint for improvement", min = 0, max = 100, value = c(10, 30), step = 5),
@@ -295,6 +297,7 @@ ui <- div(page_navbar(
              textInput("titleD", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeD", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_D", label = NULL, placeholder = "Enter y-axis label"),
+             textInput("xlab_D", label = NULL, placeholder = "X-axis label"),
              textInput("arrowlab_D", label = NULL, placeholder = "Enter arrow label"),
              sliderInput("rangeD", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
              p(strong("Note:")),
@@ -329,6 +332,7 @@ ui <- div(page_navbar(
              textInput("titleE", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeE", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_E", label = NULL, placeholder = "Enter y-axis label"),
+             textInput("xlab_E", label = NULL, placeholder = "X-axis label"),
              textInput("arrowlab_E", label = NULL, placeholder = "Enter arrow label"),
              sliderInput("rangeE", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
              p(strong("Note:")),
@@ -588,12 +592,14 @@ editA <- eventReactive(input$updateA,{
 })
 editB <- eventReactive(input$updateB,{
   list(title = input$titleB,
-  titlesize = input$titlesizeB)
+  titlesize = input$titlesizeB,
+  x_lab = input$xlab_B)
 })
 editC <- eventReactive(input$updateC,{
   list(title = input$titleC,
   titlesize = input$titlesizeC,
   y_lab = input$ylab_C,
+  x_lab = input$xlab_C,
   imp_bound = input$improveC,
   wor_bound = input$worseC,
   imp_text = input$impTextC,
@@ -603,6 +609,7 @@ editD <- eventReactive(input$updateD,{
   list(title = input$titleD,
   titlesize = input$titlesizeD,
   y_lab = input$ylab_D,
+  x_lab = input$xlab_D,
   arrow_lab = input$arrowlab_D,
   range = input$rangeD)
 })
@@ -610,6 +617,7 @@ editE <- eventReactive(input$updateE,{
  list(title = input$titleE,
   titlesize = input$titlesizeE,
   y_lab = input$ylab_E,
+  x_lab = input$xlab_E,
   arrow_lab = input$arrowlab_E,
   range = input$rangeE)
 })
@@ -853,15 +861,18 @@ output$graphB <- renderPlot({
                 nrow = 3,
                 strip.position = "left",
                 axes = "all",
-                labeller = as_labeller(formatter)) +
+                labeller = as_labeller(formatter))
+          if (isTruthy(input$updateB)){
+                                  g +
+    labs(x = editB()$x_lab,
+         y = "Proportion",
+         fill = "Severity Grade")+ ggtitle(editB()$title) + theme(plot.title = element_text(size = editB()$titlesize, face = "bold"))
+                                }
+                                else {
+                                  g +
     labs(x = "Timepoint",
          y = "Proportion",
          fill = "Severity Grade")
-          if (isTruthy(input$updateB)){
-                                  g + ggtitle(editB()$title) + theme(plot.title = element_text(size = editB()$titlesize, face = "bold"))
-                                }
-                                else {
-                                  g
                                 }
 }, height = function() input$heightB, width = function() input$widthB)
 
@@ -990,7 +1001,7 @@ output$graphC <- renderPlot({
     guides(shape = guide_legend(title = "Dose"),
            colour = guide_legend(title = "Dose")) +
     theme_minimal(base_size = 14) +
-    xlab("Timepoint") +
+    xlab(editC$x_lab) +
     ylab(paste0(editC$y_lab)) +
     scale_fill_manual(name = "Threshold", values = c("palegreen1", "red"), label = c("Improvement", "Worsening")) +
     geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = impbound[2]),
@@ -1148,7 +1159,7 @@ output$graphD <- renderPlot({
       geom_point() +
       labs(
         y = paste0(editD$y_lab),
-        x = "Timepoint",
+        x = editD$x_lab,
         color = "Patient (Dose)") +
       ggtitle(editD$title) + theme(plot.title = element_text(size = editD$titlesize, face = "bold")) +
       geom_segment(x = 0.2, xend = 0.2, y = lower, yend = upper,
@@ -1251,8 +1262,7 @@ output$graphE <- renderPlot({
   g <- ggplot(continuous_data, aes(x = as.factor(timepoint), y = score, fill = as.factor(dose))) +
     labs(fill = "Dose") +
     geom_boxplot() +
-    theme_minimal(base_size = 14) +
-    xlab("Timepoint")
+    theme_minimal(base_size = 14)
      if (isTruthy(input$updateE)){
       editE <- editE()
       bounds <- editE$range
@@ -1260,7 +1270,7 @@ output$graphE <- renderPlot({
       minval <- min(continuous_data$score, na.rm = TRUE)
       lower <- min(c(minval, bounds[1]))
       upper <- max(c(maxval, bounds[2]))
-      g + ylab(paste0(editE$y_lab)) +
+      g + xlab(editE$x_lab) + ylab(paste0(editE$y_lab)) +
     geom_segment(aes(x = 0.2, xend = 0.2, y = lower, yend = upper),
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches"))) + ylim(c(lower, upper)) +
@@ -1270,7 +1280,7 @@ output$graphE <- renderPlot({
     theme(plot.title = element_text(size = editE$titlesize, face = "bold"))
                                 }
                                 else {
-                                  g + ylab(paste0("Score in category ", func_E())) +
+                                  g + xlab("Timepoint") + ylab(paste0("Score in category ", func_E())) +
     geom_segment(aes(x = 0.2, xend = 0.2, y = 0, yend = 100),
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches"))) + ylim(c(0, 100)) +
