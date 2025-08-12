@@ -51,16 +51,16 @@ ui <- div(page_navbar(
       card(card_header("Graph"), card_body(imageOutput("about_ordinal"), height = "800px"), full_screen = TRUE, fillable = TRUE),
       card(card_header("Information"), fill = TRUE,
         card_body(card_title("About"), htmlOutput("ordinal_information_about")),
-        card_body(card_title("Advantages"), htmlOutput("ordinal_pros")),
-        card_body(card_title("Disadvantages"), htmlOutput("ordinal_cons"))
+        card_body(card_title("Edit functionality"), htmlOutput("ordinal_edit")),
+        card_body(card_title("Limitations"), htmlOutput("ordinal_lims"))
         ))),
     nav_panel("Continuous", fillable = TRUE,
     layout_columns(col_widths = c(9, 3), height = "900px",
       card(card_header("Graph"), card_body(imageOutput("about_continuous", height = "800px")), full_screen = TRUE, fill = TRUE),
       card(card_header("Information"),
         card_body(card_title("About"), htmlOutput("continuous_information_about")),
-        card_body(card_title("Advantages"), htmlOutput("continuous_pros")),
-        card_body(card_title("Disadvantages"), htmlOutput("continuous_cons"))
+        card_body(card_title("Edit functionality"), htmlOutput("continuous_edit")),
+        card_body(card_title("Limitations"), htmlOutput("continuous_lims"))
         ))))))),
   ####################################################################################################### Data Sorting + Upload
   tabPanel("Data", icon = icon("arrow-up-from-bracket"),
@@ -68,8 +68,9 @@ ui <- div(page_navbar(
   card_body(
     p("Data must be input as a .csv file with column titles matching the listed below."),
     p("Any columns not fitting the format will be ignored - if not all columns are provided, the app may not run."),
-    p("- If a patient doesn't report at a specific timepoint, do not enter any data."),
+    p("- If a patient experiences an intercurrent event (e.g. discontinuation or death), do not enter any data."),
     p("- If a patient partially responds to a questionnaire at a timepoint, enter all data and use NA in place of an unreported score or grade."),
+    p("- If a patient recieves treatment and does not complete a questionnaire at that timepoint, fill in all scores or grades as NA"),
     p("For an example of data, you can toggle the dummy data on - please note to use your own data, the dummy dataset must be toggled off."),
    layout_columns(
     card(card_header(strong("Ordinal datasets")),
@@ -111,7 +112,7 @@ ui <- div(page_navbar(
         layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(checkboxGroupInput("numdose", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)))
+                                                 selected = NULL, inline = TRUE), height = 800))
                , card(card_header("Download .svg file"), card_body(downloadButton("downloadA")))),
           card(card_header(class = "d-inline-flex justify-content-end",
           popover(
@@ -127,6 +128,9 @@ ui <- div(page_navbar(
              placement = "right",
              textInput("titleA", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeA", label = "Title size", min = 10, max = 50, value = 20, step = 5),
+             textInput("ylab_A", label = NULL, placeholder = "Enter y-axis label"),
+             textInput("xlab_A", label = NULL, placeholder = "Enter x-axis label"),
+             sliderInput("axisSizeA", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
              actionButton("updateA", "Update")
           )), card_body(plotOutput("graphA"), height = 1000), full_screen = TRUE)
           )),
@@ -141,7 +145,7 @@ ui <- div(page_navbar(
                     checkboxGroupInput("numdoseB", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-                    selectInput("toxicB", label = "Toxicity of interest", choices = NULL))
+                    selectInput("toxicB", label = "Toxicity of interest", choices = NULL), height = 800)
           ), card(card_header("Download .svg file"), card_body(downloadButton("downloadB"))))
           ,
           card(card_header(class = "d-inline-flex justify-content-end",
@@ -158,6 +162,8 @@ ui <- div(page_navbar(
              placement = "right",
              textInput("titleB", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeB", label = "Title size", min = 10, max = 50, value = 20, step = 5),
+             textInput("xlab_B", label = NULL, placeholder = "Enter x-axis label"),
+             sliderInput("axisSizeB", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
              actionButton("updateB", "Update")
           )), card_body(plotOutput("graphB"), height = 1000), full_screen = TRUE)
             )),
@@ -173,7 +179,7 @@ ui <- div(page_navbar(
                     checkboxGroupInput("numdoseH", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1),
-                    checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL, inline = TRUE)
+                    checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL, inline = TRUE), height = 800
           )), 
           card(card_header("Download .svg file"), card_body(downloadButton("downloadH")))),
           card(card_header(class = "d-inline-flex justify-content-end",
@@ -206,7 +212,7 @@ ui <- div(page_navbar(
                     checkboxGroupInput("numdoseI", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointI", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-                    checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE))
+                    checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE), height = 800) 
           ), 
           card(card_header("Download .svg file"), card_body(downloadButton("downloadI")))),
           card(card_header(class = "d-inline-flex justify-content-end",
@@ -238,7 +244,7 @@ ui <- div(page_navbar(
                     checkboxGroupInput("numdoseC", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                    sliderInput("tpointC", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-                   selectInput("functioningC", label = "Functioning of interest", choices = NULL))),
+                   selectInput("functioningC", label = "Functioning of interest", choices = NULL), height = 800)),
                    card(card_header("Download .svg file"), card_body(downloadButton("downloadC")))
           ),
           card(card_header(class = "d-inline-flex justify-content-end",
@@ -246,9 +252,9 @@ ui <- div(page_navbar(
             actionButton("sizeC", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
             title = "Adjust output size",
             id = "dimC",
-            sliderInput("widthC", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
+            sliderInput("widthC", "Adjust graph width", value = 800, min = 300, max = 1600, step = 100, width = "400px"),
             sliderInput("heightC", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
-          popover(
+            popover(
             actionButton("editC", "Edit", value = FALSE, icon = icon("pencil-square")),
              title = "Graph Editor",
              id = "popC",
@@ -256,12 +262,18 @@ ui <- div(page_navbar(
              textInput("titleC", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeC", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_C", label = NULL, placeholder = "Enter y-axis label"),
-             sliderInput("improveC", label = "Start and endpoint for improvement", min = 0, max = 100, value = c(10, 30), step = 5),
-             sliderInput("worseC", label = "Start and endpoint for worsening", min = -100, max = 0, value = c(-30, -10), step = 5),
-             sliderInput("impTextC", label = "Position of Improvement text", min = 0, max = 100, value = 18, step = 2),
-             sliderInput("worTextC", label = "Position of Worsening text", min = -100, max = 0, value = -18, step = 2),
-             actionButton("updateC", "Update")
-          )), card_body(plotOutput("graphC"), height = 1000), full_screen = TRUE)
+             textInput("xlab_C", label = NULL, placeholder = "Enter x-axis label"),
+             sliderInput("axisSizeC", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
+             p(strong("Note:")),
+             p("Upper bound for improvement and lower bound for worsening will be taken as range"),
+             sliderInput("improveC", label = "Start and endpoint for improvement", min = -100, max = 100, value = c(10, 30), step = 5),
+             sliderInput("worseC", label = "Start and endpoint for worsening", min = -100, max = 100, value = c(-30, -10), step = 5),
+             sliderInput("impTextC", label = "Position of Improvement text", min = -100, max = 100, value = 18, step = 2),
+             sliderInput("worTextC", label = "Position of Worsening text", min = -100, max = 100, value = -18, step = 2),
+             p(strong("Note:")),
+             p("If value selected for bounds excludes minimum or maximum of the data, the app will instead set this as the value. This also applies to the text height."),
+             actionButton("updateC", "Update"))
+          ), card_body(plotOutput("graphC"), height = 1000), full_screen = TRUE)
             )),
 ############################################################################################################ D UI
              tabPanel("GraphD", icon = icon("moon"), fluidRow(
@@ -273,14 +285,14 @@ ui <- div(page_navbar(
                     sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                     checkboxGroupInput("numdoseD", label = "Dosage",choices = NULL),
                     uiOutput("select_idD"),
-                    selectInput("functioningD", label = "Functioning of interest", choices = NULL))),
+                    selectInput("functioningD", label = "Functioning of interest", choices = NULL), height = 800)),
                     card(card_header("Download .svg file"), card_body(downloadButton("downloadD")))),
                     card(card_header(class = "d-inline-flex justify-content-end",
                     popover(
             actionButton("sizeD", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
             title = "Adjust output size",
             id = "dimD",
-            sliderInput("widthD", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
+            sliderInput("widthD", "Adjust graph width", value = 800, min = 300, max = 1600, step = 100, width = "400px"),
             sliderInput("heightD", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
           popover(
             actionButton("editD", "Edit", value = FALSE, icon = icon("pencil-square")),
@@ -290,7 +302,12 @@ ui <- div(page_navbar(
              textInput("titleD", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeD", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_D", label = NULL, placeholder = "Enter y-axis label"),
+             textInput("xlab_D", label = NULL, placeholder = "Enter x-axis label"),
+             sliderInput("axisSizeD", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
+             textInput("arrowlab_D", label = NULL, placeholder = "Enter arrow label"),
              sliderInput("rangeD", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
+             p(strong("Note:")),
+             p("If value selected for range excludes minimum or maximum of the data, the app will instead set this as the value."),
              actionButton("updateD", "Update")
           )), card_body(plotOutput("graphD"), height = 1000), full_screen = TRUE)
         )),
@@ -304,14 +321,14 @@ ui <- div(page_navbar(
           card(card_header("Variables"), card_body(
             checkboxGroupInput("numdoseE", label = "Dosage", selected = NULL, inline = TRUE),
             sliderInput("tpointE", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-            selectInput("functioningE", label = "Functioning of interest", choices = NULL))),
+            selectInput("functioningE", label = "Functioning of interest", choices = NULL), height = 800)),
             card(card_header("Download .svg file"), card_body(downloadButton("downloadE")))),
             card(card_header(class = "d-inline-flex justify-content-end",
             popover(
             actionButton("sizeE", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
             title = "Adjust output size",
             id = "dimE",
-            sliderInput("widthE", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
+            sliderInput("widthE", "Adjust graph width", value = 800, min = 300, max = 1600, step = 100, width = "400px"),
             sliderInput("heightE", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
           popover(
             actionButton("editE", "Edit", value = FALSE, icon = icon("pencil-square")),
@@ -321,7 +338,12 @@ ui <- div(page_navbar(
              textInput("titleE", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeE", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_E", label = NULL, placeholder = "Enter y-axis label"),
+             textInput("xlab_E", label = NULL, placeholder = "Enter x-axis label"),
+             sliderInput("axisSizeE", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
+             textInput("arrowlab_E", label = NULL, placeholder = "Enter arrow label"),
              sliderInput("rangeE", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
+             p(strong("Note:")),
+             p("If value selected for range excludes minimum or maximum of the data, the app will instead set this as the value."),
              actionButton("updateE", "Update")
           )), card_body(plotOutput("graphE"), height = 1000), full_screen = TRUE)
         )),
@@ -335,7 +357,7 @@ ui <- div(page_navbar(
                    checkboxGroupInput("numdoseF", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
           sliderInput("tpointF", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-          checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE))),
+          checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE), height = 800)),
           card(card_header("Download .svg file"), card_body(downloadButton("downloadF")))),
            card(card_header(class = "d-inline-flex justify-content-end",
            popover(
@@ -364,7 +386,7 @@ ui <- div(page_navbar(
           checkboxGroupInput("numdoseG", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
           sliderInput("tpointG", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-          checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE))),
+          checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE), height = 800)),
           card(card_header("Download .svg file"), card_body(downloadButton("downloadG")))),
           card(card_header(class = "d-inline-flex justify-content-end",
           popover(
@@ -381,11 +403,16 @@ ui <- div(page_navbar(
              textInput("titleG", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeG", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_G", label = NULL, placeholder = "Enter y-axis label"),
+             sliderInput("axisSizeG", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
              textInput("sublab_G", label = NULL, placeholder = "Enter subgraph label"),
-             sliderInput("improveG", label = "Start and endpoint for improvement", min = 0, max = 100, value = c(10, 25), step = 5),
-             sliderInput("worseG", label = "Start and endpoint for worsening", min = -100, max = 0, value = c(-25, -10), step = 5),
-             sliderInput("impTextG", label = "Position of Improvement text", min = 0, max = 100, value = 22, step = 2),
-             sliderInput("worTextG", label = "Position of Worsening text", min = -100, max = 0, value = -22, step = 2),
+             p(strong("Note:")),
+             p("Upper bound for improvement and lower bound for worsening will be taken as range"),
+             sliderInput("improveG", label = "Start and endpoint for improvement", min = -100, max = 100, value = c(10, 25), step = 5),
+             sliderInput("worseG", label = "Start and endpoint for worsening", min = -100, max = 100, value = c(-25, -10), step = 5),
+             sliderInput("impTextG", label = "Position of Improvement text", min = -100, max = 100, value = 22, step = 2),
+             sliderInput("worTextG", label = "Position of Worsening text", min = -100, max = 100, value = -22, step = 2),
+             p(strong("Note:")),
+             p("If value selected for bounds excludes minimum or maximum of the data, the app will instead set this as the value. This also applies to the text height."),
              actionButton("updateG", "Update")
           )), card_body(plotOutput("graphG"), height = 1000), full_screen = TRUE)
       ))),
@@ -403,7 +430,16 @@ ui <- div(page_navbar(
 ################################################################################################################## Version history
       tabPanel("Version History", tabName = "history", icon = icon("history"),
       card(card_header("Versions"),
-      card_body(p("v1.0 - Internal ICR release 06/08/2025")))), bg = "DarkSeaGreen"))
+      card_body(p("v1.0 - Internal ICR release 06/08/2025")))), bg = "DarkSeaGreen",
+      #########################################Dealing with the long popovers
+      tags$head(tags$style(HTML("
+      .popover {
+        max-height: 1000px;
+        max-width: 300px;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+    "))),))
 
 #######################################################################################################################   SERVER SIDE 
 
@@ -426,10 +462,10 @@ about_continuous <- reactive({input$about_continuous})
 output$about_ordinal <- renderImage({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "graphA"){
-    list(src = "www/GraphExamples/graphA.jpeg")
+    list(src = "www/GraphExamples/graphA.svg")
   }
   else if (about_ordinal == "graphB") {
-     list(src = "www/GraphExamples/graphB.jpeg", height = "800px")
+     list(src = "www/GraphExamples/graphB.svg", height = "800px")
   }
   else if (about_ordinal == "graphH") {
      list(src = "www/GraphExamples/graphH.svg", height = "800px")
@@ -495,8 +531,8 @@ output$continuous_information_about <- renderUI({
   }
 })
 
-############################################################# GRAPH PROS
-output$ordinal_pros <- renderUI({
+############################################################# GRAPH Editor 
+output$ordinal_edit <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "graphA"){
     HTML("- Easily compare selected doses <br> - Provides a table with number of patients")
@@ -511,7 +547,7 @@ output$ordinal_pros <- renderUI({
      HTML("I <br> -pro 1 <br> -pro 2 <br> -pro 3")
   }
 })
-output$continuous_pros <- renderUI({
+output$continuous_edit <- renderUI({
   about_continuous <- about_continuous()
   if (about_continuous == "graphC"){
      HTML("C <br> -pro 1 <br> -pro 2 <br> -pro 3")
@@ -531,8 +567,8 @@ output$continuous_pros <- renderUI({
 })
 
 
-############################################################ GRAPH CONS
-output$ordinal_cons <- renderUI({
+############################################################ GRAPH CONSIDERATIONS
+output$ordinal_lims <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "graphA"){
      HTML("- Currently only allows baseline change of 3 as an event <br> - Missing patients aren't denoted on graph")
@@ -547,7 +583,7 @@ output$ordinal_cons <- renderUI({
     HTML("I <br> -con 1 <br> -con 2 <br> -con 3")
   }
 })
-output$continuous_cons <- renderUI({
+output$continuous_lims <- renderUI({
   about_continuous <- about_continuous()
   if (about_continuous == "graphC"){
     HTML("C <br> -con 1 <br> -con 2 <br> -con 3")
@@ -569,31 +605,44 @@ output$continuous_cons <- renderUI({
 
 editA <- eventReactive(input$updateA,{
   list(title = input$titleA,
-  titlesize = input$titlesizeA)
+  titlesize = input$titlesizeA,
+  y_lab = input$ylab_A,
+  x_lab = input$xlab_A,
+  axissize = input$axisSizeA)
 })
 editB <- eventReactive(input$updateB,{
   list(title = input$titleB,
-  titlesize = input$titlesizeB)
+  titlesize = input$titlesizeB,
+  x_lab = input$xlab_B,
+  axissize = input$axisSizeB)
 })
 editC <- eventReactive(input$updateC,{
   list(title = input$titleC,
   titlesize = input$titlesizeC,
   y_lab = input$ylab_C,
+  x_lab = input$xlab_C,
+  axissize = input$axisSizeC,
   imp_bound = input$improveC,
   wor_bound = input$worseC,
   imp_text = input$impTextC,
-  wor_text =input$worTextC)
+  wor_text = input$worTextC)
 })
 editD <- eventReactive(input$updateD,{
   list(title = input$titleD,
   titlesize = input$titlesizeD,
   y_lab = input$ylab_D,
+  x_lab = input$xlab_D,
+  axissize = input$axisSizeD,
+  arrow_lab = input$arrowlab_D,
   range = input$rangeD)
 })
 editE <- eventReactive(input$updateE,{
  list(title = input$titleE,
   titlesize = input$titlesizeE,
   y_lab = input$ylab_E,
+  x_lab = input$xlab_E,
+  axissize = input$axisSizeE,
+  arrow_lab = input$arrowlab_E,
   range = input$rangeE)
 })
 titleF <- eventReactive(input$updateF,{
@@ -603,6 +652,7 @@ editG <- eventReactive(input$updateG,{
   list(title = input$titleG,
   titlesize = input$titlesizeG,
   y_lab = input$ylab_G,
+  axissize = input$axisSizeG,
   subgraph_lab = input$sublab_G,
   imp_bound = input$improveG,
   wor_bound = input$worseG,
@@ -656,7 +706,7 @@ output$continuous_table <- renderTable(continuous_data())
   #Define the relevant variables
   no_dose <- reactive({
                        req(input$numdose)
-                       as.numeric(input$numdose)})
+                       input$numdose})
   #Filter the data
   summary_df <- reactive({
                           req(input$numdose)
@@ -674,6 +724,7 @@ output$continuous_table <- renderTable(continuous_data())
                             )
                           summary_df <- cbind(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose)))
                           colnames(summary_df)[5] <- "dose"
+                          summary_df$dose <- paste0("Dose: ", summary_df$dose)
                           summary_df})
 
   output$graphA <- renderPlot({
@@ -683,10 +734,12 @@ output$continuous_table <- renderTable(continuous_data())
                                  add_confidence_interval() +
                                  scale_ggsurvfit() + add_risktable()
                                 if (isTruthy(input$updateA)){
-                                  g + ggtitle(editA()$title) + theme(plot.title = element_text(size = editA()$titlesize, face = "bold"))
+                                  editA <- editA()
+                                  g + ggtitle(editA$title) + theme(plot.title = element_text(size = editA$titlesize, face = "bold"), axis.title = element_text(size = editA$axissize)) +
+                                  labs(y = editA$y_lab , x = editA$x_lab)
                                 }
                                 else {
-                                  g
+                                  g + labs(y = "Probability of first baseline-adjusted \n Grade ≥3 PRO-CTCAE score" )
                                 }}, height = function() input$heightA, width = function() input$widthA)
 
 ################################################ graph B
@@ -738,11 +791,11 @@ observe({
 #Define the relevant variables
 no_doseb <- reactive({
                      req(input$numdoseB)
-                     as.numeric(input$numdoseB)})
+                     input$numdoseB})
 
 final_t <- reactive({
   req(input$tpointB)
-  as.numeric(input$tpointB)
+  input$tpointB
 })
 
 toxic <- reactive({
@@ -818,7 +871,7 @@ output$graphB <- renderPlot({
   prop <- prop()
   no_dose <- no_doseb()
   no_patient <- no_patient()
-  formatter <- function(no_dose, no_pat = no_patient) { paste0("Dose level ", no_dose, " (N=", no_pat, ")")}
+  formatter <- function(no_dose, no_pat = no_patient) { paste0("Dose ", no_dose, " (N=", no_pat, ")")}
   g <- prop %>% filter(toxicity == toxic()) %>% ggplot(aes(x = as.factor(timepoint))) +
     geom_bar(aes(x = as.factor(timepoint),
                  y = proportion,
@@ -836,15 +889,18 @@ output$graphB <- renderPlot({
                 nrow = 3,
                 strip.position = "left",
                 axes = "all",
-                labeller = as_labeller(formatter)) +
+                labeller = as_labeller(formatter))
+          if (isTruthy(input$updateB)){
+                                  g +
+    labs(x = editB()$x_lab,
+         y = "Proportion",
+         fill = "Severity Grade")+ ggtitle(editB()$title) + theme(plot.title = element_text(size = editB()$titlesize, face = "bold"), axis.title = element_text(size = editB()$axissize))
+                                }
+                                else {
+                                  g +
     labs(x = "Timepoint",
          y = "Proportion",
          fill = "Severity Grade")
-          if (isTruthy(input$updateB)){
-                                  g + ggtitle(editB()$title) + theme(plot.title = element_text(size = editB()$titlesize, face = "bold"))
-                                }
-                                else {
-                                  g
                                 }
 }, height = function() input$heightB, width = function() input$widthB)
 
@@ -910,11 +966,11 @@ observe({
 #Define the relevant variables
 no_doseC <- reactive({
                       req(input$numdoseC)
-                      as.numeric(input$numdoseC)})
+                      input$numdoseC})
 
 final_tC <- reactive({
   req(input$tpointC)
-  as.numeric(input$tpointC)
+  input$tpointC
 })
 
 func_C <- reactive({
@@ -959,8 +1015,18 @@ output$graphC <- renderPlot({
     editC <- editC()
     impbound <- editC$imp_bound
     worbound <- editC$wor_bound
-    worse_text <- max(editC$wor_text, worbound[1])
-    improve_text <- min(editC$imp_text, impbound[2])
+    upper <- max(editC$wor_bound[2], editC$wor_bound[2], max(diffC()$adjusted_value))
+    lower <- min(editC$wor_bound[1], editC$wor_bound[1], min(diffC()$adjusted_value))
+    worse_text <- if (worbound[1] < impbound[1]){
+      min(max(editC$wor_text, worbound[1]), worbound[2])}
+      else {
+         max(min(editC$wor_text, worbound[2]), worbound[1])
+      }
+    improve_text <- if (worbound[1] < impbound[1]){
+      max(min(editC$imp_text, impbound[2]), impbound[1])}
+      else {
+        min(max(editC$imp_text, impbound[1]), impbound[2])
+      }
     summaryC %>%
     ggplot(
            aes(x = as.factor(timepoint),
@@ -973,20 +1039,20 @@ output$graphC <- renderPlot({
     guides(shape = guide_legend(title = "Dose"),
            colour = guide_legend(title = "Dose")) +
     theme_minimal(base_size = 14) +
-    xlab("Timepoint") +
+    xlab(editC$x_lab) +
     ylab(paste0(editC$y_lab)) +
     scale_fill_manual(name = "Threshold", values = c("palegreen1", "red"), label = c("Improvement", "Worsening")) +
-    geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = impbound[2]),
+    geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = max(impbound[2], worbound[2])),
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches"))) +
-    geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = worbound[1]),
+    geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = min(impbound[1], worbound[1])),
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches"))) +
     geom_text(data = data.frame(x = 1.6, y = improve_text, label = "Improvement"), aes(x = x, y = y, label = label),
               inherit.aes = FALSE) +
     geom_text(data = data.frame(x = 1.6, y = worse_text, label = "Worsening"), aes(x = x, y = y, label = label),
-              inherit.aes = FALSE)+ 
-              ggtitle(editC()$title) + theme(plot.title = element_text(size = editC()$titlesize, face = "bold"))
+              inherit.aes = FALSE) +
+              ggtitle(editC$title) + theme(plot.title = element_text(size = editC$titlesize, face = "bold"), axis.title = element_text(size = editC$axissize)) + ylim(lower, upper)
                                 }
   else {
     summaryC %>%
@@ -1066,11 +1132,11 @@ observe({
 #Define the relevant variables
 no_doseD <- reactive({
                       req(input$numdoseD)
-                      as.numeric(input$numdoseD)})
+                      input$numdoseD})
 
 final_tD <- reactive({
   req(input$tpointD)
-  as.numeric(input$tpointD)
+  input$tpointD
 })
 
 func_D <- reactive({
@@ -1131,17 +1197,27 @@ output$graphD <- renderPlot({
       geom_point() +
       labs(
         y = paste0(editD$y_lab),
-        x = "Timepoint",
+        x = editD$x_lab,
         color = "Patient (Dose)") +
-      ggtitle(editD$title) + theme(plot.title = element_text(size = editD$titlesize, face = "bold"))
-                                }
+      ggtitle(editD$title) + theme(plot.title = element_text(size = editD$titlesize, face = "bold"), axis.title = element_text(size = editD$axissize)) +
+      geom_segment(x = 0.2, xend = 0.2, y = lower, yend = upper,
+                 colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches")), inherit.aes = FALSE) +
+    geom_text(x = -0.2, y = upper * 0.9, label = editD$arrow_lab, color = "black", inherit.aes = FALSE) +
+    scale_x_discrete(expand = expansion(add = c(2, 0)))
+}
                                 else {
                                   g + ylim(c(0, 100)) +
       geom_point() +
       labs(
         y = paste0("Score in functionality ", func_D()),
         x = "Timepoint",
-        color = "Patient (Dose)")
+        color = "Patient (Dose)") +
+        geom_segment(x = 0.2, xend = 0.2, y = 0, yend = 100,
+                 colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches")), inherit.aes = FALSE) +
+    geom_text(x = -0.2, y = 90, label = "Better \n tolerability", color = "black", inherit.aes = FALSE) +
+    scale_x_discrete(expand = expansion(add = c(2, 0)))
                                 }
 }, height = function() input$heightD, width = function() input$widthD)
 
@@ -1195,11 +1271,11 @@ observe({
 #Define the relevant variables
 no_doseE <- reactive({
                       req(input$numdoseE)
-                      as.numeric(input$numdoseE)})
+                      input$numdoseE})
 
 final_tE <- reactive({
   req(input$tpointE)
-  as.numeric(input$tpointE)
+  input$tpointE
 })
 
 func_E <- reactive({
@@ -1222,10 +1298,9 @@ data_E <- reactive({
 output$graphE <- renderPlot({
   continuous_data <- data_E()
   g <- ggplot(continuous_data, aes(x = as.factor(timepoint), y = score, fill = as.factor(dose))) +
-    labs(fill = "Dose level") +
+    labs(fill = "Dose") +
     geom_boxplot() +
-    theme_minimal(base_size = 14) +
-    xlab("Timepoint")
+    theme_minimal(base_size = 14)
      if (isTruthy(input$updateE)){
       editE <- editE()
       bounds <- editE$range
@@ -1233,17 +1308,17 @@ output$graphE <- renderPlot({
       minval <- min(continuous_data$score, na.rm = TRUE)
       lower <- min(c(minval, bounds[1]))
       upper <- max(c(maxval, bounds[2]))
-      g + ylab(paste0(editE$y_lab)) +
+      g + xlab(editE$x_lab) + ylab(paste0(editE$y_lab)) +
     geom_segment(aes(x = 0.2, xend = 0.2, y = lower, yend = upper),
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches"))) + ylim(c(lower, upper)) +
     scale_x_discrete(expand = expansion(add = c(2, 0))) +
-    geom_text(aes(x = -0.45, y = upper * 0.9, label = "Better \n tolerability"))+
+    geom_text(aes(x = -0.45, y = upper * 0.9, label = editE$arrow_lab))+
     ggtitle(editE$title) +
-    theme(plot.title = element_text(size = editE$titlesize, face = "bold"))
+    theme(plot.title = element_text(size = editE$titlesize, face = "bold"), axis.title = element_text(size = editE$axissize))
                                 }
                                 else {
-                                  g + ylab(paste0("Score in category ", func_E())) +
+                                  g + xlab("Timepoint") + ylab(paste0("Score in category ", func_E())) +
     geom_segment(aes(x = 0.2, xend = 0.2, y = 0, yend = 100),
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches"))) + ylim(c(0, 100)) +
@@ -1300,11 +1375,11 @@ observe({
 #Define the relevant variables
 no_doseF <- reactive({
                       req(input$numdoseF)
-                      as.numeric(input$numdoseF)})
+                      input$numdoseF})
 
 final_tF <- reactive({
   req(input$tpointF)
-  as.numeric(input$tpointF)
+  input$tpointF
 })
 
 func_F <- reactive({
@@ -1443,11 +1518,11 @@ observe({
 #Define the relevant variables
 no_doseG <- reactive({
                       req(input$numdoseG)
-                      as.numeric(input$numdoseG)})
+                      input$numdoseG})
 
 final_tG <- reactive({
   req(input$tpointG)
-  as.numeric(input$tpointG)
+  input$tpointG
 })
 
 func_G <- reactive({
@@ -1533,22 +1608,30 @@ output$graphG <- renderPlot({
   no_patient <- paste(no_patient, collapse = ";")
   g <- data.frame(sum.dfG()) %>% ggplot(aes(x = custom_x, y = mean, colour = as.factor(dose))) +
   geom_point(size = 3) +
-  scale_color_discrete(name = "Dose level") +
+  scale_color_discrete(name = "Dose") +
   geom_errorbar(aes(ymin = l.ci, ymax = u.ci), width = 0.2, size = 1.2) +
   theme_minimal(base_size = 14)
       if (isTruthy(input$updateG)){
         editG <- editG()
-        Impbounds <- editG$imp_bound
-        Worbounds <- editG$wor_bound
+        impbound <- editG$imp_bound
+        worbound <- editG$wor_bound
         minval <- min(dfG()$score, na.rm = TRUE)
         maxval <- max(dfG()$score, na.rm = TRUE)
-        lower <- min(minval, Worbounds[1])
-        upper <- max(maxval, Impbounds[2])
-        worse_text <- max(lower, editG$wor_text)
-        improve_text <- min(upper, editG$imp_text)
+        upper <- max(worbound[2],impbound[2], maxval)
+        lower <- min(worbound[1], impbound[1], minval)
+        worse_text <- if (worbound[1] < impbound[1]){
+          min(max(editG$wor_text, worbound[1]), worbound[2])}
+          else {
+            max(min(editG$wor_text, worbound[2]), worbound[1])
+          }
+        improve_text <- if (worbound[1] < impbound[1]){
+          max(min(editG$imp_text, impbound[2]), impbound[1])}
+          else {
+            min(max(editG$imp_text, impbound[1]), impbound[2])
+          }
         thresholds <- data.frame(
-  ymin = c(Impbounds[1], lower),
-  ymax = c(upper, Worbounds[2]),
+  ymin = c(impbound[1], worbound[1]),
+  ymax = c(impbound[2], worbound[2]),
   Threshold = factor(c("Improvement", "Worsening"))
 )
  formatterG <- function(end = end_t) {paste(editG$subgraph_lab, func_G(), sep = " ")}
@@ -1577,7 +1660,7 @@ output$graphG <- renderPlot({
               inherit.aes = FALSE) +
    geom_text(data = arrowdf, aes(x = 2, y = worse_text, label = "Worsening"),
               inherit.aes = FALSE) +
-              ggtitle(editG$title) + theme(plot.title = element_text(size = editG$titlesize, face = "bold"))
+              ggtitle(editG$title) + theme(plot.title = element_text(size = editG$titlesize, face = "bold"), axis.title = element_text(size = editG$axissize))
                                 }
                                 else {
                                   thresholds <- data.frame(
@@ -1662,11 +1745,11 @@ observe({
 #Define the relevant variables
 no_doseH <- reactive({
                      req(input$numdoseH)
-                     as.numeric(input$numdoseH)})
+                     input$numdoseH})
 
 times_H <- reactive({
   req(input$tpointH)
-  as.numeric(input$tpointH)
+  input$tpointH
 })
 
 toxicH <- reactive({
@@ -1945,11 +2028,11 @@ observe({
 #Define the relevant variables
 no_doseI <- reactive({
                      req(input$numdoseI)
-                     as.numeric(input$numdoseI)})
+                     input$numdoseI})
 
 times_I <- reactive({
   req(input$tpointI)
-  as.numeric(input$tpointI)
+  input$tpointI
 })
 
 toxicI <- reactive({
