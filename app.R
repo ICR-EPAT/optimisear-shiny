@@ -128,6 +128,9 @@ ui <- div(page_navbar(
              placement = "right",
              textInput("titleA", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeA", label = "Title size", min = 10, max = 50, value = 20, step = 5),
+             textInput("ylab_A", label = NULL, placeholder = "Enter y-axis label"),
+             textInput("xlab_A", label = NULL, placeholder = "Enter x-axis label"),
+             sliderInput("axisSizeA", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
              actionButton("updateA", "Update")
           )), card_body(plotOutput("graphA"), height = 1000), full_screen = TRUE)
           )),
@@ -602,7 +605,10 @@ output$continuous_lims <- renderUI({
 
 editA <- eventReactive(input$updateA,{
   list(title = input$titleA,
-  titlesize = input$titlesizeA)
+  titlesize = input$titlesizeA,
+  y_lab = input$ylab_A,
+  x_lab = input$xlab_A,
+  axissize = input$axisSizeA)
 })
 editB <- eventReactive(input$updateB,{
   list(title = input$titleB,
@@ -718,6 +724,7 @@ output$continuous_table <- renderTable(continuous_data())
                             )
                           summary_df <- cbind(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose)))
                           colnames(summary_df)[5] <- "dose"
+                          summary_df$dose <- paste0("Dose: ", summary_df$dose)
                           summary_df})
 
   output$graphA <- renderPlot({
@@ -727,10 +734,12 @@ output$continuous_table <- renderTable(continuous_data())
                                  add_confidence_interval() +
                                  scale_ggsurvfit() + add_risktable()
                                 if (isTruthy(input$updateA)){
-                                  g + ggtitle(editA()$title) + theme(plot.title = element_text(size = editA()$titlesize, face = "bold"))
+                                  editA <- editA()
+                                  g + ggtitle(editA$title) + theme(plot.title = element_text(size = editA$titlesize, face = "bold"), axis.title = element_text(size = editA$axissize)) +
+                                  labs(y = editA$y_lab , x = editA$x_lab)
                                 }
                                 else {
-                                  g
+                                  g + labs(y = "Probability of first baseline-adjusted \n Grade ≥3 PRO-CTCAE score" )
                                 }}, height = function() input$heightA, width = function() input$widthA)
 
 ################################################ graph B
