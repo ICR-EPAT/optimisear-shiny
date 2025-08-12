@@ -112,7 +112,7 @@ ui <- div(page_navbar(
         layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables"), card_body(checkboxGroupInput("numdose", label = "Dosage",
-                                                 selected = NULL, inline = TRUE)))
+                                                 selected = NULL, inline = TRUE), height = 800))
                , card(card_header("Download .svg file"), card_body(downloadButton("downloadA")))),
           card(card_header(class = "d-inline-flex justify-content-end",
           popover(
@@ -145,7 +145,7 @@ ui <- div(page_navbar(
                     checkboxGroupInput("numdoseB", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-                    selectInput("toxicB", label = "Toxicity of interest", choices = NULL))
+                    selectInput("toxicB", label = "Toxicity of interest", choices = NULL), height = 800)
           ), card(card_header("Download .svg file"), card_body(downloadButton("downloadB"))))
           ,
           card(card_header(class = "d-inline-flex justify-content-end",
@@ -179,7 +179,7 @@ ui <- div(page_navbar(
                     checkboxGroupInput("numdoseH", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1),
-                    checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL, inline = TRUE)
+                    checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL, inline = TRUE), height = 800
           )), 
           card(card_header("Download .svg file"), card_body(downloadButton("downloadH")))),
           card(card_header(class = "d-inline-flex justify-content-end",
@@ -212,7 +212,7 @@ ui <- div(page_navbar(
                     checkboxGroupInput("numdoseI", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointI", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-                    checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE))
+                    checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE), height = 800) 
           ), 
           card(card_header("Download .svg file"), card_body(downloadButton("downloadI")))),
           card(card_header(class = "d-inline-flex justify-content-end",
@@ -244,7 +244,7 @@ ui <- div(page_navbar(
                     checkboxGroupInput("numdoseC", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                    sliderInput("tpointC", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-                   selectInput("functioningC", label = "Functioning of interest", choices = NULL))),
+                   selectInput("functioningC", label = "Functioning of interest", choices = NULL), height = 800)),
                    card(card_header("Download .svg file"), card_body(downloadButton("downloadC")))
           ),
           card(card_header(class = "d-inline-flex justify-content-end",
@@ -285,7 +285,7 @@ ui <- div(page_navbar(
                     sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                     checkboxGroupInput("numdoseD", label = "Dosage",choices = NULL),
                     uiOutput("select_idD"),
-                    selectInput("functioningD", label = "Functioning of interest", choices = NULL))),
+                    selectInput("functioningD", label = "Functioning of interest", choices = NULL), height = 800)),
                     card(card_header("Download .svg file"), card_body(downloadButton("downloadD")))),
                     card(card_header(class = "d-inline-flex justify-content-end",
                     popover(
@@ -321,7 +321,7 @@ ui <- div(page_navbar(
           card(card_header("Variables"), card_body(
             checkboxGroupInput("numdoseE", label = "Dosage", selected = NULL, inline = TRUE),
             sliderInput("tpointE", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-            selectInput("functioningE", label = "Functioning of interest", choices = NULL))),
+            selectInput("functioningE", label = "Functioning of interest", choices = NULL), height = 800)),
             card(card_header("Download .svg file"), card_body(downloadButton("downloadE")))),
             card(card_header(class = "d-inline-flex justify-content-end",
             popover(
@@ -357,7 +357,7 @@ ui <- div(page_navbar(
                    checkboxGroupInput("numdoseF", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
           sliderInput("tpointF", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-          checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE))),
+          checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE), height = 800)),
           card(card_header("Download .svg file"), card_body(downloadButton("downloadF")))),
            card(card_header(class = "d-inline-flex justify-content-end",
            popover(
@@ -386,7 +386,7 @@ ui <- div(page_navbar(
           checkboxGroupInput("numdoseG", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
           sliderInput("tpointG", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-          checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE))),
+          checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE), height = 800)),
           card(card_header("Download .svg file"), card_body(downloadButton("downloadG")))),
           card(card_header(class = "d-inline-flex justify-content-end",
           popover(
