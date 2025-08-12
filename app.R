@@ -257,10 +257,14 @@ ui <- div(page_navbar(
              textInput("titleC", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeC", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_C", label = NULL, placeholder = "Enter y-axis label"),
+             p(strong("Note:")),
+             p("Upper bound for improvement and lower bound for worsening will be taken as range"),
              sliderInput("improveC", label = "Start and endpoint for improvement", min = 0, max = 100, value = c(10, 30), step = 5),
              sliderInput("worseC", label = "Start and endpoint for worsening", min = -100, max = 0, value = c(-30, -10), step = 5),
              sliderInput("impTextC", label = "Position of Improvement text", min = 0, max = 100, value = 18, step = 2),
              sliderInput("worTextC", label = "Position of Worsening text", min = -100, max = 0, value = -18, step = 2),
+             p(strong("Note:")),
+             p("If value selected for bounds excludes minimum or maximum of the data, the app will instead set this as the maximum. This also applies to the text height."),
              actionButton("updateC", "Update")
           )), card_body(plotOutput("graphC"), height = 1000), full_screen = TRUE)
             )),
@@ -383,10 +387,14 @@ ui <- div(page_navbar(
              sliderInput("titlesizeG", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_G", label = NULL, placeholder = "Enter y-axis label"),
              textInput("sublab_G", label = NULL, placeholder = "Enter subgraph label"),
+             p(strong("Note:")),
+             p("Upper bound for improvement and lower bound for worsening will be taken as range"),
              sliderInput("improveG", label = "Start and endpoint for improvement", min = 0, max = 100, value = c(10, 25), step = 5),
              sliderInput("worseG", label = "Start and endpoint for worsening", min = -100, max = 0, value = c(-25, -10), step = 5),
              sliderInput("impTextG", label = "Position of Improvement text", min = 0, max = 100, value = 22, step = 2),
              sliderInput("worTextG", label = "Position of Worsening text", min = -100, max = 0, value = -22, step = 2),
+             p(strong("Note:")),
+             p("If value selected for bounds excludes minimum or maximum of the data, the app will instead set this as the maximum. This also applies to the text height."),
              actionButton("updateG", "Update")
           )), card_body(plotOutput("graphG"), height = 1000), full_screen = TRUE)
       ))),
