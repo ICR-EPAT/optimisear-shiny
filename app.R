@@ -1142,15 +1142,25 @@ output$graphD <- renderPlot({
         y = paste0(editD$y_lab),
         x = "Timepoint",
         color = "Patient (Dose)") +
-      ggtitle(editD$title) + theme(plot.title = element_text(size = editD$titlesize, face = "bold"))
-                                }
+      ggtitle(editD$title) + theme(plot.title = element_text(size = editD$titlesize, face = "bold")) +
+      geom_segment(x = 0.2, xend = 0.2, y = lower, yend = upper,
+                 colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches")), inherit.aes = FALSE) +
+    geom_text(x = -0.2, y = upper * 0.9, label = "Better \n tolerability", color = "black", inherit.aes = FALSE) +
+    scale_x_discrete(expand = expansion(add = c(2, 0)))
+}
                                 else {
                                   g + ylim(c(0, 100)) +
       geom_point() +
       labs(
         y = paste0("Score in functionality ", func_D()),
         x = "Timepoint",
-        color = "Patient (Dose)")
+        color = "Patient (Dose)") +
+        geom_segment(x = 0.2, xend = 0.2, y = 0, yend = 100,
+                 colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches")), inherit.aes = FALSE) +
+    geom_text(x = -0.2, y = 90, label = "Better \n tolerability", color = "black", inherit.aes = FALSE) +
+    scale_x_discrete(expand = expansion(add = c(2, 0)))
                                 }
 }, height = function() input$heightD, width = function() input$widthD)
 
