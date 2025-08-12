@@ -263,10 +263,10 @@ ui <- div(page_navbar(
              sliderInput("axisSizeC", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
              p(strong("Note:")),
              p("Upper bound for improvement and lower bound for worsening will be taken as range"),
-             sliderInput("improveC", label = "Start and endpoint for improvement", min = 0, max = 100, value = c(10, 30), step = 5),
-             sliderInput("worseC", label = "Start and endpoint for worsening", min = -100, max = 0, value = c(-30, -10), step = 5),
-             sliderInput("impTextC", label = "Position of Improvement text", min = 0, max = 100, value = 18, step = 2),
-             sliderInput("worTextC", label = "Position of Worsening text", min = -100, max = 0, value = -18, step = 2),
+             sliderInput("improveC", label = "Start and endpoint for improvement", min = -100, max = 100, value = c(10, 30), step = 5),
+             sliderInput("worseC", label = "Start and endpoint for worsening", min = -100, max = 100, value = c(-30, -10), step = 5),
+             sliderInput("impTextC", label = "Position of Improvement text", min = -100, max = 100, value = 18, step = 2),
+             sliderInput("worTextC", label = "Position of Worsening text", min = -100, max = 100, value = -18, step = 2),
              p(strong("Note:")),
              p("If value selected for bounds excludes minimum or maximum of the data, the app will instead set this as the value. This also applies to the text height."),
              actionButton("updateC", "Update"))
@@ -404,10 +404,10 @@ ui <- div(page_navbar(
              textInput("sublab_G", label = NULL, placeholder = "Enter subgraph label"),
              p(strong("Note:")),
              p("Upper bound for improvement and lower bound for worsening will be taken as range"),
-             sliderInput("improveG", label = "Start and endpoint for improvement", min = 0, max = 100, value = c(10, 25), step = 5),
-             sliderInput("worseG", label = "Start and endpoint for worsening", min = -100, max = 0, value = c(-25, -10), step = 5),
-             sliderInput("impTextG", label = "Position of Improvement text", min = 0, max = 100, value = 22, step = 2),
-             sliderInput("worTextG", label = "Position of Worsening text", min = -100, max = 0, value = -22, step = 2),
+             sliderInput("improveG", label = "Start and endpoint for improvement", min = -100, max = 100, value = c(10, 25), step = 5),
+             sliderInput("worseG", label = "Start and endpoint for worsening", min = -100, max = 100, value = c(-25, -10), step = 5),
+             sliderInput("impTextG", label = "Position of Improvement text", min = -100, max = 100, value = 22, step = 2),
+             sliderInput("worTextG", label = "Position of Worsening text", min = -100, max = 100, value = -22, step = 2),
              p(strong("Note:")),
              p("If value selected for bounds excludes minimum or maximum of the data, the app will instead set this as the value. This also applies to the text height."),
              actionButton("updateG", "Update")
@@ -428,16 +428,15 @@ ui <- div(page_navbar(
       tabPanel("Version History", tabName = "history", icon = icon("history"),
       card(card_header("Versions"),
       card_body(p("v1.0 - Internal ICR release 06/08/2025")))), bg = "DarkSeaGreen",
-      ,))
-
-tags$head(tags$style(HTML("
+      #########################################Dealing with the long popovers
+      tags$head(tags$style(HTML("
       .popover {
         max-height: 1000px;
         max-width: 300px;
         overflow-y: auto;
         overflow-x: hidden;
       }
-    ")))
+    "))),))
 
 #######################################################################################################################   SERVER SIDE 
 
@@ -1007,8 +1006,18 @@ output$graphC <- renderPlot({
     editC <- editC()
     impbound <- editC$imp_bound
     worbound <- editC$wor_bound
-    worse_text <- max(editC$wor_text, worbound[1])
-    improve_text <- min(editC$imp_text, impbound[2])
+    upper <- max(editC$wor_bound[2], editC$wor_bound[2], max(diffC()$adjusted_value))
+    lower <- min(editC$wor_bound[1], editC$wor_bound[1], min(diffC()$adjusted_value))
+    worse_text <- if (worbound[1] < impbound[1]){
+      min(max(editC$wor_text, worbound[1]), worbound[2])}
+      else {
+         max(min(editC$wor_text, worbound[2]), worbound[1])
+      }
+    improve_text <- if (worbound[1] < impbound[1]){
+      max(min(editC$imp_text, impbound[2]), impbound[1])}
+      else {
+        min(max(editC$imp_text, impbound[1]), impbound[2])
+      }
     summaryC %>%
     ggplot(
            aes(x = as.factor(timepoint),
@@ -1024,17 +1033,17 @@ output$graphC <- renderPlot({
     xlab(editC$x_lab) +
     ylab(paste0(editC$y_lab)) +
     scale_fill_manual(name = "Threshold", values = c("palegreen1", "red"), label = c("Improvement", "Worsening")) +
-    geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = impbound[2]),
+    geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = max(impbound[2], worbound[2])),
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches"))) +
-    geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = worbound[1]),
+    geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = min(impbound[1], worbound[1])),
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches"))) +
     geom_text(data = data.frame(x = 1.6, y = improve_text, label = "Improvement"), aes(x = x, y = y, label = label),
               inherit.aes = FALSE) +
     geom_text(data = data.frame(x = 1.6, y = worse_text, label = "Worsening"), aes(x = x, y = y, label = label),
               inherit.aes = FALSE) +
-              ggtitle(editC$title) + theme(plot.title = element_text(size = editC$titlesize, face = "bold"), axis.title = element_text(size = editC$axissize))
+              ggtitle(editC$title) + theme(plot.title = element_text(size = editC$titlesize, face = "bold"), axis.title = element_text(size = editC$axissize)) + ylim(lower, upper)
                                 }
   else {
     summaryC %>%
@@ -1595,17 +1604,25 @@ output$graphG <- renderPlot({
   theme_minimal(base_size = 14)
       if (isTruthy(input$updateG)){
         editG <- editG()
-        Impbounds <- editG$imp_bound
-        Worbounds <- editG$wor_bound
+        impbound <- editG$imp_bound
+        worbound <- editG$wor_bound
         minval <- min(dfG()$score, na.rm = TRUE)
         maxval <- max(dfG()$score, na.rm = TRUE)
-        lower <- min(minval, Worbounds[1])
-        upper <- max(maxval, Impbounds[2])
-        worse_text <- max(lower, editG$wor_text)
-        improve_text <- min(upper, editG$imp_text)
+        upper <- max(worbound[2],impbound[2], maxval)
+        lower <- min(worbound[1], impbound[1], minval)
+        worse_text <- if (worbound[1] < impbound[1]){
+          min(max(editG$wor_text, worbound[1]), worbound[2])}
+          else {
+            max(min(editG$wor_text, worbound[2]), worbound[1])
+          }
+        improve_text <- if (worbound[1] < impbound[1]){
+          max(min(editG$imp_text, impbound[2]), impbound[1])}
+          else {
+            min(max(editG$imp_text, impbound[1]), impbound[2])
+          }
         thresholds <- data.frame(
-  ymin = c(Impbounds[1], lower),
-  ymax = c(upper, Worbounds[2]),
+  ymin = c(impbound[1], worbound[1]),
+  ymax = c(impbound[2], worbound[2]),
   Threshold = factor(c("Improvement", "Worsening"))
 )
  formatterG <- function(end = end_t) {paste(editG$subgraph_lab, func_G(), sep = " ")}
