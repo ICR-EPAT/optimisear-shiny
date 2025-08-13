@@ -105,7 +105,7 @@ ui <- div(page_navbar(
   card(card_header("Continuous data"), card_body(tableOutput("continuous_table")), max_height = 250))),
   navbarMenu("Ordinal",
 ############################################################################################################ A UI
-            tabPanel("GraphA", icon = icon("sun"),
+            tabPanel("GraphA",
             fluidRow(
           textOutput("textHeaderA")
         ),
@@ -135,7 +135,7 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphA"), height = 1000), full_screen = TRUE)
           )),
   ############################################################################################################ B UI
-            tabPanel("GraphB", icon = icon("sun"),
+            tabPanel("GraphB",
           fluidRow(
           textOutput("textHeaderB")
         ),
@@ -169,7 +169,7 @@ ui <- div(page_navbar(
             )),
 ############################################################################################################ H UI
          
-            tabPanel("GraphH", icon = icon("sun"),
+            tabPanel("GraphH",
             fluidRow(
           textOutput("textHeaderH")
         ),
@@ -202,7 +202,7 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphH"), height = 1000), full_screen = TRUE)
             )),
 ############################################################################################################ I UI
-            tabPanel("GraphI", icon = icon("sun"),
+            tabPanel("GraphI",
             fluidRow(
           textOutput("textHeaderI")
         ),
@@ -234,7 +234,7 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphI"), height = 1000), full_screen = TRUE)
             ))),
   navbarMenu("Continuous",############################################################################################################ C UI
-             tabPanel("GraphC", icon = icon("moon"),
+             tabPanel("GraphC",
              fluidRow(
           textOutput("textHeaderC")
         ),
@@ -266,8 +266,8 @@ ui <- div(page_navbar(
              sliderInput("axisSizeC", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
              p(strong("Note:")),
              p("Upper bound for improvement and lower bound for worsening will be taken as range"),
-             sliderInput("improveC", label = "Start and endpoint for improvement", min = -100, max = 100, value = c(10, 30), step = 5),
-             sliderInput("worseC", label = "Start and endpoint for worsening", min = -100, max = 100, value = c(-30, -10), step = 5),
+             sliderInput("improveC", label = "Start and endpoint for improvement", min = -100, max = 100, value = c(10, 30), step = 1),
+             sliderInput("worseC", label = "Start and endpoint for worsening", min = -100, max = 100, value = c(-30, -10), step = 1),
              sliderInput("impTextC", label = "Position of Improvement text", min = -100, max = 100, value = 18, step = 2),
              sliderInput("worTextC", label = "Position of Worsening text", min = -100, max = 100, value = -18, step = 2),
              p(strong("Note:")),
@@ -276,7 +276,7 @@ ui <- div(page_navbar(
           ), card_body(plotOutput("graphC"), height = 1000), full_screen = TRUE)
             )),
 ############################################################################################################ D UI
-             tabPanel("GraphD", icon = icon("moon"), fluidRow(
+             tabPanel("GraphD", fluidRow(
           textOutput("textHeaderD")
         ),
             layout_sidebar(
@@ -313,7 +313,7 @@ ui <- div(page_navbar(
         )),
 ############################################################################################################ E UI
               
-             tabPanel("GraphE", icon = icon("moon"),  fluidRow(
+             tabPanel("GraphE",  fluidRow(
           textOutput("textHeaderE")
         ),
          layout_sidebar(
@@ -348,7 +348,7 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphE"), height = 1000), full_screen = TRUE)
         )),
 ############################################################################################################ F UI
-           tabPanel("GraphF", icon = icon("moon"),     fluidRow(
+           tabPanel("GraphF",     fluidRow(
           textOutput("textHeaderF")
         ),
           layout_sidebar(
@@ -377,7 +377,7 @@ ui <- div(page_navbar(
            )),
            ############################################################################################################ G UI 
     
-             tabPanel("GraphG", icon = icon("moon"),          fluidRow(
+             tabPanel("GraphG",          fluidRow(
           textOutput("textHeaderG")
         ),
           layout_sidebar(
@@ -407,8 +407,8 @@ ui <- div(page_navbar(
              textInput("sublab_G", label = NULL, placeholder = "Enter subgraph label"),
              p(strong("Note:")),
              p("Upper bound for improvement and lower bound for worsening will be taken as range"),
-             sliderInput("improveG", label = "Start and endpoint for improvement", min = -100, max = 100, value = c(10, 25), step = 5),
-             sliderInput("worseG", label = "Start and endpoint for worsening", min = -100, max = 100, value = c(-25, -10), step = 5),
+             sliderInput("improveG", label = "Start and endpoint for improvement", min = -100, max = 100, value = c(10, 25), step = 1),
+             sliderInput("worseG", label = "Start and endpoint for worsening", min = -100, max = 100, value = c(-25, -10), step = 1),
              sliderInput("impTextG", label = "Position of Improvement text", min = -100, max = 100, value = 22, step = 2),
              sliderInput("worTextG", label = "Position of Worsening text", min = -100, max = 100, value = -22, step = 2),
              p(strong("Note:")),
