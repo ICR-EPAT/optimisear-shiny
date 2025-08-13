@@ -79,9 +79,13 @@ ui <- div(page_navbar(
       p("- Patient ID, {id}, [numeric]"),
       p("- Toxicity type, {toxicity}, [numeric or character]"),
       p("- Grade of response, {grade}, [1,2,3,4,5]"),
-      p("- Timepoint of current report, {timepoint}, [numeric - must begin with timepoint 0]"),
       p("- Dose Level, {dose}, [numeric]"),
-      p("- Final reported time by the patient, {time_last_report}, [numeric]"),
+      p("- Timepoint of current report, {timepoint},"),
+      p("[numeric - must begin with timepoint 0 OR date \"YYYY-MM-DD\"]"),
+      p("- Final reported time by the patient, {timepoint},"),
+      p("[numeric OR date \"YYYY-MM-DD\"]"),
+      p("To switch to date format use toggle:"),
+      input_switch("ordinal_date", "Turn on date format")
     )),
     card(card_header(strong("Continuous datasets")),
     card_body(
@@ -89,8 +93,11 @@ ui <- div(page_navbar(
        p("- Patient ID, {id}, [numeric]"),
        p("- Functionality characteristic, {functioning}, [numeric or character]"),
        p("- Score in the functionality category, {score}, [numeric]"),
-       p("- Timepoint of current report, {timepoint}, [numeric- must begin with timepoint 0]"),
        p("- Dose Level, {dose}, [numeric]"),
+       p("- Timepoint of current report, {timepoint},"),
+       p("[numeric - must begin with timepoint 0 OR date \"YYYY-MM-DD\"]"),
+       p("To switch to date format use toggle:"),
+       input_switch("continuous_date", "Turn on date format")
     ))
   ))),
   layout_sidebar(
@@ -712,16 +719,32 @@ output$continuous_table <- renderTable(continuous_data())
                           req(input$numdose)
                           ordinal_data <- ordinal_data()
                           ordinal_data <- ordinal_data %>% filter(dose %in% no_dose())
+                          if (input$ordinal_date == FALSE){
                           ordinal_data <- ordinal_data %>%
                             group_by(id, toxicity) %>%
-                            mutate(base_adj = grade-grade[timepoint == 0])
+                            mutate(base_adj = grade-grade[timepoint == min(ordinal_data$timepoint)])
+                          }
+                          else {
+                          ordinal_data <- ordinal_data %>%
+                            group_by(id, toxicity) %>%
+                            mutate(base_adj = grade-grade[timepoint == min(as.Date(ordinal_data$timepoint))])  
+                          }
                           ordinal_data <- ordinal_data %>% filter(is.na(base_adj) == FALSE)
+                          if (input$ordinal_date == FALSE){
                           summary_df <- ordinal_data %>%
                             group_by(id) %>%
                             summarise(
-                              time = if (any(base_adj == 3)) min(timepoint[base_adj == 3]) else max(timepoint),
+                              time = if (any(base_adj == 3)) as.numeric(min(timepoint[base_adj == 3]) - min(timepoint)) else as.numeric(max(timepoint)- min(timepoint)),
+                              event = as.integer(any(base_adj == 3))  # 1 if grade 3 occurred, 0 if censored
+                            )}
+                            else{
+                              summary_df <- ordinal_data %>%
+                            group_by(id) %>%
+                            summarise(
+                              time = if (any(base_adj == 3)) as.numeric(min(as.Date(timepoint[base_adj == 3])) - min(as.Date(timepoint))) else as.numeric(max(as.Date(timepoint))- min(as.Date(timepoint))),
                               event = as.integer(any(base_adj == 3))  # 1 if grade 3 occurred, 0 if censored
                             )
+                            }
                           summary_df <- cbind(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose)))
                           colnames(summary_df)[5] <- "dose"
                           summary_df$dose <- paste0("Dose: ", summary_df$dose)
