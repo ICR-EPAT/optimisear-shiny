@@ -535,34 +535,34 @@ output$continuous_information_about <- renderUI({
 output$ordinal_edit <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "graphA"){
-    HTML("- Easily compare selected doses <br> - Provides a table with number of patients")
+    HTML("This app allows you to edit: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label  <br> - X axis label  <br> - Axis label font size  <br> - Graph height and width")
   }
   else if (about_ordinal == "graphB") {
-    HTML("B <br> -pro 1 <br> -pro 2 <br> -pro 3")
+    HTML("This app allows you to edit: <br> - Graph title  <br> - Graph title font size <br> - X axis label  <br> - Axis label font size  <br> - Graph height and width")
   }
   else if (about_ordinal == "graphH") {
-    HTML("H <br> -pro 1 <br> -pro 2 <br> -pro 3")
+    HTML("This app allows you to edit: <br> - Graph title  <br> - Graph title font size <br> - Subgraph label format  <br> - Position of unreported percentage <br> - Graph height and width")
   }
   else if (about_ordinal == "graphI") {
-     HTML("I <br> -pro 1 <br> -pro 2 <br> -pro 3")
+     HTML("This app allows you to edit: <br> - Graph title  <br> - Graph title font size <br> - Subgraph label format  <br> - Position of unreported percentage <br> - Graph height and width")
   }
 })
 output$continuous_edit <- renderUI({
   about_continuous <- about_continuous()
   if (about_continuous == "graphC"){
-     HTML("C <br> -pro 1 <br> -pro 2 <br> -pro 3")
+     HTML("This app allows you to edit: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label  <br> - X axis label  <br> - Axis label font size <br> - Boundaries for improvement <br> - Boundaries for worsening <br> - Position of improvement text <br> - Position of worsening text <br> - Graph height and width")
   }
   else if (about_continuous == "graphD") {
-     HTML("D <br> -pro 1 <br> -pro 2 <br> -pro 3")
+     HTML("This app allows you to edit: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label  <br> - X axis label  <br> - Axis label font size <br> - Arrow label <br> - Y axis range <br> - Graph height and width")
   }
   else if (about_continuous == "graphE") {
-     HTML("E <br> -pro 1 <br> -pro 2 <br> -pro 3")
+     HTML("This app allows you to edit: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label  <br> - X axis label  <br> - Axis label font size <br> - Arrow label <br> - Y axis range <br> - Graph height and width")
   }
   else if (about_continuous == "graphF") {
-     HTML("F <br> -pro 1 <br> -pro 2 <br> -pro 3")
+     HTML("This app allows you to edit: <br> - Table title <br> - Table height and width")
   }
   else if (about_continuous == "graphG") {
-     HTML("G <br> -pro 1 <br> -pro 2 <br> -pro 3")
+     HTML("This app allows you to edit: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label <br> - Axis label font size <br> - Subgraph label format <br> - Boundaries for improvement <br> - Boundaries for worsening <br> - Position of improvement text <br> - Position of worsening text <br> - Graph height and width")
   }
 })
 
@@ -598,7 +598,7 @@ output$continuous_lims <- renderUI({
     HTML("F <br> -con 1 <br> -con 2 <br> -con 3")
   }
   else if (about_continuous == "graphG") {
-    HTML("G <br> -con 1 <br> -con 2 <br> -con 3")
+    HTML("G <br> -con 1")
   }
 })
 ################################################################################################################ Server side for graph editors
