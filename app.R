@@ -719,31 +719,31 @@ output$continuous_table <- renderTable(continuous_data())
                           req(input$numdose)
                           ordinal_data <- ordinal_data()
                           ordinal_data <- ordinal_data %>% filter(dose %in% no_dose())
-                          if (input$ordinal_date == FALSE){
-                          ordinal_data <- ordinal_data %>%
-                            group_by(id, toxicity) %>%
-                            mutate(base_adj = grade-grade[timepoint == min(ordinal_data$timepoint)])
-                          }
-                          else {
-                          ordinal_data <- ordinal_data %>%
+                          if (input$ordinal_date == TRUE & input$dummy_ordinal == FALSE){
+                            ordinal_data <- ordinal_data %>%
                             group_by(id, toxicity) %>%
                             mutate(base_adj = grade-grade[timepoint == min(as.Date(ordinal_data$timepoint))])  
                           }
+                          else {
+                            ordinal_data <- ordinal_data %>%
+                            group_by(id, toxicity) %>%
+                            mutate(base_adj = grade-grade[timepoint == min(ordinal_data$timepoint)])
+                          }
                           ordinal_data <- ordinal_data %>% filter(is.na(base_adj) == FALSE)
-                          if (input$ordinal_date == FALSE){
-                          summary_df <- ordinal_data %>%
-                            group_by(id) %>%
-                            summarise(
-                              time = if (any(base_adj == 3)) as.numeric(min(timepoint[base_adj == 3]) - min(timepoint)) else as.numeric(max(timepoint)- min(timepoint)),
-                              event = as.integer(any(base_adj == 3))  # 1 if grade 3 occurred, 0 if censored
-                            )}
-                            else{
+                          if (input$ordinal_date == TRUE & input$dummy_ordinal == FALSE){
                               summary_df <- ordinal_data %>%
                             group_by(id) %>%
                             summarise(
                               time = if (any(base_adj == 3)) as.numeric(min(as.Date(timepoint[base_adj == 3])) - min(as.Date(timepoint))) else as.numeric(max(as.Date(timepoint))- min(as.Date(timepoint))),
                               event = as.integer(any(base_adj == 3))  # 1 if grade 3 occurred, 0 if censored
                             )
+                            }
+                            else{
+                              summary_df <- ordinal_data %>%
+                            group_by(id) %>%
+                            summarise(
+                              time = if (any(base_adj == 3)) as.numeric(min(timepoint[base_adj == 3]) - min(timepoint)) else as.numeric(max(timepoint)- min(timepoint)),
+                              event = as.integer(any(base_adj == 3)))  # 1 if grade 3 occurred, 0 if censored
                             }
                           summary_df <- cbind(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose)))
                           colnames(summary_df)[5] <- "dose"
@@ -780,7 +780,10 @@ observe({
   req(input$upload)
   data <- ordinal_data()
   tpoint <- unique(data$timepoint)
-  updateSliderInput(session, "tpointB", label = "Final timepoint of interest", max = length(tpoint) - 1)
+  if (input$ordinal_date == TRUE & input$dummy_ordinal == FALSE){
+    tpoint <- as.Date(tpoint)
+  }
+  updateSliderInput(session, "tpointB", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
 })
 
 observe({
@@ -834,10 +837,18 @@ prop <- reactive({
   ordinal_data <- ordinal_data()
   ordinal_data$grade[is.na(ordinal_data$grade)] <- "Unreported"
 
-  n_pat <- ordinal_data %>%
-    filter(timepoint == 0, toxicity == toxic()) %>%
+  if (input$ordinal_date == TRUE & input$dummy_ordinal == FALSE){
+    n_pat <- ordinal_data %>%
+    filter(timepoint == min(as.Date(timepoint)), toxicity == toxic()) %>%
     group_by(dose) %>%
     summarise(n.pat = n())
+    }
+    else {
+     n_pat <- ordinal_data %>%
+    filter(timepoint == min(timepoint), toxicity == toxic()) %>%
+    group_by(dose) %>%
+    summarise(n.pat = n())
+    }
 
   prop <- ordinal_data %>%
     group_by(toxicity, timepoint, dose) %>%
@@ -867,11 +878,18 @@ prop <- reactive({
   prop$toxicity <- as.factor(prop$toxicity)
   prop$grade <- as.factor(prop$grade)
   prop$dose <- as.factor(prop$dose)
-  prop$timepoint <- as.factor(prop$timepoint)
+  if (input$ordinal_date == TRUE & input$dummy_ordinal == FALSE){
+    prop <- prop %>% filter(as.Date(timepoint) <= as.Date(final_t()))
+    prop$timepoint <- as.factor(as.Date(prop$timepoint))
+  }
+  else {
+    prop <- prop %>% filter(timepoint <= final_t())
+    prop$timepoint <- as.factor(prop$timepoint)
+  }
   prop$dose <- factor(prop$dose, levels = no_doseb())
   prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))
   prop <- prop %>% filter(dose %in% no_doseb())
-  prop <- prop %>% filter(timepoint %in% c(0:final_t()))
+
   prop
 })
 
@@ -881,11 +899,20 @@ prop <- reactive({
 no_patient <- reactive({
   req(input$numdoseB)
   ordinal_data <- ordinal_data()
-  no_pat <- ordinal_data %>%
-    filter(timepoint == 0, toxicity == toxic()) %>%
+  if (input$ordinal_date == TRUE & input$dummy_ordinal == FALSE){
+    no_pat <- ordinal_data %>%
+    filter(timepoint == min(as.Date(timepoint)), toxicity == toxic()) %>%
     group_by(dose) %>%
     filter(dose %in% no_doseb()) %>%
     summarise(n.pat = n(),.groups = "keep")
+  }
+  else {
+    no_pat <- ordinal_data %>%
+    filter(timepoint == min(timepoint), toxicity == toxic()) %>%
+    group_by(dose) %>%
+    filter(dose %in% no_doseb()) %>%
+    summarise(n.pat = n(),.groups = "keep")
+  }
   no_pat$n.pat
 })
 
