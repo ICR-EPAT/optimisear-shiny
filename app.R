@@ -977,10 +977,13 @@ observe({
 })
 
 observe({
-  req(input$upload_cts)
+  req(input$upload)
   data <- continuous_data()
-  tpointC <- unique(data$timepoint)
-  updateSliderInput(session, "tpointC", label = "Final timepoint of interest", max = length(tpointC) - 1)
+  tpoint <- unique(data$timepoint)
+  if (input$continuous_date == TRUE & input$continuous_ordinal == FALSE){
+    tpoint <- as.Date(tpoint)
+  }
+  updateSliderInput(session, "tpointC", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
 })
 
 observe({
@@ -1136,11 +1139,15 @@ output$graphC <- renderPlot({
                                 }
 }, height = function() input$heightC, width = function() input$widthC)
 ############################################################################################# GRAPH D
+
 observe({
-  req(input$upload_cts)
+  req(input$upload)
   data <- continuous_data()
-  tpointD <- unique(data$timepoint)
-  updateSliderInput(session, "tpointD", label = "Final timepoint of interest", max = length(tpointD) - 1)
+  tpoint <- unique(data$timepoint)
+  if (input$continuous_date == TRUE & input$continuous_ordinal == FALSE){
+    tpoint <- as.Date(tpoint)
+  }
+  updateSliderInput(session, "tpointD", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
 })
 
 observe({
@@ -1281,10 +1288,13 @@ observe({
 })
 
 observe({
-  req(input$upload_cts)
+  req(input$upload)
   data <- continuous_data()
-  tpointE <- unique(data$timepoint)
-  updateSliderInput(session, "tpointE", label = "Final timepoint of interest", max = length(tpointE) - 1)
+  tpoint <- unique(data$timepoint)
+  if (input$continuous_date == TRUE & input$continuous_ordinal == FALSE){
+    tpoint <- as.Date(tpoint)
+  }
+  updateSliderInput(session, "tpointE", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
 })
 
 observe({
@@ -1408,10 +1418,13 @@ observe({
 })
 
 observe({
-  req(input$dummy_continuous)
+  req(input$upload)
   data <- continuous_data()
-  tpointF <- unique(data$timepoint)
-  updateSliderInput(session, "tpointF", label = "Final timepoint of interest", max = length(tpointF) - 1)
+  tpoint <- unique(data$timepoint)
+  if (input$continuous_date == TRUE & input$continuous_ordinal == FALSE){
+    tpoint <- as.Date(tpoint)
+  }
+  updateSliderInput(session, "tpointF", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
 })
 
 observe({
@@ -1528,11 +1541,15 @@ observe({
   updateCheckboxGroupInput(session, "numdoseG", label = "Dosage", choices = numdoseG, selected = NULL)
 })
 
+
 observe({
-  req(input$upload_cts)
+  req(input$upload)
   data <- continuous_data()
-  tpointG <- unique(data$timepoint)
-  updateSliderInput(session, "tpointG", label = "Final timepoint of interest", max = length(tpointG) - 1)
+  tpoint <- unique(data$timepoint)
+  if (input$continuous_date == TRUE & input$continuous_ordinal == FALSE){
+    tpoint <- as.Date(tpoint)
+  }
+  updateSliderInput(session, "tpointG", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
 })
 
 observe({
@@ -1761,7 +1778,10 @@ observe({
   req(input$upload)
   data <- ordinal_data()
   tpoint <- unique(data$timepoint)
-  updateSliderInput(session, "tpointH", label = "Start and endpoint for comparison", max = length(tpoint)-1)
+  if (input$ordinal_date == TRUE & input$dummy_ordinal == FALSE){
+    tpoint <- as.Date(tpoint)
+  }
+  updateSliderInput(session, "tpointH", label = "Start and endpoint for comparison", min = min(tpoint), max = max(tpoint), value = c(min(tpoint), max(tpoint)))
 })
 
 observe({
@@ -2040,11 +2060,15 @@ observe({
   updateCheckboxGroupInput(session, "numdoseI", label = "Dosage", choices = numdose, selected = NULL)
 })
 
+
 observe({
   req(input$upload)
   data <- ordinal_data()
   tpoint <- unique(data$timepoint)
-  updateSliderInput(session, "tpointI", label = "Final timepoint of interest", max = length(tpoint)-1)
+  if (input$ordinal_date == TRUE & input$dummy_ordinal == FALSE){
+    tpoint <- as.Date(tpoint)
+  }
+  updateSliderInput(session, "tpointI", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
 })
 
 observe({
