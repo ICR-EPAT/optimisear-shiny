@@ -1224,10 +1224,14 @@ idD <- reactive({
 #### Filter data
 continuous_data_filteredD <- reactive({
   req(input$tpointD)
-  data <- continuous_data() %>%
+  data <- continuous_data() 
+  if(input$continuous_date == TRUE & input$dummy_continuous == FALSE){
+    data$timepoint == as.Date(data$timepoint)
+  }
+   data <- data %>%
     filter(dose %in% no_doseD()) %>%
     filter(id %in% idD()) %>%
-    filter(timepoint %in% c(0:final_tD())) %>%
+    filter(timepoint <= final_tD()) %>%
     filter(functioning == func_D()) %>%
     filter(!is.na(score)) %>%
     dplyr::select(-functioning)
