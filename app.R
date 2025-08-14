@@ -16,7 +16,12 @@ ui <- div(page_navbar(
   ############################################################################################# Information
   tabPanel("Overview", icon = icon("house"),
   h1("OPTIMISE-AR"),
+  layout_columns(
   card(card_body(
+    h3("Background"),
+    #p("OPTIMISE-AR (incOrporating PaTIent-reported outcoMes In doSE-finding trials–Analysis Recommendations) provides this shiny app to support the generation of patient-reported outcome (PRO) data visualisations for DFOT publications.")
+  )),
+  card(card_body(,
   h3("Work-flow"),
   p("1. Identify the type of data  (Ordinal/Continuous)"),
   p("2. Read about the graph choices on this page"),
@@ -28,7 +33,7 @@ ui <- div(page_navbar(
   p("- Use the edit button to make changes to graphs where necessary"),
   p("6. Click download to export any relevant graphs as a .svg file"),
   p("- Changing the image size in the editor will also adjust the file for download")
-  )),
+  ))),
   card(card_body(
   h3("About the graphs")),
   card_body(
@@ -43,7 +48,7 @@ ui <- div(page_navbar(
       ),
       conditionalPanel(
         "input.about == 'Continuous'",
-        radioButtons("about_continuous", label = NULL, choiceValues = c("graphC", "graphD", "graphE", "graphF", "graphG"), choiceNames = c("GraphC", "GraphD", "GraphE", "GraphF", "GraphG") )
+        radioButtons("about_continuous", label = NULL, choiceValues = c("graphC", "graphD", "graphE", "graphF", "graphG"), choiceNames = c("Change from baseline across timepoints", "Individual patient trajectory", "Boxplot across timepoints", "Change from baseline across PRO domains (table)", "Change from baseline across PRO domains (figure)") )
       )
     ),
     nav_panel("Ordinal", fillable = TRUE,
@@ -176,7 +181,7 @@ ui <- div(page_navbar(
             )),
 ############################################################################################################ H UI
          
-            tabPanel("GraphH",
+            tabPanel("Butterfly plot",
             fluidRow(
           textOutput("textHeaderH")
         ),
@@ -209,7 +214,7 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphH"), height = 1000), full_screen = TRUE)
             )),
 ############################################################################################################ I UI
-            tabPanel("GraphI",
+            tabPanel("Baseline-adjusted barplot",
             fluidRow(
           textOutput("textHeaderI")
         ),
@@ -241,7 +246,7 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphI"), height = 1000), full_screen = TRUE)
             ))),
   navbarMenu("Continuous",############################################################################################################ C UI
-             tabPanel("GraphC",
+             tabPanel("Change from baseline across timepoints",
              fluidRow(
           textOutput("textHeaderC")
         ),
@@ -283,7 +288,7 @@ ui <- div(page_navbar(
           ), card_body(plotOutput("graphC"), height = 1000), full_screen = TRUE)
             )),
 ############################################################################################################ D UI
-             tabPanel("GraphD", fluidRow(
+             tabPanel("Individual patient trajectory", fluidRow(
           textOutput("textHeaderD")
         ),
             layout_sidebar(
@@ -320,7 +325,7 @@ ui <- div(page_navbar(
         )),
 ############################################################################################################ E UI
               
-             tabPanel("GraphE",  fluidRow(
+             tabPanel("Boxplot across timepoints",  fluidRow(
           textOutput("textHeaderE")
         ),
          layout_sidebar(
@@ -355,7 +360,7 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphE"), height = 1000), full_screen = TRUE)
         )),
 ############################################################################################################ F UI
-           tabPanel("GraphF",     fluidRow(
+           tabPanel("Change from baseline across functionings (table)",     fluidRow(
           textOutput("textHeaderF")
         ),
           layout_sidebar(
@@ -384,7 +389,7 @@ ui <- div(page_navbar(
            )),
            ############################################################################################################ G UI 
     
-             tabPanel("GraphG",          fluidRow(
+             tabPanel("Change from baseline across PRO domains (figure)",          fluidRow(
           textOutput("textHeaderG")
         ),
           layout_sidebar(
