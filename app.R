@@ -1414,9 +1414,13 @@ observe({
 observe({
   req(input$upload_cts)
   data <- continuous_data()
-  tpointF <- unique(data$timepoint)
-  updateSliderInput(session, "tpointF", label = "Final timepoint of interest", max = length(tpointF) - 1)
+  tpoint <- unique(data$timepoint)
+  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
+    tpoint <- as.Date(tpoint)
+  }
+  updateSliderInput(session, "tpointF", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
 })
+
 
 observe({
   req(input$upload_cts)
@@ -1433,13 +1437,10 @@ observe({
 })
 
 observe({
-  req(input$upload_cts)
+  req(input$dummy_continuous)
   data <- continuous_data()
-  tpoint <- unique(data$timepoint)
-  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
-    tpoint <- as.Date(tpoint)
-  }
-  updateSliderInput(session, "tpointF", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
+  tpointF <- unique(data$timepoint)
+  updateSliderInput(session, "tpointF", label = "Final timepoint of interest", min = min(tpointF), max = max(tpointF))
 })
 
 observe({
@@ -1474,7 +1475,7 @@ continuous_data_filteredF <- reactive({
   filtered <- continuous_data()
   filtered$functioning <- as.character(filtered$functioning)
   if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
-    filtered$timepoint <- as.numeric(as.Date(filtered$timepoint))
+    filtered$timepoint <- as.Date(filtered$timepoint)
   }
   filtered <- filtered %>%
     filter(dose %in% no_doseF()) %>%
@@ -1497,14 +1498,15 @@ ice_n_patF <- reactive({
 
 dfF <- reactive({
   data <- continuous_data_filteredF()
-  final_in_list <- max(unique(filter(data, timepoint <= final_tF())))
+  final_list <- unique(data %>% filter(timepoint <= final_tF()) %>% select(timepoint))
+  final_in_list <- max(final_list$timepoint)
   first_in_list <- min(unique(data$timepoint))
   finalT <- as.symbol(paste0("tp_", final_in_list))
   firstT <- as.symbol(paste0("tp_", first_in_list))
   df <- data %>%
     group_by(functioning) %>%
     pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_") %>%
-    mutate(score = as.numeric(!!finalT - !!firstT)) %>%
+    mutate(score = !!finalT - !!firstT) %>%
     dplyr::select(id, score, dose, functioning)
 
   df <- df %>%
@@ -1628,12 +1630,15 @@ no_patientG <- reactive({
   continuous_data <- continuous_data()
   continuous_data  %>%
   filter(dose %in% no_doseG()) %>%
-  filter(timepoint == 0, functioning == func_G()[1]) %>%
+  filter(timepoint == min(timepoint), functioning == func_G()[1]) %>%
   count(dose)
 })
 
 continuous_data_filteredG <- reactive({
   continuous_data <- continuous_data()
+  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
+    continuous_data$timepoint <- as.Date(continuous_data$timepoint)
+  }
   continuous_data$functioning <- as.character(continuous_data$functioning)
   continuous_data_filtered <- continuous_data %>%
   filter(dose %in% no_doseG()) %>%
@@ -1654,13 +1659,15 @@ ice_n_pat <- reactive({
 })
 
 dfG <- reactive({
-  endT <- final_tG()
-  endT<- as.character(endT)
+  endT_list <- unique(continuous_data() %>% filter(timepoint <= final_tG()) %>% select(timepoint))
+  endT <- max(endT_list$timepoint)
+  startT <- min(unique(continuous_data_filteredG()$timepoint))
   tp_end <- sym(paste0("tp_", endT))
+  tp_start <- sym(paste0("tp_", startT))
   df <- continuous_data_filteredG() %>%
-  filter(timepoint %in% c(0, as.numeric(endT))) %>%
+  filter(timepoint <= endT) %>%
   pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_") %>%
-  mutate(score = as.numeric(!!tp_end - tp_0)) %>%
+  mutate(score = !!tp_end - !!tp_start) %>%
   dplyr::select(id, score, dose, functioning)
 
   df <- df %>%
