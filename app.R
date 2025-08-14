@@ -977,7 +977,7 @@ observe({
 })
 
 observe({
-  req(input$upload)
+  req(input$upload_cts)
   data <- continuous_data()
   tpoint <- unique(data$timepoint)
   if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
@@ -1051,6 +1051,7 @@ diffC <- reactive({
 })
 
 summaryC <- reactive({
+  req(input$numdose)
   diff <- diffC()
   diff <- diff %>%
     group_by(dose, timepoint) %>%
@@ -1142,7 +1143,7 @@ output$graphC <- renderPlot({
 ############################################################################################# GRAPH D
 
 observe({
-  req(input$upload)
+  req(input$upload_cts)
   data <- continuous_data()
   tpoint <- unique(data$timepoint)
   if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
@@ -1290,7 +1291,7 @@ observe({
 })
 
 observe({
-  req(input$upload)
+  req(input$upload_cts)
   data <- continuous_data()
   tpoint <- unique(data$timepoint)
   if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
@@ -1421,10 +1422,10 @@ observe({
 })
 
 observe({
-  req(input$upload)
+  req(input$upload_cts)
   data <- continuous_data()
   tpoint <- unique(data$timepoint)
-  if (input$continuous_date == TRUE & input$input$dummy_continuous == FALSE){
+  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
     tpoint <- as.Date(tpoint)
   }
   updateSliderInput(session, "tpointF", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
@@ -1549,7 +1550,7 @@ observe({
 
 
 observe({
-  req(input$upload)
+  req(input$upload_cts)
   data <- continuous_data()
   tpoint <- unique(data$timepoint)
   if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
