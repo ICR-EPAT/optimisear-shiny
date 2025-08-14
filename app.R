@@ -445,8 +445,14 @@ ui <- div(page_navbar(
         max-width: 300px;
         overflow-y: auto;
         overflow-x: hidden;
-      }
-    "))),))
+      }"))),
+      tags$head(tags$style(HTML("
+      .shiny-output-error-style{
+      color: red;
+      font-size: 20px;
+      font-weight: bold;
+      }"
+    )))))
 
 #######################################################################################################################   SERVER SIDE 
 
@@ -683,6 +689,15 @@ editI <- eventReactive(input$updateI,{
     if (input$dummy_ordinal == FALSE) {
       req(input$upload)
        data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")
+       if (all(c("id", "toxicity", "grade", "timepoint", "dose", "time_last_report") %in% colnames(data)) == FALSE){
+        validate(
+          need("id" %in% colnames(data), "Missing id column"),
+          need("toxicity" %in% colnames(data), "Missing toxicity column"),
+          need("grade" %in% colnames(data), "Missing grade column"),
+          need("timepoint" %in% colnames(data), "Missing timepoint column"),
+          need("dose" %in% colnames(data), "Missing dose column"),
+          need("time_last_report" %in% colnames(data), "Missing time_last_report column"), errorClass = "style")
+       }
        data <- data %>% select(id, toxicity, grade, timepoint, dose, time_last_report)
        data
     }
