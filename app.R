@@ -1869,8 +1869,10 @@ toxicH <- reactive({
 ordinal_dataH <- reactive({
   tps <- times_H()
   tp_first <- as.symbol(paste0("tp_", tps[1]))
-  tp_last <- as.symbol(paste0("tp_", tps[2]))
   ordinal_dataH <- ordinal_data()
+  list_T <- unique(ordinal_dataH %>% filter(timepoint <= tps[2]) %>% select(timepoint))
+  tps[2] <- max(list_T$timepoint)
+  tp_last <- as.symbol(paste0("tp_", tps[2]))
   ordinal_dataH <- ordinal_dataH %>% filter(dose %in% no_doseH()) %>% filter(toxicity %in% toxicH()) %>%
     group_by(id) %>%
     mutate(has_tp = any(timepoint == tps[2])) %>%
