@@ -1037,6 +1037,9 @@ continuous_data_filtered <- reactive({
   req(input$tpointC)
   continuous_data <- continuous_data()
   continuous_data <- continuous_data %>% filter(functioning == func_C()) %>% dplyr::select(-functioning)# %>% filter(!is.na(score))
+  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
+    continuous_data$timepoint == as.Date(continuous_data$timepoint)
+  }
   continuous_data
 })
 
@@ -1045,7 +1048,7 @@ diffC <- reactive({
   continuous_data_f <- continuous_data_filtered()
   continuous_data_f <- continuous_data_f %>%
     group_by(id) %>%
-    mutate(baseline = score[timepoint == 0], adjusted_value = score - baseline) %>%
+    mutate(baseline = score[timepoint == min(timepoint)], adjusted_value = score - baseline) %>%
       ungroup()
     continuous_data_f
 })
@@ -1057,7 +1060,8 @@ summaryC <- reactive({
     group_by(dose, timepoint) %>%
     summarise(mean = mean(adjusted_value, na.rm = TRUE), sd = sd(adjusted_value, na.rm = TRUE) / sqrt(n()), .groups = "keep")
   summary <- diff %>% mutate(l.ci = mean - (1.96 * sd)) %>% mutate(u.ci = mean + (1.96 * sd))
-  summary <- summary %>% filter(timepoint %in% c(0:final_tC())) %>% filter(dose %in% no_doseC())
+  summary <- summary %>% filter(timepoint <= final_tC()) %>% 
+  filter(dose %in% no_doseC())
   summary
 })
 
