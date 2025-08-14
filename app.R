@@ -39,7 +39,7 @@ ui <- div(page_navbar(
     sidebar = sidebar(
       conditionalPanel(
         "input.about == 'Ordinal'",
-        radioButtons("about_ordinal", label = NULL, choiceValues = c("graphA", "graphB", "graphH", "graphI"), choiceNames =  c("GraphA", "GraphB", "GraphH", "GraphI"))
+        radioButtons("about_ordinal", label = NULL, choiceValues = c("graphA", "graphB", "graphH", "graphI"), choiceNames =  c("Kaplan-Meier", "Barplot across timepoints", "Butterfly plot", "Baseline-adjusted barplot"))
       ),
       conditionalPanel(
         "input.about == 'Continuous'",
@@ -112,7 +112,7 @@ ui <- div(page_navbar(
   card(card_header("Continuous data"), card_body(tableOutput("continuous_table")), max_height = 250))),
   navbarMenu("Ordinal",
 ############################################################################################################ A UI
-            tabPanel("GraphA",
+            tabPanel("Kaplan-Meier",
             fluidRow(
           textOutput("textHeaderA")
         ),
@@ -142,7 +142,7 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphA"), height = 1000), full_screen = TRUE)
           )),
   ############################################################################################################ B UI
-            tabPanel("GraphB",
+            tabPanel("Barplot across timepoints",
           fluidRow(
           textOutput("textHeaderB")
         ),
@@ -512,13 +512,13 @@ output$about_continuous <- renderImage({
 output$ordinal_information_about <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "graphA"){
-    HTML("The Kaplan-Meier graph shows the survival percentage over time across dosages.<br>For this graph, we assume a change from baseline of 3 to represent an event.<br> <br> This app allows you to select: <br>- Dose levels")
+    HTML("Kaplan-Meier figures present tolerability across dose levels by identifying whether patients at higher doses experience earlier undesirable PRO events (e.g., symptom worsening or dose-limiting events) compared to those at lower doses")
   }
   else if (about_ordinal == "graphB") {
-     html("Graph B shows the proportion of patients at each severity across time on a given dose.<br> <br> This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Toxicity of interest")
+     html("This figure presents the proportion of patients experiencing each ordinal score across timepoints.<br> <br> This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Toxicity of interest")
   }
   else if (about_ordinal == "graphH") {
-     html("Graph H is a butterfly plot, it allows you to compare the change in severity grades between two timepoints for a dose and toxicity of interest.<br> <br> This app allows you to select: <br>- Dose levels <br>- Start timepoint <br>- Final timepoint <br>- Toxicities of interest")
+     html("This figures presents differences between ordinal PRO scores as both a magnitude of worsening/improvement between two timepoints of interest across doses and symptomatic adverse events. <br> <br> This app allows you to select: <br>- Dose levels <br>- Start timepoint <br>- Final timepoint <br>- Toxicities of interest")
   }
   else if (about_ordinal == "graphI") {
      html("Graph I shows the percentage of patients at each severity for a given dose level, timepoint and SAE. The graph also shows the number of patients who reported. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Toxicities of interest")
