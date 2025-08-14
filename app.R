@@ -19,10 +19,18 @@ ui <- div(page_navbar(
   layout_columns(
   card(card_body(
     h3("Background"),
-    p("OPTIMISE-AR (incOrporating PaTIent-reported outcoMes In doSE-finding trials–Analysis Recommendations) provides this shiny app to support the generation of patient-reported outcome (PRO) data visualisations for DFOT publications.")
+    p("OPTIMISE-AR (incOrporating PaTIent-reported outcoMes In doSE-finding trials–Analysis Recommendations) provides this shiny app to support the generation of patient-reported outcome (PRO) data visualisations for DFOT publications. Informed by critical PRO research objectives in DFOTs[1], this toolkit supports trialists wishing to present PRO data in line with three key PRO endpoint types:"),
+    tags$b("Time-to-event PRO endpoints -"),
+    p("For DFOTs, a PRO objective could look to assess tolerability across dose levels by identifying whether patients at higher doses experience earlier undesirable PRO events e.g., symptom worsening or dose-limiting events compared to those at lower doses.  Such objectives are typically described using time-to-event endpoints."),
+    tags$b("PRO endpoints across timepoints -"),
+    p("For DFOTs, a PRO objective could look to assess tolerability across dose levels by analysing the longitudinal tolerability profile of a treatment. Such endpoints may assess whether patients at higher doses experience worse tolerability than patients at lower doses at any timepoint within the trial."),
+    tags$b("PRO endpoints between timepoints -"),
+    p("For DFOTs, a PRO objective could look to assess tolerability by analysing tolerability to treatment at two clinically meaningful timepoints across dose levels. For example, such endpoints may assess whether patients at higher doses experience worse tolerability at the final assessment timepoint than patients at lower doses when compared to baseline."),
+    p("[1] Alger E, et al. International consensus recommendations for PRO research in early-phase dose-finding oncology trials: OPTIMISE-ROR. ESMO Open. 2025;10:105438.")
   )),
   card(card_body(
-  h3("Work-flow"),
+  h3("App workflow"),
+  p("This section provides guidance on how best to utilise this shiny app for data visualisation generation."),
   p("1. Identify the type of data  (Ordinal/Continuous)"),
   p("2. Read about the graph choices on this page"),
   p("3. Go to the data tab"),
