@@ -980,7 +980,7 @@ observe({
   req(input$upload)
   data <- continuous_data()
   tpoint <- unique(data$timepoint)
-  if (input$continuous_date == TRUE & input$continuous_ordinal == FALSE){
+  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
     tpoint <- as.Date(tpoint)
   }
   updateSliderInput(session, "tpointC", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
@@ -1034,6 +1034,7 @@ func_C <- reactive({
 #### Data Filtering
 continuous_data_filtered <- reactive({
   req(input$functioningC)
+  req(input$tpointC)
   continuous_data <- continuous_data()
   continuous_data <- continuous_data %>% filter(functioning == func_C()) %>% dplyr::select(-functioning)# %>% filter(!is.na(score))
   continuous_data
@@ -1144,7 +1145,7 @@ observe({
   req(input$upload)
   data <- continuous_data()
   tpoint <- unique(data$timepoint)
-  if (input$continuous_date == TRUE & input$continuous_ordinal == FALSE){
+  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
     tpoint <- as.Date(tpoint)
   }
   updateSliderInput(session, "tpointD", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
@@ -1217,6 +1218,7 @@ idD <- reactive({
 
 #### Filter data
 continuous_data_filteredD <- reactive({
+  req(input$tpointD)
   data <- continuous_data() %>%
     filter(dose %in% no_doseD()) %>%
     filter(id %in% idD()) %>%
@@ -1291,7 +1293,7 @@ observe({
   req(input$upload)
   data <- continuous_data()
   tpoint <- unique(data$timepoint)
-  if (input$continuous_date == TRUE & input$continuous_ordinal == FALSE){
+  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
     tpoint <- as.Date(tpoint)
   }
   updateSliderInput(session, "tpointE", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
@@ -1346,6 +1348,7 @@ func_E <- reactive({
 #### Data Filtering
 data_E <- reactive({
   req(input$functioningD)
+  req(input$tpointE)
   continuous_data <- continuous_data()
   continuous_data <- continuous_data %>% filter(functioning == func_E()) %>% dplyr::select(-functioning)
   continuous_data <- continuous_data %>%
@@ -1421,7 +1424,7 @@ observe({
   req(input$upload)
   data <- continuous_data()
   tpoint <- unique(data$timepoint)
-  if (input$continuous_date == TRUE & input$continuous_ordinal == FALSE){
+  if (input$continuous_date == TRUE & input$input$dummy_continuous == FALSE){
     tpoint <- as.Date(tpoint)
   }
   updateSliderInput(session, "tpointF", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
@@ -1453,6 +1456,9 @@ func_F <- reactive({
 ###Filter and sort data
 
 continuous_data_filteredF <- reactive({
+   req(input$numdoseF)
+  req(input$functioningF)
+  req(input$tpointF)
   filtered <- continuous_data()
   filtered$functioning <- as.character(filtered$functioning)
   filtered <- filtered %>%
@@ -1546,7 +1552,7 @@ observe({
   req(input$upload)
   data <- continuous_data()
   tpoint <- unique(data$timepoint)
-  if (input$continuous_date == TRUE & input$continuous_ordinal == FALSE){
+  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
     tpoint <- as.Date(tpoint)
   }
   updateSliderInput(session, "tpointG", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
@@ -1599,6 +1605,7 @@ func_G <- reactive({
 
 ####Filtering
 no_patientG <- reactive({
+  req(input$tpointG)
   continuous_data <- continuous_data()
   continuous_data  %>%
   filter(dose %in% no_doseG()) %>%
