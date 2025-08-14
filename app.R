@@ -1868,9 +1868,10 @@ toxicH <- reactive({
 
 ordinal_dataH <- reactive({
   tps <- times_H()
-  tp_first <- as.symbol(paste0("tp_", tps[1]))
   ordinal_dataH <- ordinal_data()
-  list_T <- unique(ordinal_dataH %>% filter(timepoint <= tps[2]) %>% select(timepoint))
+  list_T <- unique(ordinal_dataH %>% filter(timepoint <= tps[2] & timepoint >= tps[1]) %>% select(timepoint))
+  tps[1] <- min(list_T$timepoint)
+  tp_first <- as.symbol(paste0("tp_", tps[1]))
   tps[2] <- max(list_T$timepoint)
   tp_last <- as.symbol(paste0("tp_", tps[2]))
   ordinal_dataH <- ordinal_dataH %>% filter(dose %in% no_doseH()) %>% filter(toxicity %in% toxicH()) %>%
@@ -2154,16 +2155,19 @@ toxicI <- reactive({
 
 ordinal_dataI <- reactive({
   ordinal_data <- ordinal_data()
-  end <- times_I()
+  end_list <- unique(ordinal_data %>% filter(timepoint <= times_I()) %>% select(timepoint))
+  end <- max(end_list$timepoint)
   tp_end <- as.symbol(paste0("tp_", end))
+  start <- min(unique(ordinal_data$timepoint))
+  tp_start <- as.symbol(paste0("tp_", start))
   ordinal_data <- ordinal_data %>%
     filter(toxicity %in% toxicI()) %>%
     filter(dose %in% no_doseI()) %>%
     group_by(id) %>%
     mutate(has_tp = any(timepoint == end)) %>%
-    filter(timepoint %in% c(0, end)) %>%
+    filter(timepoint <= end) %>%
     pivot_wider(names_from = timepoint, values_from = grade, names_prefix = "tp_") %>%
-    mutate(grade_change = !!tp_end - tp_0) %>%
+    mutate(grade_change = !!tp_end - !!tp_start) %>%
     mutate(base_adj = case_when(
                                 has_tp == FALSE ~ "ICE",
                                 TRUE ~  ifelse(grade_change > 0, as.character(!!tp_end), as.character(1))))
