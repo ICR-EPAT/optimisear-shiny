@@ -81,7 +81,7 @@ ui <- div(page_navbar(
       p("- Grade of response, {grade}, [1,2,3,4,5]"),
       p("- Dose Level, {dose}, [numeric]"),
       p("- Timepoint of current report, {timepoint},"),
-      p("[Integer OR date \"YYYY-MM-DD\"]"),
+      p("[integer OR date \"YYYY-MM-DD\"]"),
       p("- Final reported time by the patient, {timepoint},"),
       p("[numeric OR date \"YYYY-MM-DD\"]"),
       p("To switch to date format use toggle:"),
@@ -95,7 +95,7 @@ ui <- div(page_navbar(
        p("- Score in the functionality category, {score}, [numeric]"),
        p("- Dose Level, {dose}, [numeric]"),
        p("- Timepoint of current report, {timepoint},"),
-       p("[Integer OR date \"YYYY-MM-DD\"]"),
+       p("[integer OR date \"YYYY-MM-DD\"]"),
        p("To switch to date format use toggle:"),
        input_switch("continuous_date", "Turn on date format")
     ))
@@ -688,6 +688,8 @@ editI <- eventReactive(input$updateI,{
   ordinal_data <- reactive({
     if (input$dummy_ordinal == FALSE) {
       req(input$upload)
+      if (tools::file_ext(input$upload$name) != "csv"){
+      validate( "Invalid upload: not .csv file", errorClass = "style")}
        data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")
        if (all(c("id", "toxicity", "grade", "timepoint", "dose", "time_last_report") %in% colnames(data)) == FALSE){
         validate(
@@ -710,7 +712,7 @@ observeEvent(input$upload,{
     showNotification("Timepoint of format \"YYYY-MM-DD\" detected in input, auto-switching ON date mode. Switch back OFF if not a date.", type = "warning")
   }
    else if (class(ordinal_data()$timepoint[1]) == "integer") {
-    showNotification("Timepoint of format INTEGER detected in input, auto-switching OFF date mode. Switch back ON if a date.", type = "warning")
+    showNotification("Timepoint of format integer detected in input, auto-switching OFF date mode. Switch back ON if a date.", type = "warning")
   }
 })
 observe({
@@ -991,6 +993,8 @@ output$graphB <- renderPlot({
 continuous_data <- reactive({
   if (input$dummy_continuous == FALSE) {
     req(input$upload_cts)
+    if (tools::file_ext(input$upload_cts$name) != "csv"){
+      validate( "Invalid upload: not .csv file", errorClass = "style")}
       data <- read.csv(input$upload_cts$datapath, header = TRUE, sep = ",")
       if (all(c("score", "id", "functioning", "timepoint", "dose") %in% colnames(data)) == FALSE){
         validate(
@@ -1014,7 +1018,7 @@ observeEvent(input$upload_cts,{
     showNotification("Timepoint of format \"YYYY-MM-DD\" detected in input, auto-switching ON date mode. Switch back OFF if not a date.", type = "warning")
   }
    else if (class(continuous_data()$timepoint[1]) == "integer") {
-    showNotification("Timepoint of format INTEGER detected in input, auto-switching OFF date mode. Switch back ON if a date.", type = "warning")
+    showNotification("Timepoint of format integer detected in input, auto-switching OFF date mode. Switch back ON if a date.", type = "warning")
   }
 })
 observe({
