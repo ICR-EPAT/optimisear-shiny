@@ -1473,10 +1473,13 @@ continuous_data_filteredF <- reactive({
   req(input$tpointF)
   filtered <- continuous_data()
   filtered$functioning <- as.character(filtered$functioning)
+  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
+    filtered$timepoint <- as.numeric(as.Date(filtered$timepoint))
+  }
   filtered <- filtered %>%
     filter(dose %in% no_doseF()) %>%
     filter(functioning %in% func_F()) %>%
-    filter(timepoint %in% c(0, final_tF()))
+    filter(timepoint <= final_tF())
   filtered
 })
 
@@ -1493,11 +1496,15 @@ ice_n_patF <- reactive({
 
 
 dfF <- reactive({
-  finalT <- as.symbol(paste0("tp_", final_tF()))
-  df <- continuous_data_filteredF() %>%
+  data <- continuous_data_filteredF()
+  final_in_list <- max(unique(filter(data, timepoint <= final_tF())))
+  first_in_list <- min(unique(data$timepoint))
+  finalT <- as.symbol(paste0("tp_", final_in_list))
+  firstT <- as.symbol(paste0("tp_", first_in_list))
+  df <- data %>%
     group_by(functioning) %>%
     pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_") %>%
-    mutate(score = as.numeric(!!finalT - tp_0)) %>%
+    mutate(score = as.numeric(!!finalT - !!firstT)) %>%
     dplyr::select(id, score, dose, functioning)
 
   df <- df %>%
@@ -1510,7 +1517,7 @@ dfF <- reactive({
 
 sum.dfF <- reactive({
   sum.df <- dfF() %>%
-    group_by(dose, functioning) %>%
+    group_by(dose, functioning) %>% ################### I think the issue may be here ish?
     summarise(mean = mean(score, na.rm = TRUE),
               non_na_count = unique(non_na_count),
               se = sd(score, na.rm = TRUE) / sqrt(non_na_count), .groups = "keep")
