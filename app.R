@@ -118,8 +118,33 @@ ui <- div(page_navbar(
   card(card_header("Dummy data"), card_body("For those with no data wishing to test the app, you can select these to test with."),
   card_body(input_switch("dummy_ordinal", "Dummy Ordinal data")),
   card_body(input_switch("dummy_continuous", "Dummy Continuous data")))),
+  layout_columns(col_widths = c(9, 3),
   card(card_header("Ordinal data"), card_body(tableOutput("ordinal_table")), max_height = 250),
-  card(card_header("Continuous data"), card_body(tableOutput("continuous_table")), max_height = 250))),
+  card(
+    value_box(
+      title = "No. patients",
+      value = textOutput("ord_summary_pat"),
+      showcase = icon("person")
+    ),
+     value_box(
+      title = "No. doses",
+      value = textOutput("ord_summary_dose")
+    )
+  , max_height = 250)),
+  layout_columns(col_widths = c(9, 3),
+  card(card_header("Continuous data"), card_body(tableOutput("continuous_table")), card_body(), max_height = 250),
+  card(
+    value_box(
+      title = "No. patients",
+      value = textOutput("cts_summary_pat"),
+      showcase = icon("person")
+    ),
+    value_box(
+      title = "No. doses",
+      value = textOutput("cts_summary_dose")
+    )
+  , max_height = 250)
+  ))),
   navbarMenu("Ordinal",
 ############################################################################################################ A UI
             tabPanel("Kaplan-Meier",
@@ -735,6 +760,9 @@ observe({
   }
 })
 
+output$ord_summary_pat <- renderText(length(unique(ordinal_data()$id)))
+output$ord_summary_dose <- renderText(length(unique(ordinal_data()$dose)))
+
 output$ordinal_table <- renderTable(ordinal_data())
 
 output$continuous_table <- renderTable(continuous_data())
@@ -1040,6 +1068,9 @@ observe({
     update_switch(session = session, id = "continuous_date", value = FALSE)
   }
 })
+
+output$cts_summary_pat <- renderText(length(unique(continuous_data()$id)))
+output$cts_summary_dose <- renderText(length(unique(continuous_data()$dose)))
 #### Update the inputs
 observe({
   req(input$upload_cts)
