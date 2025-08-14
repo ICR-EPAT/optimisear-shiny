@@ -1054,7 +1054,7 @@ diffC <- reactive({
 })
 
 summaryC <- reactive({
-  req(input$numdose)
+  req(input$numdoseC)
   diff <- diffC()
   diff <- diff %>%
     group_by(dose, timepoint) %>%
@@ -1356,13 +1356,16 @@ func_E <- reactive({
 
 #### Data Filtering
 data_E <- reactive({
-  req(input$functioningD)
+  req(input$functioningE)
   req(input$tpointE)
   continuous_data <- continuous_data()
+  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
+    continuous_data$timepoint <- as.Date(continuous_data$timepoint)
+  }
   continuous_data <- continuous_data %>% filter(functioning == func_E()) %>% dplyr::select(-functioning)
   continuous_data <- continuous_data %>%
   filter(dose %in% no_doseE()) %>%
-  filter(timepoint %in% c(1:final_tE())) %>%
+  filter(timepoint <= final_tE()) %>%
   filter(!is.na(score))
   continuous_data
 })
