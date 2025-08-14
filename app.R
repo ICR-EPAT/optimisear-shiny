@@ -19,9 +19,9 @@ ui <- div(page_navbar(
   layout_columns(
   card(card_body(
     h3("Background"),
-    #p("OPTIMISE-AR (incOrporating PaTIent-reported outcoMes In doSE-finding trials–Analysis Recommendations) provides this shiny app to support the generation of patient-reported outcome (PRO) data visualisations for DFOT publications.")
+    p("OPTIMISE-AR (incOrporating PaTIent-reported outcoMes In doSE-finding trials–Analysis Recommendations) provides this shiny app to support the generation of patient-reported outcome (PRO) data visualisations for DFOT publications.")
   )),
-  card(card_body(,
+  card(card_body(
   h3("Work-flow"),
   p("1. Identify the type of data  (Ordinal/Continuous)"),
   p("2. Read about the graph choices on this page"),
