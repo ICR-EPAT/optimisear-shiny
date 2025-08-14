@@ -31,16 +31,13 @@ ui <- div(page_navbar(
   card(card_body(
   h3("App workflow"),
   p("This section provides guidance on how best to utilise this shiny app for data visualisation generation."),
-  p("1. Identify the type of data  (Ordinal/Continuous)"),
-  p("2. Read about the graph choices on this page"),
-  p("3. Go to the data tab"),
-  p("- Read about how to format data"),
-  p("- Format data and upload OR select the dummy datasets"),
-  p("4. Select relevant graphs under the Ordinal or Continuous dropdown"),
-  p("5. Adjust the variables to suit your required outputs"),
-  p("- Use the edit button to make changes to graphs where necessary"),
-  p("6. Click download to export any relevant graphs as a .svg file"),
-  p("- Changing the image size in the editor will also adjust the file for download")
+  p("1. Identify the PRO data type you wish to report: ordinal (eg. FACT-GP5, PRO-CTCAE) or continuous (eg. EORTC QLQ-C30)."),
+  p("2. Learn more about each figure in the 'About the graphs' section below. The section is partitioned by PRO data type and PRO endpoint types."),
+  p("3. Select your data in the ‘Data’ tab, using either the built-in dummy data or uploading your own, with formatting guidelines provided."),
+  p("4. Visualise your graphs with the 'Ordinal' and 'Continuous' data tabs."),
+  p(" - Customise the size and layout of figures,"),
+  p(" - Customise axis and main titles."),
+  p("6. Click 'Download' to export your graphs as .svg files.")
   ))),
   card(card_body(
   h3("About the graphs")),
