@@ -552,10 +552,12 @@ output$about_continuous <- renderImage({
 output$ordinal_information_about <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "graphA"){
-    HTML("Kaplan-Meier figures present tolerability across dose levels by identifying whether patients at higher doses experience earlier undesirable PRO events (e.g., symptom worsening or dose-limiting events) compared to those at lower doses")
+    HTML("Kaplan-Meier figures present tolerability across dose levels by identifying whether patients at higher doses experience earlier undesirable PRO events (e.g., symptom worsening or dose-limiting events) compared to those at lower doses.
+    This Kaplan-Meier visulises the time to first baseline-adjusted Grade >= 3 score change. <br> In cases where a patient's post-baseline PRO score increases by at least one compared to baseline, the baseline-adjusted score is this post-baseline value. Otherwise, if the patient's baseline and post-baseline score are equal, their baseline-adjusted score is 0 (or 'None'). 
+    <br><br> This app allows you to select the doses you wish to display in your figure.")
   }
   else if (about_ordinal == "graphB") {
-     html("This figure presents the proportion of patients experiencing each ordinal score across timepoints.<br> <br> This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Toxicity of interest")
+     html("This figure presents the proportion of patients experiencing each ordinal score across timepoints.<br> <br> This app allows you to select: <br>- The dose levels you wish to display <br>- The final timepoint you wish to display <br>- Which PRO domain you wish to display.")
   }
   else if (about_ordinal == "graphH") {
      html("This figures presents differences between ordinal PRO scores as both a magnitude of worsening/improvement between two timepoints of interest across doses and symptomatic adverse events. <br> <br> This app allows you to select: <br>- Dose levels <br>- Start timepoint <br>- Final timepoint <br>- Toxicities of interest")
