@@ -557,13 +557,14 @@ output$ordinal_information_about <- renderUI({
     <br><br> This app allows you to select the doses you wish to display in your figure.")
   }
   else if (about_ordinal == "graphB") {
-     html("This figure presents the proportion of patients experiencing each ordinal score across timepoints.<br> <br> This app allows you to select: <br>- The dose levels you wish to display <br>- The final timepoint you wish to display <br>- Which PRO domain you wish to display.")
+     html("This figure presents the proportion of patients experiencing each ordinal score across timepoints as well as the proportion of patients with unreported PRO data or who experience an intercurrent event.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint you wish to display, <br>- Which PRO domain you wish to display.")
   }
   else if (about_ordinal == "graphH") {
-     html("This figures presents differences between ordinal PRO scores as both a magnitude of worsening/improvement between two timepoints of interest across doses and symptomatic adverse events. <br> <br> This app allows you to select: <br>- Dose levels <br>- Start timepoint <br>- Final timepoint <br>- Toxicities of interest")
+     html("This figures presents differences between ordinal PRO scores as both a magnitude of worsening/improvement between two timepoints of interest across doses and PRO domains. This figure also indicates the proportion of patients with unreported PRO data at timepoints of interest.It <br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The two timepoints you wish to compare, <br>- Which PRO domains you wish to display.")
   }
   else if (about_ordinal == "graphI") {
-     html("Graph I shows the percentage of patients at each severity for a given dose level, timepoint and SAE. The graph also shows the number of patients who reported. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Toxicities of interest")
+     html("This figures presents maximum baseline-adjusted PRO score between two timepoints of interest across doses and PRO domains. 
+     In cases where a patient's post-baseline PRO score increases by at least one compared to baseline, the maximum baseline-adjusted score is this maximum post-baseline value. Otherwise, if the patient's baseline and post-baseline score are always equal, their maximum baseline-adjusted score is 0 (or 'None')  <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final time point of analysis <br>- Which PRO domains you wish to display.")
   }
 })
 
