@@ -159,7 +159,7 @@ ui <- div(page_navbar(
 ############################################################################################################ A UI
             tabPanel("Kaplan-Meier",
             card(
-          card_header(textOutput("textHeaderA"), style = "background-color: #8FBC8F; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"),
+          card_header(textOutput("textHeaderA"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"),
         layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables", style = "background-color: #bfd9bf"), card_body(checkboxGroupInput("numdose", label = "Dosage",
@@ -188,7 +188,7 @@ ui <- div(page_navbar(
   ############################################################################################################ B UI
             tabPanel("Barplot across timepoints",
           card(
-          card_header(textOutput("textHeaderB"), style = "background-color: #8FBC8F; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"),
+          card_header(textOutput("textHeaderB"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"),
         layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables", style = "background-color: #bfd9bf"), card_body(
@@ -221,7 +221,7 @@ ui <- div(page_navbar(
          
             tabPanel("Butterfly plot",
             card(
-          card_header(textOutput("textHeaderH"), style = "background-color: #8FBC8F; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"),
+          card_header(textOutput("textHeaderH"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"),
         layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables", style = "background-color: #bfd9bf"), card_body(
@@ -253,7 +253,7 @@ ui <- div(page_navbar(
 ############################################################################################################ I UI
             tabPanel("Baseline-adjusted barplot",
             card(
-          card_header(textOutput("textHeaderI"), style = "background-color: #8FBC8F; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"),
+          card_header(textOutput("textHeaderI"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"),
     layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables", style = "background-color: #bfd9bf"), card_body(
@@ -284,7 +284,7 @@ ui <- div(page_navbar(
   navbarMenu("Continuous",############################################################################################################ C UI
              tabPanel("Change from baseline across timepoints",
              card(
-          card_header(textOutput("textHeaderC"), style = "background-color: #8FBC8F; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
+          card_header(textOutput("textHeaderC"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
         ),
                 layout_sidebar(
           sidebar = sidebar(
@@ -325,7 +325,7 @@ ui <- div(page_navbar(
             ))),
 ############################################################################################################ D UI
              tabPanel("Individual patient trajectory", card(
-          card_header(textOutput("textHeaderD"), style = "background-color: #8FBC8F; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
+          card_header(textOutput("textHeaderD"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
         ),
             layout_sidebar(
           sidebar = sidebar(
@@ -362,7 +362,7 @@ ui <- div(page_navbar(
 ############################################################################################################ E UI
               
              tabPanel("Boxplot across timepoints",  card(
-          card_header(textOutput("textHeaderE"), style = "background-color: #8FBC8F; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
+          card_header(textOutput("textHeaderE"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
         ),
          layout_sidebar(
           sidebar = sidebar(
@@ -397,7 +397,7 @@ ui <- div(page_navbar(
         ))),
 ############################################################################################################ F UI
            tabPanel("Change from baseline across functionings (table)",     card(
-          card_header(textOutput("textHeaderF"), style = "background-color: #8FBC8F; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
+          card_header(textOutput("textHeaderF"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
         ),
           layout_sidebar(
           sidebar = sidebar(
@@ -426,7 +426,7 @@ ui <- div(page_navbar(
            ############################################################################################################ G UI 
     
              tabPanel("Change from baseline across PRO domains (figure)",          card(
-          card_header(textOutput("textHeaderG"), style = "background-color: #8FBC8F; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
+          card_header(textOutput("textHeaderG"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
         ),
           layout_sidebar(
           sidebar = sidebar(
