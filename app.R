@@ -490,7 +490,7 @@ ui <- div(page_navbar(
       #########################################Dealing with the long popovers
       tags$head(tags$style(HTML("
       .popover {
-        max-height: 1000px;
+        max-height: 600px;
         max-width: 300px;
         overflow-y: auto;
         overflow-x: hidden;
@@ -1217,7 +1217,16 @@ observe({
   updateSelectInput(session, "functioningC", label = "Functionality of interest", choices = func, selected = NULL)
 })
 
-
+observe({
+  req(input$improveC)
+  bounds <- input$improveC
+  updateSliderInput(session, "impTextC", min = bounds[1] + 2, max = bounds[2] - 2, value = bounds[2] - 2)
+})
+observe({
+  req(input$worseC)
+  bounds <- input$worseC
+  updateSliderInput(session, "worTextC", min = bounds[1] + 2, max = bounds[2] - 2, value = bounds[2] - 2)
+})
 #### Reactive Defining
 #Define the relevant variables
 no_doseC <- reactive({
@@ -1787,6 +1796,17 @@ observe({
   data <- continuous_data()
   func <- unique(data$functioning)
   updateCheckboxGroupInput(session, "functioningG", label = "Functionality of interest", choices = func, selected = NULL)
+})
+
+observe({
+  req(input$improveG)
+  bounds <- input$improveG
+  updateSliderInput(session, "impTextG", min = bounds[1] + 2, max = bounds[2] - 2, value = bounds[2] - 2)
+})
+observe({
+  req(input$worseG)
+  bounds <- input$worseG
+  updateSliderInput(session, "worTextG", min = bounds[1] + 2, max = bounds[2] - 2, value = bounds[2] - 2)
 })
 
 ########### for dummy set
