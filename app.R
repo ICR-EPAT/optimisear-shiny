@@ -498,15 +498,15 @@ ui <- div(page_navbar(
 #######################################################################################################################   SERVER SIDE 
 
 server <- function(input, output, session) {
-  output$textHeaderA <- renderText({"Kaplan-Meier Graph"})
-  output$textHeaderB <- renderText({"Proportional severity of doses across timepoints plot"})
-  output$textHeaderC <- renderText({"Mean change from baseline reported value across timepoints plot"})
-  output$textHeaderD <- renderText({"Patient experience plot"})
-  output$textHeaderE <- renderText({"Tolerability Boxplot"})
-  output$textHeaderF <- renderText({"Change from baseline table"})
-  output$textHeaderG <- renderText({"Mean change in functionalities plot"})
+  output$textHeaderA <- renderText({"Kaplan-Meier"})
+  output$textHeaderB <- renderText({"Barplot across timepoints"})
+  output$textHeaderC <- renderText({"Change from baseline across timepoints"})
+  output$textHeaderD <- renderText({"Individual patient trajectory"})
+  output$textHeaderE <- renderText({"Boxplot across timepoints"})
+  output$textHeaderF <- renderText({"Change from baseline across PRO domains (table)"})
+  output$textHeaderG <- renderText({"Change from baseline across PRO domains (figure)"})
   output$textHeaderH <- renderText({"Butterfly plot"})
-  output$textHeaderI <- renderText({"Toxicity % plot"})
+  output$textHeaderI <- renderText({"Baseline-adjusted barplot"})
   ############################################################################################Overview page
 about_ordinal <- reactive({input$about_ordinal})
 about_continuous <- reactive({input$about_continuous})
