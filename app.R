@@ -10,8 +10,10 @@ library(tidyr)
 library(gt)
 library(svglite)
 library(bslib)
+library(bsicons)
 
 ui <- div(page_navbar(
+  theme = bslib::bs_theme("bslib-value-box-horizontal-break-point" = "1px"),
   title = span(tags$img(src = "ICR_logo.png"), "OPTIMISE-AR"),
   ############################################################################################# Information
   tabPanel("Overview", icon = icon("house"),
@@ -119,32 +121,37 @@ ui <- div(page_navbar(
   card_body(input_switch("dummy_ordinal", "Dummy Ordinal data")),
   card_body(input_switch("dummy_continuous", "Dummy Continuous data")))),
   layout_columns(col_widths = c(9, 3),
-  card(card_header("Ordinal data"), card_body(tableOutput("ordinal_table")), max_height = 250),
-  card(
+  card(card_header("Ordinal data"), card_body(tableOutput("ordinal_table")), max_height = 300),
+  card( card_header("Summaries"),
     value_box(
-      title = "No. patients",
-      value = textOutput("ord_summary_pat"),
-      showcase = icon("person")
-    ),
+    title = "No. patients", value = textOutput("ord_summary_pat"),
+    theme = value_box_theme(bg = "#8FBC8F", fg = "#000000"),
+    showcase = bsicons::bs_icon("person", size = "0.75em"), showcase_layout = "left center",
+    full_screen = FALSE, fill = TRUE, height = NULL
+   ),
      value_box(
-      title = "No. doses",
-      value = textOutput("ord_summary_dose")
-    )
-  , max_height = 250)),
-  layout_columns(col_widths = c(9, 3),
-  card(card_header("Continuous data"), card_body(tableOutput("continuous_table")), card_body(), max_height = 250),
-  card(
+    title = "No. doses", value = textOutput("ord_summary_dose"), ,
+    theme = value_box_theme(bg = "#8FBC8F", fg = "#000000"),
+    showcase = bsicons::bs_icon("capsule-pill", size = "0.75em"), showcase_layout = "left center",
+    full_screen = FALSE, fill = TRUE, height = NULL
+  )
+  , max_height = 300)),
+   layout_columns(col_widths = c(9, 3),
+  card(card_header("Continuous data"), card_body(tableOutput("continuous_table")), max_height = 300),
+  card( card_header("Summaries"),
     value_box(
-      title = "No. patients",
-      value = textOutput("cts_summary_pat"),
-      showcase = icon("person")
-    ),
-    value_box(
-      title = "No. doses",
-      value = textOutput("cts_summary_dose")
-    )
-  , max_height = 250)
-  ))),
+    title = "No. patients", value = textOutput("cts_summary_pat"),
+    theme = value_box_theme(bg = "#8FBC8F", fg = "#000000"),
+    showcase = bsicons::bs_icon("person", size = "0.75em"), showcase_layout = "left center",
+    full_screen = FALSE, fill = TRUE, height = NULL
+   ),
+     value_box(
+    title = "No. doses", value = textOutput("cts_summary_dose"), ,
+    theme = value_box_theme(bg = "#8FBC8F", fg = "#000000"),
+    showcase = bsicons::bs_icon("capsule-pill", size = "0.75em"), showcase_layout = "left center",
+    full_screen = FALSE, fill = TRUE, height = NULL
+  )
+  , max_height = 300)))),
   navbarMenu("Ordinal",
 ############################################################################################################ A UI
             tabPanel("Kaplan-Meier",
@@ -481,6 +488,9 @@ ui <- div(page_navbar(
         overflow-y: auto;
         overflow-x: hidden;
       }"))),
+      tags$head(tags$style(HTML('
+      .bslib-value-box 
+      .value-box-title {font-size:14px;}'))),
       tags$head(tags$style(HTML("
       .shiny-output-error-style{
       color: red;
@@ -739,7 +749,7 @@ editI <- eventReactive(input$updateI,{
        data
     }
     else if (input$dummy_ordinal == TRUE) {
-          read.csv("www/DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")[,-1]
+          read.csv("www/DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")[, -1]
 }
 })
 observeEvent(input$upload,{
@@ -760,12 +770,19 @@ observe({
   }
 })
 
-output$ord_summary_pat <- renderText(length(unique(ordinal_data()$id)))
-output$ord_summary_dose <- renderText(length(unique(ordinal_data()$dose)))
+output$ord_summary_pat <- renderText(
+      length(unique(ordinal_data()$id))
+)
 
-output$ordinal_table <- renderTable(ordinal_data())
+output$ord_summary_dose <- renderText(
+  length(unique(ordinal_data()$dose))
+)
 
-output$continuous_table <- renderTable(continuous_data())
+output$ordinal_table <- renderTable(
+    ordinal_data())
+
+output$continuous_table <- renderTable(
+  continuous_data())
 
   #Update the selection boxes based on dataset
   observe({
