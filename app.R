@@ -11,6 +11,8 @@ library(gt)
 library(svglite)
 library(bslib)
 library(bsicons)
+library(gridExtra)
+library(survminer)
 
 ui <- div(page_navbar(
   theme = bslib::bs_theme("bslib-value-box-horizontal-break-point" = "1px"),
@@ -54,15 +56,18 @@ ui <- div(page_navbar(
     sidebar = sidebar(
       conditionalPanel(
         "input.about == 'Ordinal'",
-        radioButtons("about_ordinal", label = NULL, choiceValues = c("graphA", "graphB", "graphH", "graphI"), choiceNames =  c("Kaplan-Meier", "Barplot across timepoints", "Butterfly plot", "Baseline-adjusted barplot"))
+        radioButtons("about_ordinal", label = HTML("<b>Time-to-event PRO endpoints</b>"), choiceValues = c("graphA"), choiceNames =  c("Kaplan-Meier")),
+        radioButtons("about_ordinal1", label = HTML("<b>PRO endpoints across time points</b>"), choiceValues = c("graphB"), choiceNames =  c("Barplot across timepoints"), selected = character(0)),
+        radioButtons("about_ordinal2", label = HTML("<b>PRO endpoints between time points</b>"), choiceValues = c("graphH", "graphI"), choiceNames =  c("Butterfly plot", "Baseline-adjusted barplot"), selected = character(0))
       ),
       conditionalPanel(
         "input.about == 'Continuous'",
-        radioButtons("about_continuous", label = NULL, choiceValues = c("graphC", "graphD", "graphE", "graphF", "graphG"), choiceNames = c("Change from baseline across timepoints", "Individual patient trajectory", "Boxplot across timepoints", "Change from baseline across PRO domains (table)", "Change from baseline across PRO domains (figure)") )
+        radioButtons("about_continuous", label = HTML("<b>PRO endpoints across time points</b>"), choiceValues = c("graphC", "graphE", "graphD"), choiceNames = c("Change from baseline across timepoints", "Boxplot across timepoints", "Individual patient trajectory")),
+        radioButtons("about_continuous1", label =HTML("<b>PRO endpoints between time points</b>"), choiceValues = c("graphF", "graphG"), choiceNames = c("Change from baseline across PRO domains (table)", "Change from baseline across PRO domains (figure)"), selected = character(0))
       )
     ),
     nav_panel("Ordinal", fillable = TRUE,
-    layout_columns(col_widths = c(9, 3), height = "900px",
+    layout_columns(col_widths = c(9, 3), height = "1000px",
       card(card_header("Graph", style = "background-color: #bfd9bf"), card_body(imageOutput("about_ordinal"), height = "800px"), full_screen = TRUE, fillable = TRUE),
       card(card_header("Information", style = "background-color: #bfd9bf"), fill = TRUE,
         card_body(card_title("About"), htmlOutput("ordinal_information_about")),
@@ -70,7 +75,7 @@ ui <- div(page_navbar(
         #card_body(card_title("Limitations"), htmlOutput("ordinal_lims"))
         ))),
     nav_panel("Continuous", fillable = TRUE,
-    layout_columns(col_widths = c(9, 3), height = "900px",
+    layout_columns(col_widths = c(9, 3), height = "1000px",
       card(card_header("Graph", style = "background-color: #bfd9bf"), card_body(imageOutput("about_continuous", height = "800px")), full_screen = TRUE, fill = TRUE),
       card(card_header("Information", style = "background-color: #bfd9bf"),
         card_body(card_title("About"), htmlOutput("continuous_information_about")),
@@ -159,7 +164,7 @@ ui <- div(page_navbar(
 ############################################################################################################ A UI
             tabPanel("Kaplan-Meier",
             card(
-          card_header(textOutput("textHeaderA"), style = "background-color: #8FBC8F; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"),
+          card_header(textOutput("textHeaderA"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"),
         layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables", style = "background-color: #bfd9bf"), card_body(checkboxGroupInput("numdose", label = "Dosage",
@@ -182,13 +187,15 @@ ui <- div(page_navbar(
              textInput("ylab_A", label = NULL, placeholder = "Enter y-axis label"),
              textInput("xlab_A", label = NULL, placeholder = "Enter x-axis label"),
              sliderInput("axisSizeA", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
+             sliderInput("box_xA", label = "Median table x-axis location", min = -0.5, max = 20, value = -0.5, step = 0.5),
+             sliderInput("box_yA", label = "Median table y-axis location", min = -0.05, max = 1, value = -0.05, step = 0.05),
              actionButton("updateA", "Update")
           )), card_body(plotOutput("graphA"), height = 1000), full_screen = TRUE)
           ))),
   ############################################################################################################ B UI
             tabPanel("Barplot across timepoints",
           card(
-          card_header(textOutput("textHeaderB"), style = "background-color: #8FBC8F; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"),
+          card_header(textOutput("textHeaderB"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"),
         layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables", style = "background-color: #bfd9bf"), card_body(
@@ -221,7 +228,7 @@ ui <- div(page_navbar(
          
             tabPanel("Butterfly plot",
             card(
-          card_header(textOutput("textHeaderH"), style = "background-color: #8FBC8F; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"),
+          card_header(textOutput("textHeaderH"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"),
         layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables", style = "background-color: #bfd9bf"), card_body(
@@ -253,7 +260,7 @@ ui <- div(page_navbar(
 ############################################################################################################ I UI
             tabPanel("Baseline-adjusted barplot",
             card(
-          card_header(textOutput("textHeaderI"), style = "background-color: #8FBC8F; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"),
+          card_header(textOutput("textHeaderI"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"),
     layout_sidebar(
           sidebar = sidebar(
           card(card_header("Variables", style = "background-color: #bfd9bf"), card_body(
@@ -284,7 +291,7 @@ ui <- div(page_navbar(
   navbarMenu("Continuous",############################################################################################################ C UI
              tabPanel("Change from baseline across timepoints",
              card(
-          card_header(textOutput("textHeaderC"), style = "background-color: #8FBC8F; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
+          card_header(textOutput("textHeaderC"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
         ),
                 layout_sidebar(
           sidebar = sidebar(
@@ -323,9 +330,45 @@ ui <- div(page_navbar(
              actionButton("updateC", "Update"))
           ), card_body(plotOutput("graphC"), height = 1000), full_screen = TRUE)
             ))),
+############################################################################################################ E UI
+              
+             tabPanel("Boxplot across timepoints",  card(
+          card_header(textOutput("textHeaderE"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
+        ),
+         layout_sidebar(
+          sidebar = sidebar(
+          card(card_header("Variables", style = "background-color: #bfd9bf"), card_body(
+            checkboxGroupInput("numdoseE", label = "Dosage", selected = NULL, inline = TRUE),
+            sliderInput("tpointE", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+            selectInput("functioningE", label = "Functioning of interest", choices = NULL), height = 800)),
+            card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadE", style = "background-color: #d9bfd9")))),
+            card(card_header(class = "d-inline-flex justify-content-end bg-light",
+            popover(
+            actionButton("sizeE", "Size", value = FALSE, icon = icon("arrows-up-down-left-right"), style = "background-color: #bfd9bf"),
+            title = "Adjust output size",
+            id = "dimE",
+            sliderInput("widthE", "Adjust graph width", value = 800, min = 300, max = 1600, step = 100, width = "400px"),
+            sliderInput("heightE", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
+          popover(
+            actionButton("editE", "Edit", value = FALSE, icon = icon("pencil-square"), style = "background-color: #bfd9bf"),
+             title = "Graph Editor",
+             id = "popE",
+             placement = "right",
+             textInput("titleE", label = NULL, placeholder = "Enter graph title"),
+             sliderInput("titlesizeE", label = "Title size", min = 10, max = 50, value = 20, step = 5),
+             textInput("ylab_E", label = NULL, placeholder = "Enter y-axis label"),
+             textInput("xlab_E", label = NULL, placeholder = "Enter x-axis label"),
+             sliderInput("axisSizeE", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
+             textInput("arrowlab_E", label = NULL, placeholder = "Enter arrow label"),
+             sliderInput("rangeE", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
+             p(strong("Note:")),
+             p("If value selected for range excludes minimum or maximum of the data, the app will instead set this as the value."),
+             actionButton("updateE", "Update")
+          )), card_body(plotOutput("graphE"), height = 1000), full_screen = TRUE)
+        ))),
 ############################################################################################################ D UI
              tabPanel("Individual patient trajectory", card(
-          card_header(textOutput("textHeaderD"), style = "background-color: #8FBC8F; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
+          card_header(textOutput("textHeaderD"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
         ),
             layout_sidebar(
           sidebar = sidebar(
@@ -359,45 +402,10 @@ ui <- div(page_navbar(
              actionButton("updateD", "Update")
           )), card_body(plotOutput("graphD"), height = 1000), full_screen = TRUE)
         ))),
-############################################################################################################ E UI
-              
-             tabPanel("Boxplot across timepoints",  card(
-          card_header(textOutput("textHeaderE"), style = "background-color: #8FBC8F; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
-        ),
-         layout_sidebar(
-          sidebar = sidebar(
-          card(card_header("Variables", style = "background-color: #bfd9bf"), card_body(
-            checkboxGroupInput("numdoseE", label = "Dosage", selected = NULL, inline = TRUE),
-            sliderInput("tpointE", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-            selectInput("functioningE", label = "Functioning of interest", choices = NULL), height = 800)),
-            card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadE", style = "background-color: #d9bfd9")))),
-            card(card_header(class = "d-inline-flex justify-content-end bg-light",
-            popover(
-            actionButton("sizeE", "Size", value = FALSE, icon = icon("arrows-up-down-left-right"), style = "background-color: #bfd9bf"),
-            title = "Adjust output size",
-            id = "dimE",
-            sliderInput("widthE", "Adjust graph width", value = 800, min = 300, max = 1600, step = 100, width = "400px"),
-            sliderInput("heightE", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
-          popover(
-            actionButton("editE", "Edit", value = FALSE, icon = icon("pencil-square"), style = "background-color: #bfd9bf"),
-             title = "Graph Editor",
-             id = "popE",
-             placement = "right",
-             textInput("titleE", label = NULL, placeholder = "Enter graph title"),
-             sliderInput("titlesizeE", label = "Title size", min = 10, max = 50, value = 20, step = 5),
-             textInput("ylab_E", label = NULL, placeholder = "Enter y-axis label"),
-             textInput("xlab_E", label = NULL, placeholder = "Enter x-axis label"),
-             sliderInput("axisSizeE", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
-             textInput("arrowlab_E", label = NULL, placeholder = "Enter arrow label"),
-             sliderInput("rangeE", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
-             p(strong("Note:")),
-             p("If value selected for range excludes minimum or maximum of the data, the app will instead set this as the value."),
-             actionButton("updateE", "Update")
-          )), card_body(plotOutput("graphE"), height = 1000), full_screen = TRUE)
-        ))),
+
 ############################################################################################################ F UI
            tabPanel("Change from baseline across functionings (table)",     card(
-          card_header(textOutput("textHeaderF"), style = "background-color: #8FBC8F; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
+          card_header(textOutput("textHeaderF"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
         ),
           layout_sidebar(
           sidebar = sidebar(
@@ -426,7 +434,7 @@ ui <- div(page_navbar(
            ############################################################################################################ G UI 
     
              tabPanel("Change from baseline across PRO domains (figure)",          card(
-          card_header(textOutput("textHeaderG"), style = "background-color: #8FBC8F; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
+          card_header(textOutput("textHeaderG"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
         ),
           layout_sidebar(
           sidebar = sidebar(
@@ -465,9 +473,9 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphG"), height = 1000), full_screen = TRUE)
       )))),
 ################################################################################################################## description tab
-      tabPanel("Description", tabName = "description", icon = icon("book"), h4("About this site"),
+      tabPanel("Code", tabName = "description", icon = icon("book"), h4("About this site"),
       layout_columns(
-      card(card_header("Code", style = "background-color: #bfd9bf"), card_body(
+      card(card_header("Code availability", style = "background-color: #bfd9bf"), card_body(
         p("This app accompanies the OPTIMISE-AR project."),
         p("If you wish to utilise figures curated for OPTIMISE-AR for your own publications, R code is provided here: https://github.com/alemily100/optimise-ar"),
         p("We also provide code for the Shiny app itself, which can be accessed here: https://github.com/ICR-EPAT/optimisear-shiny."))),
@@ -508,9 +516,46 @@ server <- function(input, output, session) {
   output$textHeaderH <- renderText({"Butterfly plot"})
   output$textHeaderI <- renderText({"Baseline-adjusted barplot"})
   ############################################################################################Overview page
-about_ordinal <- reactive({input$about_ordinal})
-about_continuous <- reactive({input$about_continuous})
+about_ordinal <- reactive({
+  if (isTruthy(input$about_ordinal)){
+  input$about_ordinal}
+  else if (isTruthy(input$about_ordinal1)){
+  input$about_ordinal1}
+  else if (isTruthy(input$about_ordinal2)){
+  input$about_ordinal2}
+  })
 
+about_continuous <- reactive({
+  if (isTruthy(input$about_continuous)){
+  input$about_continuous}
+  else if (isTruthy(input$about_continuous1)){
+  input$about_continuous1}
+  })
+
+observe({
+  req(input$about_ordinal)
+  updateRadioButtons(session, "about_ordinal1", selected = character(0))
+  updateRadioButtons(session, "about_ordinal2", selected = character(0))
+})
+observe({
+  req(input$about_ordinal1)
+  updateRadioButtons(session, "about_ordinal", selected = character(0))
+  updateRadioButtons(session, "about_ordinal2", selected = character(0))
+})
+observe({
+  req(input$about_ordinal2)
+  updateRadioButtons(session, "about_ordinal", selected = character(0))
+  updateRadioButtons(session, "about_ordinal1", selected = character(0))
+})
+
+observe({
+  req(input$about_continuous)
+  updateRadioButtons(session, "about_continuous1", selected = character(0))
+})
+observe({
+  req(input$about_continuous1)
+  updateRadioButtons(session, "about_continuous", selected = character(0))
+})
 
 ############################################# GRAPH IMAGE
 output$about_ordinal <- renderImage({
@@ -666,7 +711,9 @@ editA <- eventReactive(input$updateA,{
   titlesize = input$titlesizeA,
   y_lab = input$ylab_A,
   x_lab = input$xlab_A,
-  axissize = input$axisSizeA)
+  axissize = input$axisSizeA,
+  box_x = input$box_xA,
+  box_y = input$box_yA)
 })
 editB <- eventReactive(input$updateB,{
   list(title = input$titleB,
@@ -836,8 +883,29 @@ output$continuous_table <- renderTable(
                             }
                           summary_df <- cbind(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose)))
                           colnames(summary_df)[5] <- "dose"
-                          summary_df$dose <- paste0("Dose: ", summary_df$dose)
                           summary_df})
+  
+  fitA <- reactive({survfit2(Surv(time, event) ~ dose, data = summary_df())})
+
+  median_dfA <- reactive({median_df <- survminer::surv_median(fitA()) %>%
+                          dplyr::select(strata, median) %>%
+                          rename(Dose = strata,
+                          "Median time \n to event" = median)
+                          median_df[,1]<-paste0("Dose: ", unique(summary_df()$dose))
+                          median_df})
+  tbl_grob <- reactive({
+    tableGrob(
+              median_dfA(),
+              rows = NULL,
+              theme = ttheme_default(
+              core = list(
+              fg_params = list(cex = 0.7, col = "black"), # text
+              bg_params = list(fill = NA, col = "black") # no fill, black borders
+              ),
+              colhead = list(
+              fg_params = list(cex = 0.8, fontface = "bold", col = "black"),
+              bg_params = list(fill = NA, col = "black") # no fill, black borders
+              )))})
 
   output$graphA <- renderPlot({
                                g <- survfit2(Surv(time, event) ~ dose, data = summary_df()) %>%
@@ -848,10 +916,20 @@ output$continuous_table <- renderTable(
                                 if (isTruthy(input$updateA)){
                                   editA <- editA()
                                   g + ggtitle(editA$title) + theme(plot.title = element_text(size = editA$titlesize, face = "bold"), axis.title = element_text(size = editA$axissize)) +
-                                  labs(y = editA$y_lab , x = editA$x_lab)
+                                  labs(y = editA$y_lab , x = editA$x_lab) +
+                                  annotation_custom(
+                                  tbl_grob(),
+                                  xmin = editA$box_x, xmax = editA$box_x + 2, # x-position range for table
+                                  ymin =editA$box_y, ymax = editA$box_y + 0.3 # y-position range for table
+                                  )
                                 }
                                 else {
-                                  g + labs(y = "Probability of first baseline-adjusted \n Grade ≥3 PRO-CTCAE score" )
+                                  g + labs(y = "Probability of first baseline-adjusted \n Grade ≥3 PRO-CTCAE score" ) +
+                                  annotation_custom(
+                                  tbl_grob(),
+                                  xmin = -0.5, xmax = 1.75, # x-position range for table
+                                  ymin = 0.05, ymax = 0.35 # y-position range for table
+                                  )
                                 }}, height = function() input$heightA, width = function() input$widthA)
 
 ################################################ graph B
