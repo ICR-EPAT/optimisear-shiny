@@ -66,7 +66,7 @@ ui <- div(page_navbar(
       card(card_header("Information", style = "background-color: #bfd9bf"), fill = TRUE,
         card_body(card_title("About"), htmlOutput("ordinal_information_about")),
         card_body(card_title("Edit functionality"), htmlOutput("ordinal_edit")),
-        card_body(card_title("Limitations"), htmlOutput("ordinal_lims"))
+        #card_body(card_title("Limitations"), htmlOutput("ordinal_lims"))
         ))),
     nav_panel("Continuous", fillable = TRUE,
     layout_columns(col_widths = c(9, 3), height = "900px",
@@ -74,7 +74,7 @@ ui <- div(page_navbar(
       card(card_header("Information", style = "background-color: #bfd9bf"),
         card_body(card_title("About"), htmlOutput("continuous_information_about")),
         card_body(card_title("Edit functionality"), htmlOutput("continuous_edit")),
-        card_body(card_title("Limitations"), htmlOutput("continuous_lims"))
+        #card_body(card_title("Limitations"), htmlOutput("continuous_lims"))
         ))))))),
   ####################################################################################################### Data Sorting + Upload
   tabPanel("Data", icon = icon("arrow-up-from-bracket"),
