@@ -16,19 +16,29 @@ ui <- div(page_navbar(
   ############################################################################################# Information
   tabPanel("Overview", icon = icon("house"),
   h1("OPTIMISE-AR"),
+  layout_columns(
   card(card_body(
-  h3("Work-flow"),
-  p("1. Identify the type of data  (Ordinal/Continuous)"),
-  p("2. Read about the graph choices on this page"),
-  p("3. Go to the data tab"),
-  p("- Read about how to format data"),
-  p("- Format data and upload OR select the dummy datasets"),
-  p("4. Select relevant graphs under the Ordinal or Continuous dropdown"),
-  p("5. Adjust the variables to suit your required outputs"),
-  p("- Use the edit button to make changes to graphs where necessary"),
-  p("6. Click download to export any relevant graphs as a .svg file"),
-  p("- Changing the image size in the editor will also adjust the file for download")
+    h3("Background"),
+    p("OPTIMISE-AR (incOrporating PaTIent-reported outcoMes In doSE-finding trials–Analysis Recommendations) provides this shiny app to support the generation of patient-reported outcome (PRO) data visualisations for DFOT publications. Informed by critical PRO research objectives in DFOTs[1], this toolkit supports trialists wishing to present PRO data in line with three key PRO endpoint types:"),
+    tags$b("Time-to-event PRO endpoints -"),
+    p("For DFOTs, a PRO objective could look to assess tolerability across dose levels by identifying whether patients at higher doses experience earlier undesirable PRO events e.g., symptom worsening or dose-limiting events compared to those at lower doses.  Such objectives are typically described using time-to-event endpoints."),
+    tags$b("PRO endpoints across timepoints -"),
+    p("For DFOTs, a PRO objective could look to assess tolerability across dose levels by analysing the longitudinal tolerability profile of a treatment. Such endpoints may assess whether patients at higher doses experience worse tolerability than patients at lower doses at any timepoint within the trial."),
+    tags$b("PRO endpoints between timepoints -"),
+    p("For DFOTs, a PRO objective could look to assess tolerability by analysing tolerability to treatment at two clinically meaningful timepoints across dose levels. For example, such endpoints may assess whether patients at higher doses experience worse tolerability at the final assessment timepoint than patients at lower doses when compared to baseline."),
+    p("[1] Alger E, et al. International consensus recommendations for PRO research in early-phase dose-finding oncology trials: OPTIMISE-ROR. ESMO Open. 2025;10:105438.")
   )),
+  card(card_body(
+  h3("App workflow"),
+  p("This section provides guidance on how best to utilise this shiny app for data visualisation generation."),
+  p("1. Identify the PRO data type you wish to report: ordinal (eg. FACT-GP5, PRO-CTCAE) or continuous (eg. EORTC QLQ-C30)."),
+  p("2. Learn more about each figure in the 'About the graphs' section below. The section is partitioned by PRO data type and PRO endpoint types."),
+  p("3. Select your data in the ‘Data’ tab, using either the built-in dummy data or uploading your own, with formatting guidelines provided."),
+  p("4. Visualise your graphs with the 'Ordinal' and 'Continuous' data tabs."),
+  p(" - Customise the size and layout of figures,"),
+  p(" - Customise axis and main titles."),
+  p("6. Click 'Download' to export your graphs as .svg files.")
+  ))),
   card(card_body(
   h3("About the graphs")),
   card_body(
@@ -39,11 +49,11 @@ ui <- div(page_navbar(
     sidebar = sidebar(
       conditionalPanel(
         "input.about == 'Ordinal'",
-        radioButtons("about_ordinal", label = NULL, choiceValues = c("graphA", "graphB", "graphH", "graphI"), choiceNames =  c("GraphA", "GraphB", "GraphH", "GraphI"))
+        radioButtons("about_ordinal", label = NULL, choiceValues = c("graphA", "graphB", "graphH", "graphI"), choiceNames =  c("Kaplan-Meier", "Barplot across timepoints", "Butterfly plot", "Baseline-adjusted barplot"))
       ),
       conditionalPanel(
         "input.about == 'Continuous'",
-        radioButtons("about_continuous", label = NULL, choiceValues = c("graphC", "graphD", "graphE", "graphF", "graphG"), choiceNames = c("GraphC", "GraphD", "GraphE", "GraphF", "GraphG") )
+        radioButtons("about_continuous", label = NULL, choiceValues = c("graphC", "graphD", "graphE", "graphF", "graphG"), choiceNames = c("Change from baseline across timepoints", "Individual patient trajectory", "Boxplot across timepoints", "Change from baseline across PRO domains (table)", "Change from baseline across PRO domains (figure)") )
       )
     ),
     nav_panel("Ordinal", fillable = TRUE,
@@ -112,7 +122,7 @@ ui <- div(page_navbar(
   card(card_header("Continuous data"), card_body(tableOutput("continuous_table")), max_height = 250))),
   navbarMenu("Ordinal",
 ############################################################################################################ A UI
-            tabPanel("GraphA",
+            tabPanel("Kaplan-Meier",
             fluidRow(
           textOutput("textHeaderA")
         ),
@@ -142,7 +152,7 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphA"), height = 1000), full_screen = TRUE)
           )),
   ############################################################################################################ B UI
-            tabPanel("GraphB",
+            tabPanel("Barplot across timepoints",
           fluidRow(
           textOutput("textHeaderB")
         ),
@@ -176,7 +186,7 @@ ui <- div(page_navbar(
             )),
 ############################################################################################################ H UI
          
-            tabPanel("GraphH",
+            tabPanel("Butterfly plot",
             fluidRow(
           textOutput("textHeaderH")
         ),
@@ -209,7 +219,7 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphH"), height = 1000), full_screen = TRUE)
             )),
 ############################################################################################################ I UI
-            tabPanel("GraphI",
+            tabPanel("Baseline-adjusted barplot",
             fluidRow(
           textOutput("textHeaderI")
         ),
@@ -241,7 +251,7 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphI"), height = 1000), full_screen = TRUE)
             ))),
   navbarMenu("Continuous",############################################################################################################ C UI
-             tabPanel("GraphC",
+             tabPanel("Change from baseline across timepoints",
              fluidRow(
           textOutput("textHeaderC")
         ),
@@ -283,7 +293,7 @@ ui <- div(page_navbar(
           ), card_body(plotOutput("graphC"), height = 1000), full_screen = TRUE)
             )),
 ############################################################################################################ D UI
-             tabPanel("GraphD", fluidRow(
+             tabPanel("Individual patient trajectory", fluidRow(
           textOutput("textHeaderD")
         ),
             layout_sidebar(
@@ -320,7 +330,7 @@ ui <- div(page_navbar(
         )),
 ############################################################################################################ E UI
               
-             tabPanel("GraphE",  fluidRow(
+             tabPanel("Boxplot across timepoints",  fluidRow(
           textOutput("textHeaderE")
         ),
          layout_sidebar(
@@ -355,7 +365,7 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphE"), height = 1000), full_screen = TRUE)
         )),
 ############################################################################################################ F UI
-           tabPanel("GraphF",     fluidRow(
+           tabPanel("Change from baseline across functionings (table)",     fluidRow(
           textOutput("textHeaderF")
         ),
           layout_sidebar(
@@ -384,7 +394,7 @@ ui <- div(page_navbar(
            )),
            ############################################################################################################ G UI 
     
-             tabPanel("GraphG",          fluidRow(
+             tabPanel("Change from baseline across PRO domains (figure)",          fluidRow(
           textOutput("textHeaderG")
         ),
           layout_sidebar(
@@ -512,13 +522,13 @@ output$about_continuous <- renderImage({
 output$ordinal_information_about <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "graphA"){
-    HTML("The Kaplan-Meier graph shows the survival percentage over time across dosages.<br>For this graph, we assume a change from baseline of 3 to represent an event.<br> <br> This app allows you to select: <br>- Dose levels")
+    HTML("Kaplan-Meier figures present tolerability across dose levels by identifying whether patients at higher doses experience earlier undesirable PRO events (e.g., symptom worsening or dose-limiting events) compared to those at lower doses")
   }
   else if (about_ordinal == "graphB") {
-     html("Graph B shows the proportion of patients at each severity across time on a given dose.<br> <br> This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Toxicity of interest")
+     html("This figure presents the proportion of patients experiencing each ordinal score across timepoints.<br> <br> This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Toxicity of interest")
   }
   else if (about_ordinal == "graphH") {
-     html("Graph H is a butterfly plot, it allows you to compare the change in severity grades between two timepoints for a dose and toxicity of interest.<br> <br> This app allows you to select: <br>- Dose levels <br>- Start timepoint <br>- Final timepoint <br>- Toxicities of interest")
+     html("This figures presents differences between ordinal PRO scores as both a magnitude of worsening/improvement between two timepoints of interest across doses and symptomatic adverse events. <br> <br> This app allows you to select: <br>- Dose levels <br>- Start timepoint <br>- Final timepoint <br>- Toxicities of interest")
   }
   else if (about_ordinal == "graphI") {
      html("Graph I shows the percentage of patients at each severity for a given dose level, timepoint and SAE. The graph also shows the number of patients who reported. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Toxicities of interest")
