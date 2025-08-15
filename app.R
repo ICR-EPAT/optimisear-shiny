@@ -906,9 +906,14 @@ output$continuous_table <- renderTable(
               fg_params = list(cex = 0.8, fontface = "bold", col = "black"),
               bg_params = list(fill = NA, col = "black") # no fill, black borders
               )))})
+summary_dfA <- reactive({
+  data <- summary_df()
+  data$dose <- paste0("Dose: ", data$dose)
+  data
+})
 
   output$graphA <- renderPlot({
-                               g <- survfit2(Surv(time, event) ~ dose, data = summary_df()) %>%
+                               g <- survfit2(Surv(time, event) ~ dose, data = summary_dfA()) %>%
                                  ggsurvfit(linewidth = 1.5) +
                                  add_censor_mark() +
                                  add_confidence_interval() +
