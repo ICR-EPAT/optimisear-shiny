@@ -184,6 +184,8 @@ ui <- div(page_navbar(
              textInput("ylab_A", label = NULL, placeholder = "Enter y-axis label"),
              textInput("xlab_A", label = NULL, placeholder = "Enter x-axis label"),
              sliderInput("axisSizeA", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
+             sliderInput("box_xA", label = "Median table x-axis location", min = -0.5, max = 20, value = -0.5, step = 0.5),
+             sliderInput("box_yA", label = "Median table y-axis location", min = -0.05, max = 1, value = -0.05, step = 0.05),
              actionButton("updateA", "Update")
           )), card_body(plotOutput("graphA"), height = 1000), full_screen = TRUE)
           ))),
@@ -668,7 +670,9 @@ editA <- eventReactive(input$updateA,{
   titlesize = input$titlesizeA,
   y_lab = input$ylab_A,
   x_lab = input$xlab_A,
-  axissize = input$axisSizeA)
+  axissize = input$axisSizeA,
+  box_x = input$box_xA,
+  box_y = input$box_yA)
 })
 editB <- eventReactive(input$updateB,{
   list(title = input$titleB,
@@ -867,19 +871,24 @@ output$continuous_table <- renderTable(
                                  ggsurvfit(linewidth = 1.5) +
                                  add_censor_mark() +
                                  add_confidence_interval() +
-                                 scale_ggsurvfit() + add_risktable() +
+                                 scale_ggsurvfit() + add_risktable()
+                                if (isTruthy(input$updateA)){
+                                  editA <- editA()
+                                  g + ggtitle(editA$title) + theme(plot.title = element_text(size = editA$titlesize, face = "bold"), axis.title = element_text(size = editA$axissize)) +
+                                  labs(y = editA$y_lab , x = editA$x_lab) +
+                                  annotation_custom(
+                                  tbl_grob(),
+                                  xmin = editA$box_x, xmax = editA$box_x + 2, # x-position range for table
+                                  ymin =editA$box_y, ymax = editA$box_y + 0.3 # y-position range for table
+                                  )
+                                }
+                                else {
+                                  g + labs(y = "Probability of first baseline-adjusted \n Grade ≥3 PRO-CTCAE score" ) +
                                   annotation_custom(
                                   tbl_grob(),
                                   xmin = -0.5, xmax = 1.75, # x-position range for table
                                   ymin = 0.05, ymax = 0.35 # y-position range for table
                                   )
-                                if (isTruthy(input$updateA)){
-                                  editA <- editA()
-                                  g + ggtitle(editA$title) + theme(plot.title = element_text(size = editA$titlesize, face = "bold"), axis.title = element_text(size = editA$axissize)) +
-                                  labs(y = editA$y_lab , x = editA$x_lab)
-                                }
-                                else {
-                                  g + labs(y = "Probability of first baseline-adjusted \n Grade ≥3 PRO-CTCAE score" )
                                 }}, height = function() input$heightA, width = function() input$widthA)
 
 ################################################ graph B
