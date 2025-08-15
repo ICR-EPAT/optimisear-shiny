@@ -60,7 +60,7 @@ ui <- div(page_navbar(
       ),
       conditionalPanel(
         "input.about == 'Continuous'",
-        radioButtons("about_continuous", label = NULL, choiceValues = c("graphC", "graphD", "graphE", "graphF", "graphG"), choiceNames = c("Change from baseline across timepoints", "Individual patient trajectory", "Boxplot across timepoints", "Change from baseline across PRO domains (table)", "Change from baseline across PRO domains (figure)") )
+        radioButtons("about_continuous", label = NULL, choiceValues = c("graphC", "graphE", "graphD", "graphF", "graphG"), choiceNames = c("Change from baseline across timepoints", "Boxplot across timepoints", "Individual patient trajectory", "Change from baseline across PRO domains (table)", "Change from baseline across PRO domains (figure)") )
       )
     ),
     nav_panel("Ordinal", fillable = TRUE,
@@ -327,42 +327,6 @@ ui <- div(page_navbar(
              actionButton("updateC", "Update"))
           ), card_body(plotOutput("graphC"), height = 1000), full_screen = TRUE)
             ))),
-############################################################################################################ D UI
-             tabPanel("Individual patient trajectory", card(
-          card_header(textOutput("textHeaderD"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
-        ),
-            layout_sidebar(
-          sidebar = sidebar(
-          card(card_header("Variables", style = "background-color: #bfd9bf"), card_body(
-                    sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-                    checkboxGroupInput("numdoseD", label = "Dosage",choices = NULL),
-                    uiOutput("select_idD"),
-                    selectInput("functioningD", label = "Functioning of interest", choices = NULL), height = 800)),
-                    card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadD", style = "background-color: #d9bfd9")))),
-                    card(card_header(class = "d-inline-flex justify-content-end bg-light",
-                    popover(
-            actionButton("sizeD", "Size", value = FALSE, icon = icon("arrows-up-down-left-right"), style = "background-color: #bfd9bf"),
-            title = "Adjust output size",
-            id = "dimD",
-            sliderInput("widthD", "Adjust graph width", value = 800, min = 300, max = 1600, step = 100, width = "400px"),
-            sliderInput("heightD", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
-          popover(
-            actionButton("editD", "Edit", value = FALSE, icon = icon("pencil-square"), style = "background-color: #bfd9bf"),
-             title = "Graph Editor",
-             id = "popD",
-             placement = "right",
-             textInput("titleD", label = NULL, placeholder = "Enter graph title"),
-             sliderInput("titlesizeD", label = "Title size", min = 10, max = 50, value = 20, step = 5),
-             textInput("ylab_D", label = NULL, placeholder = "Enter y-axis label"),
-             textInput("xlab_D", label = NULL, placeholder = "Enter x-axis label"),
-             sliderInput("axisSizeD", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
-             textInput("arrowlab_D", label = NULL, placeholder = "Enter arrow label"),
-             sliderInput("rangeD", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
-             p(strong("Note:")),
-             p("If value selected for range excludes minimum or maximum of the data, the app will instead set this as the value."),
-             actionButton("updateD", "Update")
-          )), card_body(plotOutput("graphD"), height = 1000), full_screen = TRUE)
-        ))),
 ############################################################################################################ E UI
               
              tabPanel("Boxplot across timepoints",  card(
@@ -399,6 +363,43 @@ ui <- div(page_navbar(
              actionButton("updateE", "Update")
           )), card_body(plotOutput("graphE"), height = 1000), full_screen = TRUE)
         ))),
+############################################################################################################ D UI
+             tabPanel("Individual patient trajectory", card(
+          card_header(textOutput("textHeaderD"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
+        ),
+            layout_sidebar(
+          sidebar = sidebar(
+          card(card_header("Variables", style = "background-color: #bfd9bf"), card_body(
+                    sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
+                    checkboxGroupInput("numdoseD", label = "Dosage",choices = NULL),
+                    uiOutput("select_idD"),
+                    selectInput("functioningD", label = "Functioning of interest", choices = NULL), height = 800)),
+                    card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadD", style = "background-color: #d9bfd9")))),
+                    card(card_header(class = "d-inline-flex justify-content-end bg-light",
+                    popover(
+            actionButton("sizeD", "Size", value = FALSE, icon = icon("arrows-up-down-left-right"), style = "background-color: #bfd9bf"),
+            title = "Adjust output size",
+            id = "dimD",
+            sliderInput("widthD", "Adjust graph width", value = 800, min = 300, max = 1600, step = 100, width = "400px"),
+            sliderInput("heightD", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
+          popover(
+            actionButton("editD", "Edit", value = FALSE, icon = icon("pencil-square"), style = "background-color: #bfd9bf"),
+             title = "Graph Editor",
+             id = "popD",
+             placement = "right",
+             textInput("titleD", label = NULL, placeholder = "Enter graph title"),
+             sliderInput("titlesizeD", label = "Title size", min = 10, max = 50, value = 20, step = 5),
+             textInput("ylab_D", label = NULL, placeholder = "Enter y-axis label"),
+             textInput("xlab_D", label = NULL, placeholder = "Enter x-axis label"),
+             sliderInput("axisSizeD", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
+             textInput("arrowlab_D", label = NULL, placeholder = "Enter arrow label"),
+             sliderInput("rangeD", label = "Range for y-axis", min = 0, max = 100, value = c(0, 100), step = 5),
+             p(strong("Note:")),
+             p("If value selected for range excludes minimum or maximum of the data, the app will instead set this as the value."),
+             actionButton("updateD", "Update")
+          )), card_body(plotOutput("graphD"), height = 1000), full_screen = TRUE)
+        ))),
+
 ############################################################################################################ F UI
            tabPanel("Change from baseline across functionings (table)",     card(
           card_header(textOutput("textHeaderF"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
