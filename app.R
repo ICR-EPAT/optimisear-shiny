@@ -465,9 +465,9 @@ ui <- div(page_navbar(
           )), card_body(plotOutput("graphG"), height = 1000), full_screen = TRUE)
       )))),
 ################################################################################################################## description tab
-      tabPanel("Description", tabName = "description", icon = icon("book"), h4("About this site"),
+      tabPanel("Code", tabName = "description", icon = icon("book"), h4("About this site"),
       layout_columns(
-      card(card_header("Code", style = "background-color: #bfd9bf"), card_body(
+      card(card_header("Code availability", style = "background-color: #bfd9bf"), card_body(
         p("This app accompanies the OPTIMISE-AR project."),
         p("If you wish to utilise figures curated for OPTIMISE-AR for your own publications, R code is provided here: https://github.com/alemily100/optimise-ar"),
         p("We also provide code for the Shiny app itself, which can be accessed here: https://github.com/ICR-EPAT/optimisear-shiny."))),
