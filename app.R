@@ -56,7 +56,9 @@ ui <- div(page_navbar(
     sidebar = sidebar(
       conditionalPanel(
         "input.about == 'Ordinal'",
-        radioButtons("about_ordinal", label = NULL, choiceValues = c("graphA", "graphB", "graphH", "graphI"), choiceNames =  c("Kaplan-Meier", "Barplot across timepoints", "Butterfly plot", "Baseline-adjusted barplot"))
+        radioButtons("about_ordinal", label = HTML("<b>Time-to-event PRO endpoints</b>"), choiceValues = c("graphA"), choiceNames =  c("Kaplan-Meier")),
+        radioButtons("about_ordinal1", label = HTML("<b>PRO endpoints across time points</b>"), choiceValues = c("graphB"), choiceNames =  c("Barplot across timepoints"), selected = character(0)),
+        radioButtons("about_ordinal2", label = HTML("<b>PRO endpoints between time points</b>"), choiceValues = c("graphH", "graphI"), choiceNames =  c("Butterfly plot", "Baseline-adjusted barplot"), selected = character(0))
       ),
       conditionalPanel(
         "input.about == 'Continuous'",
@@ -64,7 +66,7 @@ ui <- div(page_navbar(
       )
     ),
     nav_panel("Ordinal", fillable = TRUE,
-    layout_columns(col_widths = c(9, 3), height = "900px",
+    layout_columns(col_widths = c(9, 3), height = "1000px",
       card(card_header("Graph", style = "background-color: #bfd9bf"), card_body(imageOutput("about_ordinal"), height = "800px"), full_screen = TRUE, fillable = TRUE),
       card(card_header("Information", style = "background-color: #bfd9bf"), fill = TRUE,
         card_body(card_title("About"), htmlOutput("ordinal_information_about")),
@@ -72,7 +74,7 @@ ui <- div(page_navbar(
         #card_body(card_title("Limitations"), htmlOutput("ordinal_lims"))
         ))),
     nav_panel("Continuous", fillable = TRUE,
-    layout_columns(col_widths = c(9, 3), height = "900px",
+    layout_columns(col_widths = c(9, 3), height = "1000px",
       card(card_header("Graph", style = "background-color: #bfd9bf"), card_body(imageOutput("about_continuous", height = "800px")), full_screen = TRUE, fill = TRUE),
       card(card_header("Information", style = "background-color: #bfd9bf"),
         card_body(card_title("About"), htmlOutput("continuous_information_about")),
@@ -513,9 +515,38 @@ server <- function(input, output, session) {
   output$textHeaderH <- renderText({"Butterfly plot"})
   output$textHeaderI <- renderText({"Baseline-adjusted barplot"})
   ############################################################################################Overview page
-about_ordinal <- reactive({input$about_ordinal})
-about_continuous <- reactive({input$about_continuous})
+about_ordinal <- reactive({
+  if (isTruthy(input$about_ordinal)){
+  input$about_ordinal}
+  else if (isTruthy(input$about_ordinal1)){
+  input$about_ordinal1}
+  else if (isTruthy(input$about_ordinal2)){
+  input$about_ordinal2}
+  })
 
+about_continuous <- reactive({
+  if (isTruthy(input$about_continuous)){
+  input$about_continuous}
+  else if (isTruthy(input$about_continuous1)){
+  input$about_continuous1}
+  else if (isTruthy(input$about_continuous2)){
+  input$about_continuous2}
+  })
+observe({
+  req(input$about_ordinal)
+  updateRadioButtons(session, "about_ordinal1", selected = character(0))
+  updateRadioButtons(session, "about_ordinal2", selected = character(0))
+})
+observe({
+  req(input$about_ordinal1)
+  updateRadioButtons(session, "about_ordinal", selected = character(0))
+  updateRadioButtons(session, "about_ordinal2", selected = character(0))
+})
+observe({
+  req(input$about_ordinal2)
+  updateRadioButtons(session, "about_ordinal", selected = character(0))
+  updateRadioButtons(session, "about_ordinal1", selected = character(0))
+})
 
 ############################################# GRAPH IMAGE
 output$about_ordinal <- renderImage({
