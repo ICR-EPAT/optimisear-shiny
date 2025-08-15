@@ -11,6 +11,8 @@ library(gt)
 library(svglite)
 library(bslib)
 library(bsicons)
+library(gridExtra)
+library(survminer)
 
 ui <- div(page_navbar(
   theme = bslib::bs_theme("bslib-value-box-horizontal-break-point" = "1px"),
@@ -836,15 +838,41 @@ output$continuous_table <- renderTable(
                             }
                           summary_df <- cbind(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose)))
                           colnames(summary_df)[5] <- "dose"
-                          summary_df$dose <- paste0("Dose: ", summary_df$dose)
                           summary_df})
+  
+  fitA <- reactive({survfit2(Surv(time, event) ~ dose, data = summary_df())})
+
+  median_dfA <- reactive({median_df <- survminer::surv_median(fitA()) %>%
+                          dplyr::select(strata, median) %>%
+                          rename(Dose = strata,
+                          "Median time \n to event" = median)
+                          median_df[,1]<-paste0("Dose: ", unique(summary_df()$dose))
+                          median_df})
+  tbl_grob <- reactive({
+    tableGrob(
+              median_dfA(),
+              rows = NULL,
+              theme = ttheme_default(
+              core = list(
+              fg_params = list(cex = 0.7, col = "black"), # text
+              bg_params = list(fill = NA, col = "black") # no fill, black borders
+              ),
+              colhead = list(
+              fg_params = list(cex = 0.8, fontface = "bold", col = "black"),
+              bg_params = list(fill = NA, col = "black") # no fill, black borders
+              )))})
 
   output$graphA <- renderPlot({
                                g <- survfit2(Surv(time, event) ~ dose, data = summary_df()) %>%
                                  ggsurvfit(linewidth = 1.5) +
                                  add_censor_mark() +
                                  add_confidence_interval() +
-                                 scale_ggsurvfit() + add_risktable()
+                                 scale_ggsurvfit() + add_risktable() +
+                                  annotation_custom(
+                                  tbl_grob(),
+                                  xmin = -0.5, xmax = 1.75, # x-position range for table
+                                  ymin = 0.05, ymax = 0.35 # y-position range for table
+                                  )
                                 if (isTruthy(input$updateA)){
                                   editA <- editA()
                                   g + ggtitle(editA$title) + theme(plot.title = element_text(size = editA$titlesize, face = "bold"), axis.title = element_text(size = editA$axissize)) +
