@@ -490,7 +490,7 @@ ui <- div(page_navbar(
       #########################################Dealing with the long popovers
       tags$head(tags$style(HTML("
       .popover {
-        max-height: 1000px;
+        max-height: 600px;
         max-width: 300px;
         overflow-y: auto;
         overflow-x: hidden;
