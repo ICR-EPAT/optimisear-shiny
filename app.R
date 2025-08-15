@@ -560,30 +560,31 @@ output$ordinal_information_about <- renderUI({
      html("This figure presents the proportion of patients experiencing each ordinal score across timepoints as well as the proportion of patients with unreported PRO data or who experience an intercurrent event.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint you wish to display, <br>- Which PRO domain you wish to display.")
   }
   else if (about_ordinal == "graphH") {
-     html("This figures presents differences between ordinal PRO scores as both a magnitude of worsening/improvement between two timepoints of interest across doses and PRO domains. This figure also indicates the proportion of patients with unreported PRO data at timepoints of interest.It <br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The two timepoints you wish to compare, <br>- Which PRO domains you wish to display.")
+     html("This figure presents differences between ordinal PRO scores as both a magnitude of worsening/improvement between two timepoints of interest across doses and PRO domains. This figure also indicates the proportion of patients with unreported PRO data at timepoints of interest.It <br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The two timepoints you wish to compare, <br>- Which PRO domains you wish to display.")
   }
   else if (about_ordinal == "graphI") {
-     html("This figures presents maximum baseline-adjusted PRO score between two timepoints of interest across doses and PRO domains. 
-     In cases where a patient's post-baseline PRO score increases by at least one compared to baseline, the maximum baseline-adjusted score is this maximum post-baseline value. Otherwise, if the patient's baseline and post-baseline score are always equal, their maximum baseline-adjusted score is 0 (or 'None')  <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final time point of analysis <br>- Which PRO domains you wish to display.")
+     html("This figure presents maximum baseline-adjusted PRO score between two timepoints of interest across doses and PRO domains. 
+     In cases where a patient's post-baseline PRO score increases by at least one compared to baseline, the maximum baseline-adjusted score is this maximum post-baseline value. Otherwise, if the patient's baseline and post-baseline score are always equal, their maximum baseline-adjusted score is 0 (or 'None')  <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final time point for analysis <br>- Which PRO domains you wish to display.")
   }
 })
 
 output$continuous_information_about <- renderUI({
   about_continuous <- about_continuous()
   if (about_continuous == "graphC"){
-    html("Graph C shows the mean change from baseline functioning across time given dose level and a functionality of interest. The graph includes 95% confidence intervals for each timepoint.<br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionality of interest")
+    html("This figure evaluates mean change from baseline across time for continuous PRO scores. Associated improvement and worsening thresholds as well 95% confidence intervals for each timepoint are indicated.
+    <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint you wish to display, <br>- The PRO domain you wish to display.")
   }
   else if (about_continuous == "graphD") {
-     html("Graph D allows viewing of individual patients trends in functionality across time. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionality of interest <br> - Patient IDs ")
+     html("This figure presents individual patient trajectories for continuous PRO scores. <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint to display, <br>- The PRO domain you wish to display, <br> - The patients you wish to display. ")
   }
   else if (about_continuous == "graphE") {
-     html("Graph E creates boxplots for the tolerability based on scores in functionality categories. This allows you to compare between times and doses with a fixed functionality type. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionality of interest")
+     html("This figure presents boxplots summarising the distribution of continuous PRP scores across time. <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint to display, <br>- The PRO domain you wish to display.")
   }
   else if (about_continuous == "graphF") {
-    html("Graph F outputs a table which shows: <br> - Mean change from baseline <br> - Standard error <br> - Number of reported patients <br> These are calculated for a fixed time period from the baseline for selected functionalities and doses. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionalities of interest")
+    html("This table indicates mean change from baseline in continuous PRO score between two timepoints with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
   }
   else if (about_continuous == "graphG") {
-    html("Graph G shows the mean change from baseline to a fixed timepoint given a fuctioning category with 95% confidence intervals. Doses can be compared with each other and multiple functioning categories may be shown. <br> <br>This app allows you to select: <br>- Dose levels <br>- Final timepoint <br>- Functionalities of interest ")
+    html("This figure indicates mean change from baseline in continuous PRO score between two timepoints with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
   }
 })
 
@@ -591,34 +592,34 @@ output$continuous_information_about <- renderUI({
 output$ordinal_edit <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "graphA"){
-    HTML("This app allows you to edit: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label  <br> - X axis label  <br> - Axis label font size  <br> - Graph height and width")
+    HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label  <br> - X axis label  <br> - Axis label font size  <br> - Graph height and width")
   }
   else if (about_ordinal == "graphB") {
-    HTML("This app allows you to edit: <br> - Graph title  <br> - Graph title font size <br> - X axis label  <br> - Axis label font size  <br> - Graph height and width")
+    HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size <br> - X axis label  <br> - Axis label font size  <br> - Graph height and width")
   }
   else if (about_ordinal == "graphH") {
-    HTML("This app allows you to edit: <br> - Graph title  <br> - Graph title font size <br> - Subgraph label format  <br> - Position of unreported percentage <br> - Graph height and width")
+    HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size <br> - Subgraph label format  <br> - Position of unreported percentage <br> - Graph height and width")
   }
   else if (about_ordinal == "graphI") {
-     HTML("This app allows you to edit: <br> - Graph title  <br> - Graph title font size <br> - Subgraph label format  <br> - Position of unreported percentage <br> - Graph height and width")
+     HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size <br> - Subgraph label format  <br> - Position of unreported percentage <br> - Graph height and width")
   }
 })
 output$continuous_edit <- renderUI({
   about_continuous <- about_continuous()
   if (about_continuous == "graphC"){
-     HTML("This app allows you to edit: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label  <br> - X axis label  <br> - Axis label font size <br> - Boundaries for improvement <br> - Boundaries for worsening <br> - Position of improvement text <br> - Position of worsening text <br> - Graph height and width")
+     HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label  <br> - X axis label  <br> - Axis label font size <br> - Boundaries for improvement <br> - Boundaries for worsening <br> - Position of improvement text <br> - Position of worsening text <br> - Graph height and width")
   }
   else if (about_continuous == "graphD") {
-     HTML("This app allows you to edit: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label  <br> - X axis label  <br> - Axis label font size <br> - Arrow label <br> - Y axis range <br> - Graph height and width")
+     HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label  <br> - X axis label  <br> - Axis label font size <br> - Arrow label <br> - Y axis range <br> - Graph height and width")
   }
   else if (about_continuous == "graphE") {
-     HTML("This app allows you to edit: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label  <br> - X axis label  <br> - Axis label font size <br> - Arrow label <br> - Y axis range <br> - Graph height and width")
+     HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label  <br> - X axis label  <br> - Axis label font size <br> - Arrow label <br> - Y axis range <br> - Graph height and width")
   }
   else if (about_continuous == "graphF") {
-     HTML("This app allows you to edit: <br> - Table title <br> - Table height and width")
+     HTML("This app supports the customising of the figure to your needs, including: <br> - Table title <br> - Table height and width")
   }
   else if (about_continuous == "graphG") {
-     HTML("This app allows you to edit: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label <br> - Axis label font size <br> - Subgraph label format <br> - Boundaries for improvement <br> - Boundaries for worsening <br> - Position of improvement text <br> - Position of worsening text <br> - Graph height and width")
+     HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label <br> - Axis label font size <br> - Subgraph label format <br> - Boundaries for improvement <br> - Boundaries for worsening <br> - Position of improvement text <br> - Position of worsening text <br> - Graph height and width")
   }
 })
 
