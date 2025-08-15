@@ -62,7 +62,8 @@ ui <- div(page_navbar(
       ),
       conditionalPanel(
         "input.about == 'Continuous'",
-        radioButtons("about_continuous", label = NULL, choiceValues = c("graphC", "graphE", "graphD", "graphF", "graphG"), choiceNames = c("Change from baseline across timepoints", "Boxplot across timepoints", "Individual patient trajectory", "Change from baseline across PRO domains (table)", "Change from baseline across PRO domains (figure)") )
+        radioButtons("about_continuous", label = HTML("<b>PRO endpoints across time points</b>"), choiceValues = c("graphC", "graphE", "graphD"), choiceNames = c("Change from baseline across timepoints", "Boxplot across timepoints", "Individual patient trajectory")),
+        radioButtons("about_continuous1", label =HTML("<b>PRO endpoints between time points</b>"), choiceValues = c("graphF", "graphG"), choiceNames = c("Change from baseline across PRO domains (table)", "Change from baseline across PRO domains (figure)"), selected = character(0))
       )
     ),
     nav_panel("Ordinal", fillable = TRUE,
@@ -529,9 +530,8 @@ about_continuous <- reactive({
   input$about_continuous}
   else if (isTruthy(input$about_continuous1)){
   input$about_continuous1}
-  else if (isTruthy(input$about_continuous2)){
-  input$about_continuous2}
   })
+
 observe({
   req(input$about_ordinal)
   updateRadioButtons(session, "about_ordinal1", selected = character(0))
@@ -546,6 +546,15 @@ observe({
   req(input$about_ordinal2)
   updateRadioButtons(session, "about_ordinal", selected = character(0))
   updateRadioButtons(session, "about_ordinal1", selected = character(0))
+})
+
+observe({
+  req(input$about_continuous)
+  updateRadioButtons(session, "about_continuous1", selected = character(0))
+})
+observe({
+  req(input$about_continuous1)
+  updateRadioButtons(session, "about_continuous", selected = character(0))
 })
 
 ############################################# GRAPH IMAGE
