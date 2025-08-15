@@ -41,7 +41,8 @@ ui <- div(page_navbar(
   p("4. Visualise your graphs with the 'Ordinal' and 'Continuous' data tabs."),
   p(" - Customise the size and layout of figures,"),
   p(" - Customise axis and main titles."),
-  p("6. Click 'Download' to export your graphs as .svg files.")
+  p("6. Click 'Download' to export your graphs as .svg files."),
+  p("Below, we provide further details on each data visualisation approach. While the examples focus on specific PRO measures (e.g., PRO-CTCAE and EORTC QLQ-C30), the Shiny app can be applied to any PRO measure, provided the data matches the required type for each figure (Ordinal or Continuous).")
   ))),
   card(card_body(
   h3("About the graphs"), style = "background-color: #8FBC8F"),
@@ -467,9 +468,9 @@ ui <- div(page_navbar(
       tabPanel("Description", tabName = "description", icon = icon("book"), h4("About this site"),
       layout_columns(
       card(card_header("Background", style = "background-color: #bfd9bf"), card_body(
-        p("Recently, there has been an increasing interest in the use of PRO data to supplement assessment of tolerability in early phase dose-finding trials."),
-        p("However, there are no guidelines on how analysis should be conducted or what visualisations should be made."),
-        p("This app aims to provide and easy to use platform to assist in analysis and visualisations using current recommended methods."))),
+        p("This app accompanies the OPTIMISE-AR project."),
+        p("If you wish to utilise figures curated for OPTIMISE-AR for your own publications, R code is provided here: https://github.com/alemily100/optimise-ar"),
+        p("We also provide code for the Shiny app itself, which can be accessed here: https://github.com/ICR-EPAT/optimisear-shiny."))),
         card(card_header("OPTIMISE-AR", style = "background-color: #bfd9bf"), card_body(
         p("This is an early public release of the app with a work in progress UI. There are a few known bugs, if you find any additional, please do get in touch so they can be patched."),
         p("Authors: George Knight, Emily Alger, Karrar Shareiyat"),
