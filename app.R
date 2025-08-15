@@ -2373,7 +2373,7 @@ output$downloadA <- downloadHandler(
 )
 output$downloadB <- downloadHandler(
   filename = function(){
-    paste0("Graph-B", Sys.Date(), ".svg")
+    paste0("barplot_across_timepoints", Sys.Date(), ".svg")
   },
   content = function(file){
     ggsave(file, plot = last_plot(), device = "svg", height = input$heightB * 4, width = input$widthB * 4, units = "px")
@@ -2381,7 +2381,7 @@ output$downloadB <- downloadHandler(
 )
 output$downloadC <- downloadHandler(
   filename = function(){
-    paste0("Graph-C", Sys.Date(), ".svg")
+    paste0("change_baseline_timepoints", Sys.Date(), ".svg")
   },
   content = function(file){
     ggsave(file, plot = last_plot(), device = "svg", height = input$heightC * 4, width = input$widthC * 4, units = "px")
@@ -2389,7 +2389,7 @@ output$downloadC <- downloadHandler(
 )
 output$downloadD <- downloadHandler(
   filename = function(){
-    paste0("Graph-D", Sys.Date(), ".svg")
+    paste0("individual_patient_trajectory", Sys.Date(), ".svg")
   },
   content = function(file){
     ggsave(file, plot = last_plot(), device = "svg", height = input$heightD * 4, width = input$widthD * 4, units = "px")
@@ -2397,7 +2397,7 @@ output$downloadD <- downloadHandler(
 )
 output$downloadE <- downloadHandler(
   filename = function(){
-    paste0("Graph-E", Sys.Date(), ".svg")
+    paste0("boxplot_timepoints", Sys.Date(), ".svg")
   },
   content = function(file){
     ggsave(file, plot = last_plot(), device = "svg", height = input$heightE * 4, width = input$widthE * 4, units = "px")
@@ -2405,7 +2405,7 @@ output$downloadE <- downloadHandler(
 )
 output$downloadF <- downloadHandler(
   filename = function(){
-    paste0("Graph-F", Sys.Date(), ".svg")
+    paste0("change_baseline_functionings_table", Sys.Date(), ".svg")
   },
   content = function(file){
     ggsave(file, plot = as_gtable(sum.df.wider.gtF()), device = "svg", height = input$heightF * 4, width = input$widthF * 4, units = "px")
@@ -2413,7 +2413,7 @@ output$downloadF <- downloadHandler(
 )
 output$downloadG <- downloadHandler(
   filename = function(){
-    paste0("Graph-G", Sys.Date(), ".svg")
+    paste0("change_baseline_functionings_figure", Sys.Date(), ".svg")
   },
   content = function(file){
     ggsave(file, plot = last_plot(), device = "svg", height = input$heightG * 4, width = input$widthG * 4, units = "px")
@@ -2421,7 +2421,7 @@ output$downloadG <- downloadHandler(
 )
 output$downloadH <- downloadHandler(
   filename = function(){
-    paste0("Graph-H", Sys.Date(), ".svg")
+    paste0("butterfly", Sys.Date(), ".svg")
   },
   content = function(file){
     ggsave(file, plot = last_plot(), device = "svg", height = input$heightH * 4, width = input$widthH * 4, units = "px")
@@ -2429,7 +2429,7 @@ output$downloadH <- downloadHandler(
 )
 output$downloadI <- downloadHandler(
   filename = function(){
-    paste0("Graph-I", Sys.Date(), ".svg")
+    paste0("baseline_adjusted_barplot", Sys.Date(), ".svg")
   },
   content = function(file){
     ggsave(file, plot = last_plot(), device = "svg", height = input$heightI * 4, width = input$widthI * 4, units = "px")
