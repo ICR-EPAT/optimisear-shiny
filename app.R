@@ -18,31 +18,22 @@ ui <- div(page_navbar(
   ############################################################################################# Information
   tabPanel("Overview", icon = icon("house"),
   h1("OPTIMISE-AR"),
-  layout_columns(
-  card(card_body(
-    h3("Background"),
-    p("OPTIMISE-AR (incOrporating PaTIent-reported outcoMes In doSE-finding trials–Analysis Recommendations) provides this shiny app to support the generation of patient-reported outcome (PRO) data visualisations for DFOT publications. Informed by critical PRO research objectives in DFOTs[1], this toolkit supports trialists wishing to present PRO data in line with three key PRO endpoint types:"),
-    tags$b("Time-to-event PRO endpoints -"),
-    p("For DFOTs, a PRO objective could look to assess tolerability across dose levels by identifying whether patients at higher doses experience earlier undesirable PRO events e.g., symptom worsening or dose-limiting events compared to those at lower doses.  Such objectives are typically described using time-to-event endpoints."),
-    tags$b("PRO endpoints across timepoints -"),
-    p("For DFOTs, a PRO objective could look to assess tolerability across dose levels by analysing the longitudinal tolerability profile of a treatment. Such endpoints may assess whether patients at higher doses experience worse tolerability than patients at lower doses at any timepoint within the trial."),
-    tags$b("PRO endpoints between timepoints -"),
-    p("For DFOTs, a PRO objective could look to assess tolerability by analysing tolerability to treatment at two clinically meaningful timepoints across dose levels. For example, such endpoints may assess whether patients at higher doses experience worse tolerability at the final assessment timepoint than patients at lower doses when compared to baseline."),
-    p("[1] Alger E, et al. International consensus recommendations for PRO research in early-phase dose-finding oncology trials: OPTIMISE-ROR. ESMO Open. 2025;10:105438.")
+  card(
+    card_header(h3("Work-flow")),
+    card_body(
+  p("1. Identify the type of data  (Ordinal/Continuous)"),
+  p("2. Read about the graph choices on this page"),
+  p("3. Go to the data tab"),
+  p("- Read about how to format data"),
+  p("- Format data and upload OR select the dummy datasets"),
+  p("4. Select relevant graphs under the Ordinal or Continuous dropdown"),
+  p("5. Adjust the variables to suit your required outputs"),
+  p("- Use the edit button to make changes to graphs where necessary"),
+  p("6. Click download to export any relevant graphs as a .svg file"),
+  p("- Changing the image size in the editor will also adjust the file for download")
   )),
   card(card_body(
-  h3("App workflow"),
-  p("This section provides guidance on how best to utilise this shiny app for data visualisation generation."),
-  p("1. Identify the PRO data type you wish to report: ordinal (eg. FACT-GP5, PRO-CTCAE) or continuous (eg. EORTC QLQ-C30)."),
-  p("2. Learn more about each figure in the 'About the graphs' section below. The section is partitioned by PRO data type and PRO endpoint types."),
-  p("3. Select your data in the ‘Data’ tab, using either the built-in dummy data or uploading your own, with formatting guidelines provided."),
-  p("4. Visualise your graphs with the 'Ordinal' and 'Continuous' data tabs."),
-  p(" - Customise the size and layout of figures,"),
-  p(" - Customise axis and main titles."),
-  p("6. Click 'Download' to export your graphs as .svg files.")
-  ))),
-  card(card_body(
-  h3("About the graphs")),
+  h3("About the graphs"), class = "bg-light"),
   card_body(
   page_navbar(
     title = "Select data type",
@@ -60,23 +51,23 @@ ui <- div(page_navbar(
     ),
     nav_panel("Ordinal", fillable = TRUE,
     layout_columns(col_widths = c(9, 3), height = "900px",
-      card(card_header("Graph"), card_body(imageOutput("about_ordinal"), height = "800px"), full_screen = TRUE, fillable = TRUE),
-      card(card_header("Information"), fill = TRUE,
+      card(card_header("Graph", class = "bg-light"), card_body(imageOutput("about_ordinal"), height = "800px"), full_screen = TRUE, fillable = TRUE),
+      card(card_header("Information", class = "bg-light"), fill = TRUE,
         card_body(card_title("About"), htmlOutput("ordinal_information_about")),
         card_body(card_title("Edit functionality"), htmlOutput("ordinal_edit")),
         card_body(card_title("Limitations"), htmlOutput("ordinal_lims"))
         ))),
     nav_panel("Continuous", fillable = TRUE,
     layout_columns(col_widths = c(9, 3), height = "900px",
-      card(card_header("Graph"), card_body(imageOutput("about_continuous", height = "800px")), full_screen = TRUE, fill = TRUE),
-      card(card_header("Information"),
+      card(card_header("Graph", class = "bg-light"), card_body(imageOutput("about_continuous", height = "800px")), full_screen = TRUE, fill = TRUE),
+      card(card_header("Information", class = "bg-light"),
         card_body(card_title("About"), htmlOutput("continuous_information_about")),
         card_body(card_title("Edit functionality"), htmlOutput("continuous_edit")),
         card_body(card_title("Limitations"), htmlOutput("continuous_lims"))
         ))))))),
   ####################################################################################################### Data Sorting + Upload
   tabPanel("Data", icon = icon("arrow-up-from-bracket"),
-  card(card_header(strong("How to format data")),
+  card(card_header(strong("How to format data"), class = "bg-light"),
   card_body(
     p("Data must be input as a .csv file with column titles matching the listed below."),
     p("Any columns not fitting the format will be ignored - if not all columns are provided, the app may not run."),
@@ -85,7 +76,7 @@ ui <- div(page_navbar(
     p("- If a patient recieves treatment and does not complete a questionnaire at that timepoint, fill in all scores or grades as NA"),
     p("For an example of data, you can toggle the dummy data on - please note to use your own data, the dummy dataset must be toggled off."),
    layout_columns(
-    card(card_header(strong("Ordinal datasets")),
+    card(card_header(strong("Ordinal datasets"), class = "bg-light"),
     card_body(
       p(strong("Required columns, {column name} and [input types]:")),
       p("- Patient ID, {id}, [numeric]"),
@@ -99,7 +90,7 @@ ui <- div(page_navbar(
       p("To switch to date format use toggle:"),
       input_switch("ordinal_date", "Turn on date format")
     )),
-    card(card_header(strong("Continuous datasets")),
+    card(card_header(strong("Continuous datasets"), class = "bg-light"),
     card_body(
        p(strong("Required columns and input types:")),
        p("- Patient ID, {id}, [numeric]"),
@@ -112,17 +103,17 @@ ui <- div(page_navbar(
        input_switch("continuous_date", "Turn on date format")
     ))
   ))),
+  card(card_header(h3("Input data"), class = "bg-light"),
   layout_sidebar(
-    title = "Input data",
   sidebar = sidebar(
-  card(card_header("Upload data file"), card_body(fileInput("upload", "Ordinal data", accept = c(".csv"))),
+  card(card_header("Upload data file", class = "bg-light"), card_body(fileInput("upload", "Ordinal data", accept = c(".csv"))),
   card_body(fileInput("upload_cts", "Continuous data", accept = c(".csv")))),
-  card(card_header("Dummy data"), card_body("For those with no data wishing to test the app, you can select these to test with."),
+  card(card_header("Dummy data", class = "bg-light"), card_body("For those with no data wishing to test the app, you can select these to test with."),
   card_body(input_switch("dummy_ordinal", "Dummy Ordinal data")),
   card_body(input_switch("dummy_continuous", "Dummy Continuous data")))),
   layout_columns(col_widths = c(9, 3),
-  card(card_header("Ordinal data"), card_body(tableOutput("ordinal_table")), max_height = 300),
-  card( card_header("Summaries"),
+  card(card_header("Ordinal data", class = "bg-light"), card_body(tableOutput("ordinal_table")), max_height = 300),
+  card( card_header("Summaries", class = "bg-light"),
     value_box(
     title = "No. patients", value = textOutput("ord_summary_pat"),
     theme = value_box_theme(bg = "#8FBC8F", fg = "#000000"),
@@ -137,8 +128,8 @@ ui <- div(page_navbar(
   )
   , max_height = 300)),
    layout_columns(col_widths = c(9, 3),
-  card(card_header("Continuous data"), card_body(tableOutput("continuous_table")), max_height = 300),
-  card( card_header("Summaries"),
+  card(card_header("Continuous data", class = "bg-light"), card_body(tableOutput("continuous_table")), max_height = 300),
+  card( card_header("Summaries", class = "bg-light"),
     value_box(
     title = "No. patients", value = textOutput("cts_summary_pat"),
     theme = value_box_theme(bg = "#8FBC8F", fg = "#000000"),
@@ -151,7 +142,7 @@ ui <- div(page_navbar(
     showcase = bsicons::bs_icon("capsule-pill", size = "0.75em"), showcase_layout = "left center",
     full_screen = FALSE, fill = TRUE, height = NULL
   )
-  , max_height = 300)))),
+  , max_height = 300))))),
   navbarMenu("Ordinal",
 ############################################################################################################ A UI
             tabPanel("Kaplan-Meier",
@@ -160,10 +151,10 @@ ui <- div(page_navbar(
         ),
         layout_sidebar(
           sidebar = sidebar(
-          card(card_header("Variables"), card_body(checkboxGroupInput("numdose", label = "Dosage",
+          card(card_header("Variables", class = "bg-light"), card_body(checkboxGroupInput("numdose", label = "Dosage",
                                                  selected = NULL, inline = TRUE), height = 800))
-               , card(card_header("Download .svg file"), card_body(downloadButton("downloadA")))),
-          card(card_header(class = "d-inline-flex justify-content-end",
+               , card(card_header("Download .svg file", class = "bg-light"), card_body(downloadButton("downloadA")))),
+          card(card_header(class = "d-inline-flex justify-content-end bg-light",
           popover(
             actionButton("sizeA", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
             title = "Adjust output size",
@@ -190,14 +181,14 @@ ui <- div(page_navbar(
         ),
         layout_sidebar(
           sidebar = sidebar(
-          card(card_header("Variables"), card_body(
+          card(card_header("Variables", class = "bg-light"), card_body(
                     checkboxGroupInput("numdoseB", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                     selectInput("toxicB", label = "Toxicity of interest", choices = NULL), height = 800)
-          ), card(card_header("Download .svg file"), card_body(downloadButton("downloadB"))))
+          ), card(card_header("Download .svg file", class = "bg-light"), card_body(downloadButton("downloadB"))))
           ,
-          card(card_header(class = "d-inline-flex justify-content-end",
+          card(card_header(class = "d-inline-flex justify-content-end bg-light",
           popover(
             actionButton("sizeB", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
             title = "Adjust output size",
@@ -224,14 +215,14 @@ ui <- div(page_navbar(
         ),
         layout_sidebar(
           sidebar = sidebar(
-          card(card_header("Variables"), card_body(
+          card(card_header("Variables", class = "bg-light"), card_body(
                     checkboxGroupInput("numdoseH", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1),
                     checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL, inline = TRUE), height = 800
           )), 
-          card(card_header("Download .svg file"), card_body(downloadButton("downloadH")))),
-          card(card_header(class = "d-inline-flex justify-content-end",
+          card(card_header("Download .svg file", class = "bg-light"), card_body(downloadButton("downloadH")))),
+          card(card_header(class = "d-inline-flex justify-content-end bg-light",
           popover(
             actionButton("sizeH", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
             title = "Adjust output size",
@@ -257,14 +248,14 @@ ui <- div(page_navbar(
         ),
     layout_sidebar(
           sidebar = sidebar(
-          card(card_header("Variables"), card_body(
+          card(card_header("Variables", class = "bg-light"), card_body(
                     checkboxGroupInput("numdoseI", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointI", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                     checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE), height = 800) 
           ), 
-          card(card_header("Download .svg file"), card_body(downloadButton("downloadI")))),
-          card(card_header(class = "d-inline-flex justify-content-end",
+          card(card_header("Download .svg file", class = "bg-light"), card_body(downloadButton("downloadI")))),
+          card(card_header(class = "d-inline-flex justify-content-end bg-light",
           popover(
             actionButton("sizeI", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
             title = "Adjust output size",
@@ -289,14 +280,14 @@ ui <- div(page_navbar(
         ),
                 layout_sidebar(
           sidebar = sidebar(
-          card(card_header("Variables"), card_body(
+          card(card_header("Variables", class = "bg-light"), card_body(
                     checkboxGroupInput("numdoseC", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                    sliderInput("tpointC", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                    selectInput("functioningC", label = "Functioning of interest", choices = NULL), height = 800)),
                    card(card_header("Download .svg file"), card_body(downloadButton("downloadC")))
           ),
-          card(card_header(class = "d-inline-flex justify-content-end",
+          card(card_header(class = "d-inline-flex justify-content-end bg-light",
           popover(
             actionButton("sizeC", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
             title = "Adjust output size",
@@ -330,13 +321,13 @@ ui <- div(page_navbar(
         ),
             layout_sidebar(
           sidebar = sidebar(
-          card(card_header("Variables"), card_body(
+          card(card_header("Variables", class = "bg-light"), card_body(
                     sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                     checkboxGroupInput("numdoseD", label = "Dosage",choices = NULL),
                     uiOutput("select_idD"),
                     selectInput("functioningD", label = "Functioning of interest", choices = NULL), height = 800)),
-                    card(card_header("Download .svg file"), card_body(downloadButton("downloadD")))),
-                    card(card_header(class = "d-inline-flex justify-content-end",
+                    card(card_header("Download .svg file", class = "bg-light"), card_body(downloadButton("downloadD")))),
+                    card(card_header(class = "d-inline-flex justify-content-end bg-light",
                     popover(
             actionButton("sizeD", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
             title = "Adjust output size",
@@ -367,12 +358,12 @@ ui <- div(page_navbar(
         ),
          layout_sidebar(
           sidebar = sidebar(
-          card(card_header("Variables"), card_body(
+          card(card_header("Variables", class = "bg-light"), card_body(
             checkboxGroupInput("numdoseE", label = "Dosage", selected = NULL, inline = TRUE),
             sliderInput("tpointE", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
             selectInput("functioningE", label = "Functioning of interest", choices = NULL), height = 800)),
-            card(card_header("Download .svg file"), card_body(downloadButton("downloadE")))),
-            card(card_header(class = "d-inline-flex justify-content-end",
+            card(card_header("Download .svg file", class = "bg-light"), card_body(downloadButton("downloadE")))),
+            card(card_header(class = "d-inline-flex justify-content-end bg-light",
             popover(
             actionButton("sizeE", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
             title = "Adjust output size",
@@ -402,13 +393,13 @@ ui <- div(page_navbar(
         ),
           layout_sidebar(
           sidebar = sidebar(
-          card(card_header("Variables"), card_body(
+          card(card_header("Variables", class = "bg-light"), card_body(
                    checkboxGroupInput("numdoseF", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
           sliderInput("tpointF", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
           checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE), height = 800)),
-          card(card_header("Download .svg file"), card_body(downloadButton("downloadF")))),
-           card(card_header(class = "d-inline-flex justify-content-end",
+          card(card_header("Download .svg file", class = "bg-light"), card_body(downloadButton("downloadF")))),
+           card(card_header(class = "d-inline-flex justify-content-end bg-light",
            popover(
             actionButton("sizeF", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
             title = "Adjust output size",
@@ -431,13 +422,13 @@ ui <- div(page_navbar(
         ),
           layout_sidebar(
           sidebar = sidebar(
-          card(card_header("Variables"), card_body(
+          card(card_header("Variables", class = "bg-light"), card_body(
           checkboxGroupInput("numdoseG", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
           sliderInput("tpointG", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
           checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE), height = 800)),
-          card(card_header("Download .svg file"), card_body(downloadButton("downloadG")))),
-          card(card_header(class = "d-inline-flex justify-content-end",
+          card(card_header("Download .svg file", class = "bg-light"), card_body(downloadButton("downloadG")))),
+          card(card_header(class = "d-inline-flex justify-content-end bg-light",
           popover(
             actionButton("sizeG", "Size", value = FALSE, icon = icon("arrows-up-down-left-right")),
             title = "Adjust output size",
@@ -468,17 +459,17 @@ ui <- div(page_navbar(
 ################################################################################################################## description tab
       tabPanel("Description", tabName = "description", icon = icon("book"), h4("About this site"),
       layout_columns(
-      card(card_header("Background"), card_body(
+      card(card_header("Background", class = "bg-light"), card_body(
         p("Recently, there has been an increasing interest in the use of PRO data to supplement assessment of tolerability in early phase dose-finding trials."),
         p("However, there are no guidelines on how analysis should be conducted or what visualisations should be made."),
         p("This app aims to provide and easy to use platform to assist in analysis and visualisations using current recommended methods."))),
-        card(card_header("OPTIMISE-AR"), card_body(
+        card(card_header("OPTIMISE-AR", class = "bg-light"), card_body(
         p("This is an early public release of the app with a work in progress UI. There are a few known bugs, if you find any additional, please do get in touch so they can be patched."),
         p("Authors: George Knight, Emily Alger, Karrar Shareiyat"),
         p("Maintainers: Rachel Alcraft, ICR Scientific Computing"))))),
 ################################################################################################################## Version history
       tabPanel("Version History", tabName = "history", icon = icon("history"),
-      card(card_header("Versions"),
+      card(card_header("Versions", class = "bg-light"),
       card_body(p("v1.0 - Internal ICR release 06/08/2025")))), bg = "DarkSeaGreen",
       #########################################Dealing with the long popovers
       tags$head(tags$style(HTML("
@@ -487,17 +478,14 @@ ui <- div(page_navbar(
         max-width: 300px;
         overflow-y: auto;
         overflow-x: hidden;
-      }"))),
-      tags$head(tags$style(HTML('
-      .bslib-value-box 
-      .value-box-title {font-size:14px;}'))),
-      tags$head(tags$style(HTML("
+      }
       .shiny-output-error-style{
       color: red;
       font-size: 20px;
       font-weight: bold;
-      }"
-    )))))
+      }
+      .bslib-value-box 
+      .value-box-title {font-size:14px;}")))))
 
 #######################################################################################################################   SERVER SIDE 
 
