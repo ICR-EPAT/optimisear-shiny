@@ -17,4 +17,5 @@ dependencies:
   - r-shinydashboard
   - r-svglite
   - r-tidyr
+  - r-bsicons
 prefix: /opt/anaconda3/envs/r-shiny-env
