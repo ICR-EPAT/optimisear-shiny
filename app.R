@@ -70,16 +70,16 @@ ui <- div(page_navbar(
     layout_columns(col_widths = c(9, 3), height = "1000px",
       card(card_header("Graph", style = "background-color: #bfd9bf"), card_body(imageOutput("about_ordinal"), height = "800px"), full_screen = TRUE, fillable = TRUE),
       card(card_header("Information", style = "background-color: #bfd9bf"), fill = TRUE,
-        card_body(card_title("About"), htmlOutput("ordinal_information_about")),
-        card_body(card_title("Edit functionality"), htmlOutput("ordinal_edit")),
+        card_body(h5("About"), htmlOutput("ordinal_information_about"),
+        h5("Edit functionality"), htmlOutput("ordinal_edit")),
         #card_body(card_title("Limitations"), htmlOutput("ordinal_lims"))
         ))),
     nav_panel("Continuous", fillable = TRUE,
     layout_columns(col_widths = c(9, 3), height = "1000px",
       card(card_header("Graph", style = "background-color: #bfd9bf"), card_body(imageOutput("about_continuous", height = "800px")), full_screen = TRUE, fill = TRUE),
       card(card_header("Information", style = "background-color: #bfd9bf"),
-        card_body(card_title("About"), htmlOutput("continuous_information_about")),
-        card_body(card_title("Edit functionality"), htmlOutput("continuous_edit")),
+        card_body(h5("About"), htmlOutput("continuous_information_about"),
+        h5("Edit functionality"), htmlOutput("continuous_edit")),
         #card_body(card_title("Limitations"), htmlOutput("continuous_lims"))
         ))))))),
   ####################################################################################################### Data Sorting + Upload
