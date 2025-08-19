@@ -105,7 +105,8 @@ ui <- div(page_navbar(
       p("- Final reported time by the patient, {timepoint},"),
       p("[numeric OR date \"YYYY-MM-DD\"]"),
       p("To switch to date format use toggle:"),
-      input_switch("ordinal_date", "Turn on date format")
+      input_switch("ordinal_date", "Turn on date format"),
+      p("Date format will toggle automatically but can also be toggled manually")
     )),
     card(card_header(strong("Continuous datasets"), style = "background-color: #bfd9bf"),
     card_body(
@@ -117,7 +118,8 @@ ui <- div(page_navbar(
        p("- Timepoint of current report, {timepoint},"),
        p("[integer OR date \"YYYY-MM-DD\"]"),
        p("To switch to date format use toggle:"),
-       input_switch("continuous_date", "Turn on date format")
+       input_switch("continuous_date", "Turn on date format"),
+      p("Date format will toggle automatically but can also be toggled manually")
     ))
   ))),
   card(card_header(h3("Input data"), style = "background-color: #8FBC8F"),
@@ -127,7 +129,8 @@ ui <- div(page_navbar(
   card_body(fileInput("upload_cts", "Continuous data", accept = c(".csv")))),
   card(card_header("Dummy data", style = "background-color: #bfd9bf"), card_body("For those with no data wishing to test the app, you can select these to test with."),
   card_body(input_switch("dummy_ordinal", "Dummy Ordinal data")),
-  card_body(input_switch("dummy_continuous", "Dummy Continuous data")))),
+  card_body(input_switch("dummy_continuous", "Dummy Continuous data")),
+  card_body("Toggle date mode to view alternative data formats"))),
   layout_columns(col_widths = c(9, 3),
   card(card_header("Ordinal data", style = "background-color: #bfd9bf"), card_body(tableOutput("ordinal_table")), max_height = 300),
   card( card_header("Summaries", style = "background-color: #bfd9bf"),
