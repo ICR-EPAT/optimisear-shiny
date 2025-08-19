@@ -1195,7 +1195,7 @@ observe({
   if (input$continuous_date == TRUE){
     tpoint <- as.Date(tpoint)
   }
-  updateSliderInput(session, "tpointC", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
+  updateSliderInput(session, "tpointC", label = "Final timepoint of interest", min = sort(tpoint)[2], max = max(tpoint))
 })
 
 observe({
@@ -1219,7 +1219,7 @@ observe({
   if (input$continuous_date == TRUE){
     tpointC <- as.Date(tpointC)
   }
-  updateSliderInput(session, "tpointC", label = "Final timepoint of interest", min = min(tpointC), max = max(tpointC))
+  updateSliderInput(session, "tpointC", label = "Final timepoint of interest", min = tpointC[2], max = max(tpointC))
 })
 
 observe({
@@ -1648,7 +1648,7 @@ observe({
   if (input$continuous_date == TRUE){
     tpoint <- as.Date(tpoint)
   }
-  updateSliderInput(session, "tpointF", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
+  updateSliderInput(session, "tpointF", label = "Final timepoint of interest", min = sort(tpoint)[2], max = max(tpoint))
 })
 
 
@@ -1673,7 +1673,7 @@ observe({
   if (input$continuous_date == TRUE){
     tpoint <- as.Date(tpoint)
   }
-  updateSliderInput(session, "tpointF", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
+  updateSliderInput(session, "tpointF", label = "Final timepoint of interest", min = tpoint[2], max = max(tpoint))
 })
 
 observe({
@@ -1809,7 +1809,7 @@ observe({
   if (input$continuous_date == TRUE){
     tpoint <- as.Date(tpoint)
   }
-  updateSliderInput(session, "tpointG", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
+  updateSliderInput(session, "tpointG", label = "Final timepoint of interest", min = sort(tpoint)[2], max = max(tpoint))
 })
 
 observe({
@@ -1845,7 +1845,7 @@ observe({
   if (input$continuous_date == TRUE){
     tpoint <- as.Date(tpoint)
   }
-  updateSliderInput(session, "tpointG", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
+  updateSliderInput(session, "tpointG", label = "Final timepoint of interest", min = tpoint[2], max = max(tpoint))
 })
 
 observe({
@@ -2354,7 +2354,7 @@ observe({
   if (input$ordinal_date == TRUE){
     tpoint <- as.Date(tpoint)
   }
-  updateSliderInput(session, "tpointI", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
+  updateSliderInput(session, "tpointI", label = "Final timepoint of interest", min = sort(tpoint)[2], max = max(tpoint))
 })
 
 observe({
@@ -2378,7 +2378,7 @@ observe({
   if (input$ordinal_date == TRUE){
     tpoint <- as.Date(tpoint)
   }
-  updateSliderInput(session, "tpointI", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
+  updateSliderInput(session, "tpointI", label = "Final timepoint of interest", min = tpoint[2], max = max(tpoint))
 })
 
 observe({
