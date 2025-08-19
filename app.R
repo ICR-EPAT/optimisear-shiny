@@ -795,8 +795,11 @@ editI <- eventReactive(input$updateI,{
        data <- data %>% select(id, toxicity, grade, timepoint, dose, time_last_report)
        data
     }
-    else if (input$dummy_ordinal == TRUE) {
+    else if (input$dummy_ordinal == TRUE & input$ordinal_date == FALSE) {
           read.csv("www/DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")[, -1]
+}
+    else if (input$dummy_ordinal == TRUE & input$ordinal_date == TRUE) {
+          read.csv("www/DummyData/dummy_ordinal_dates.csv", header = TRUE, sep = ",")[, -1]
 }
 })
 observeEvent(input$upload,{
@@ -855,7 +858,7 @@ output$continuous_table <- renderTable(
                           req(input$numdose)
                           ordinal_data <- ordinal_data()
                           ordinal_data <- ordinal_data %>% filter(dose %in% no_dose())
-                          if (input$ordinal_date == TRUE & input$dummy_ordinal == FALSE){
+                          if (input$ordinal_date == TRUE){
                             ordinal_data <- ordinal_data %>%
                             group_by(id, toxicity) %>%
                             mutate(base_adj = grade-grade[timepoint == min(as.Date(ordinal_data$timepoint))])  
@@ -866,7 +869,7 @@ output$continuous_table <- renderTable(
                             mutate(base_adj = grade-grade[timepoint == min(ordinal_data$timepoint)])
                           }
                           ordinal_data <- ordinal_data %>% filter(is.na(base_adj) == FALSE)
-                          if (input$ordinal_date == TRUE & input$dummy_ordinal == FALSE){
+                          if (input$ordinal_date == TRUE){
                               summary_df <- ordinal_data %>%
                             group_by(id) %>%
                             summarise(
@@ -952,7 +955,7 @@ observe({
   req(input$upload)
   data <- ordinal_data()
   tpoint <- unique(data$timepoint)
-  if (input$ordinal_date == TRUE & input$dummy_ordinal == FALSE){
+  if (input$ordinal_date == TRUE){
     tpoint <- as.Date(tpoint)
   }
   updateSliderInput(session, "tpointB", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
@@ -976,7 +979,10 @@ observe({
   req(input$dummy_ordinal)
   data <- ordinal_data()
   tpoint <- unique(data$timepoint)
-  updateSliderInput(session, "tpointB", label = "Final timepoint of interest", max = length(tpoint)-1)
+  if (input$ordinal_date == TRUE){
+    tpoint <- as.Date(tpoint)
+  }
+  updateSliderInput(session, "tpointB", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
 })
 
 observe({
@@ -1009,7 +1015,7 @@ prop <- reactive({
   ordinal_data <- ordinal_data()
   ordinal_data$grade[is.na(ordinal_data$grade)] <- "Unreported"
 
-  if (input$ordinal_date == TRUE & input$dummy_ordinal == FALSE){
+  if (input$ordinal_date == TRUE){
     n_pat <- ordinal_data %>%
     filter(timepoint == min(as.Date(timepoint)), toxicity == toxic()) %>%
     group_by(dose) %>%
@@ -1050,7 +1056,7 @@ prop <- reactive({
   prop$toxicity <- as.factor(prop$toxicity)
   prop$grade <- as.factor(prop$grade)
   prop$dose <- as.factor(prop$dose)
-  if (input$ordinal_date == TRUE & input$dummy_ordinal == FALSE){
+  if (input$ordinal_date == TRUE){
     prop <- prop %>% filter(as.Date(timepoint) <= as.Date(final_t()))
     prop$timepoint <- as.factor(as.Date(prop$timepoint))
   }
@@ -1071,7 +1077,7 @@ prop <- reactive({
 no_patient <- reactive({
   req(input$numdoseB)
   ordinal_data <- ordinal_data()
-  if (input$ordinal_date == TRUE & input$dummy_ordinal == FALSE){
+  if (input$ordinal_date == TRUE){
     no_pat <- ordinal_data %>%
     filter(timepoint == min(as.Date(timepoint)), toxicity == toxic()) %>%
     group_by(dose) %>%
@@ -1147,8 +1153,11 @@ continuous_data <- reactive({
       data
         
   }
-  else if (input$dummy_continuous == TRUE) {
+  else if (input$dummy_continuous == TRUE & input$continuous_date == FALSE) {
         read.csv("www/DummyData/dummy_continuous.csv", header = TRUE, sep = ",")[,-1]
+}
+  else if (input$dummy_continuous == TRUE & input$continuous_date == TRUE) {
+        read.csv("www/DummyData/dummy_continuous_dates.csv", header = TRUE, sep = ",")[,-1]
 }
 })
 observeEvent(input$upload_cts,{
@@ -1183,7 +1192,7 @@ observe({
   req(input$upload_cts)
   data <- continuous_data()
   tpoint <- unique(data$timepoint)
-  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
+  if (input$continuous_date == TRUE){
     tpoint <- as.Date(tpoint)
   }
   updateSliderInput(session, "tpointC", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
@@ -1207,7 +1216,10 @@ observe({
   req(input$dummy_continuous)
   data <- continuous_data()
   tpointC <- unique(data$timepoint)
-  updateSliderInput(session, "tpointC", label = "Final timepoint of interest", max = length(tpointC) - 1)
+  if (input$continuous_date == TRUE){
+    tpointC <- as.Date(tpointC)
+  }
+  updateSliderInput(session, "tpointC", label = "Final timepoint of interest", min = min(tpointC), max = max(tpointC))
 })
 
 observe({
@@ -1249,7 +1261,7 @@ continuous_data_filtered <- reactive({
   req(input$tpointC)
   continuous_data <- continuous_data()
   continuous_data <- continuous_data %>% filter(functioning == func_C()) %>% dplyr::select(-functioning)# %>% filter(!is.na(score))
-  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
+  if (input$continuous_date == TRUE){
     continuous_data$timepoint == as.Date(continuous_data$timepoint)
   }
   continuous_data
@@ -1362,7 +1374,7 @@ observe({
   req(input$upload_cts)
   data <- continuous_data()
   tpoint <- unique(data$timepoint)
-  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
+  if (input$continuous_date == TRUE){
     tpoint <- as.Date(tpoint)
   }
   updateSliderInput(session, "tpointD", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
@@ -1386,7 +1398,10 @@ observe({
   req(input$dummy_continuous)
   data <- continuous_data()
   tpointD <- unique(data$timepoint)
-  updateSliderInput(session, "tpointD", label = "Final timepoint of interest", max = length(tpointD) - 1)
+  if (input$continuous_date == TRUE){
+    tpointD <- as.Date(tpointD)
+  }
+  updateSliderInput(session, "tpointD", label = "Final timepoint of interest", min = min(tpointD), max = max(tpointD))
 })
 
 observe({
@@ -1437,7 +1452,7 @@ idD <- reactive({
 continuous_data_filteredD <- reactive({
   req(input$tpointD)
   data <- continuous_data() 
-  if(input$continuous_date == TRUE & input$dummy_continuous == FALSE){
+  if(input$continuous_date == TRUE){
     data$timepoint == as.Date(data$timepoint)
   }
    data <- data %>%
@@ -1514,7 +1529,7 @@ observe({
   req(input$upload_cts)
   data <- continuous_data()
   tpoint <- unique(data$timepoint)
-  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
+  if (input$continuous_date == TRUE){
     tpoint <- as.Date(tpoint)
   }
   updateSliderInput(session, "tpointE", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
@@ -1539,7 +1554,10 @@ observe({
   req(input$dummy_continuous)
   data <- continuous_data()
   tpointE <- unique(data$timepoint)
-  updateSliderInput(session, "tpointE", label = "Final timepoint of interest", max = length(tpointE) - 1)
+  if (input$continuous_date == TRUE){
+    tpointE <- as.Date(tpointE)
+  }
+  updateSliderInput(session, "tpointE", label = "Final timepoint of interest", min = min(tpointE), max = max(tpointE))
 })
 
 observe({
@@ -1571,7 +1589,7 @@ data_E <- reactive({
   req(input$functioningE)
   req(input$tpointE)
   continuous_data <- continuous_data()
-  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
+  if (input$continuous_date == TRUE){
     continuous_data$timepoint <- as.Date(continuous_data$timepoint)
   }
   continuous_data <- continuous_data %>% filter(functioning == func_E()) %>% dplyr::select(-functioning)
@@ -1627,7 +1645,7 @@ observe({
   req(input$upload_cts)
   data <- continuous_data()
   tpoint <- unique(data$timepoint)
-  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
+  if (input$continuous_date == TRUE){
     tpoint <- as.Date(tpoint)
   }
   updateSliderInput(session, "tpointF", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
@@ -1651,8 +1669,11 @@ observe({
 observe({
   req(input$dummy_continuous)
   data <- continuous_data()
-  tpointF <- unique(data$timepoint)
-  updateSliderInput(session, "tpointF", label = "Final timepoint of interest", min = min(tpointF), max = max(tpointF))
+  tpoint <- unique(data$timepoint)
+  if (input$continuous_date == TRUE){
+    tpoint <- as.Date(tpoint)
+  }
+  updateSliderInput(session, "tpointF", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
 })
 
 observe({
@@ -1686,7 +1707,7 @@ continuous_data_filteredF <- reactive({
   req(input$tpointF)
   filtered <- continuous_data()
   filtered$functioning <- as.character(filtered$functioning)
-  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
+  if (input$continuous_date == TRUE){
     filtered$timepoint <- as.Date(filtered$timepoint)
   }
   filtered <- filtered %>%
@@ -1785,7 +1806,7 @@ observe({
   req(input$upload_cts)
   data <- continuous_data()
   tpoint <- unique(data$timepoint)
-  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
+  if (input$continuous_date == TRUE){
     tpoint <- as.Date(tpoint)
   }
   updateSliderInput(session, "tpointG", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
@@ -1820,8 +1841,11 @@ observe({
 observe({
   req(input$dummy_continuous)
   data <- continuous_data()
-  tpointG <- unique(data$timepoint)
-  updateSliderInput(session, "tpointG", label = "Final timepoint of interest", max = length(tpointG) - 1)
+  tpoint <- unique(data$timepoint)
+  if (input$continuous_date == TRUE){
+    tpoint <- as.Date(tpoint)
+  }
+  updateSliderInput(session, "tpointG", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
 })
 
 observe({
@@ -1859,7 +1883,7 @@ no_patientG <- reactive({
 
 continuous_data_filteredG <- reactive({
   continuous_data <- continuous_data()
-  if (input$continuous_date == TRUE & input$dummy_continuous == FALSE){
+  if (input$continuous_date == TRUE){
     continuous_data$timepoint <- as.Date(continuous_data$timepoint)
   }
   continuous_data$functioning <- as.character(continuous_data$functioning)
@@ -2034,7 +2058,7 @@ observe({
   req(input$upload)
   data <- ordinal_data()
   tpoint <- unique(data$timepoint)
-  if (input$ordinal_date == TRUE & input$dummy_ordinal == FALSE){
+  if (input$ordinal_date == TRUE){
     tpoint <- as.Date(tpoint)
   }
   updateSliderInput(session, "tpointH", label = "Start and endpoint for comparison", min = min(tpoint), max = max(tpoint), value = c(min(tpoint), max(tpoint)))
@@ -2058,7 +2082,10 @@ observe({
   req(input$dummy_ordinal)
   data <- ordinal_data()
   tpoint <- unique(data$timepoint)
-  updateSliderInput(session, "tpointH", label = "Start and endpoint for comparison", max = length(tpoint)-1)
+  if (input$ordinal_date == TRUE){
+    tpoint <- as.Date(tpoint)
+  }
+  updateSliderInput(session, "tpointH", label = "Start and endpoint for comparison", min = min(tpoint), max = max(tpoint), value = c(min(tpoint), max(tpoint)))
 })
 
 observe({
@@ -2324,7 +2351,7 @@ observe({
   req(input$upload)
   data <- ordinal_data()
   tpoint <- unique(data$timepoint)
-  if (input$ordinal_date == TRUE & input$dummy_ordinal == FALSE){
+  if (input$ordinal_date == TRUE){
     tpoint <- as.Date(tpoint)
   }
   updateSliderInput(session, "tpointI", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
@@ -2348,7 +2375,10 @@ observe({
   req(input$dummy_ordinal)
   data <- ordinal_data()
   tpoint <- unique(data$timepoint)
-  updateSliderInput(session, "tpointI", label = "Final timepoint of interest", max = length(tpoint)-1)
+  if (input$ordinal_date == TRUE){
+    tpoint <- as.Date(tpoint)
+  }
+  updateSliderInput(session, "tpointI", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
 })
 
 observe({
