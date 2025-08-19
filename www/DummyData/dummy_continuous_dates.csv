@@ -1,0 +1,1081 @@
+,id,score,timepoint,dose,functioning
+1,1,87.83233966,"2025-01-01",1,Global health status
+2,2,55.64975993,"2025-01-01",1,Global health status
+3,3,53.81526094,"2025-01-01",1,Global health status
+4,4,41.88993417,"2025-01-01",1,Global health status
+5,5,27.45537737,"2025-01-01",1,Global health status
+6,6,39.42303598,"2025-01-01",1,Global health status
+7,7,8.607305011,"2025-01-01",1,Global health status
+8,8,29.8079116,"2025-01-01",1,Global health status
+9,9,55.99096415,"2025-01-01",1,Global health status
+10,10,50.05578259,"2025-01-01",1,Global health status
+11,11,36.99110414,"2025-01-01",2,Global health status
+12,12,39.73841547,"2025-01-01",2,Global health status
+13,13,55.27509318,"2025-01-01",2,Global health status
+14,14,41.56435817,"2025-01-01",2,Global health status
+15,15,46.68776092,"2025-01-01",2,Global health status
+16,16,37.85488589,"2025-01-01",2,Global health status
+17,17,NA,"2025-01-01",2,Global health status
+18,18,NA,"2025-01-01",2,Global health status
+19,19,NA,"2025-01-01",2,Global health status
+20,20,NA,"2025-01-01",2,Global health status
+21,21,52.26033539,"2025-01-01",3,Global health status
+22,22,35.91344094,"2025-01-01",3,Global health status
+23,23,38.5217142,"2025-01-01",3,Global health status
+24,24,NA,"2025-01-01",3,Global health status
+25,25,76.86409982,"2025-01-01",3,Global health status
+26,26,39.54780451,"2025-01-01",3,Global health status
+27,27,40.01278406,"2025-01-01",3,Global health status
+28,28,77.56209184,"2025-01-01",3,Global health status
+29,29,65.25182271,"2025-01-01",3,Global health status
+30,30,NA,"2025-01-01",3,Global health status
+31,1,83.71282672,"2025-02-02",1,Global health status
+32,2,62.24030732,"2025-02-02",1,Global health status
+33,3,59.06985608,"2025-02-02",1,Global health status
+34,4,34.61095186,"2025-02-02",1,Global health status
+35,5,33.98002367,"2025-02-02",1,Global health status
+36,6,44.50295831,"2025-02-02",1,Global health status
+37,7,7.676127105,"2025-02-02",1,Global health status
+38,8,28.16555552,"2025-02-02",1,Global health status
+39,9,54.42335305,"2025-02-02",1,Global health status
+40,10,48.7296301,"2025-02-02",1,Global health status
+41,2,60.02038036,"2025-03-03",1,Global health status
+42,3,59.39901967,"2025-03-03",1,Global health status
+43,5,33.52335022,"2025-03-03",1,Global health status
+44,6,44.56352797,"2025-03-03",1,Global health status
+45,8,30.02037673,"2025-03-03",1,Global health status
+46,9,53.37221982,"2025-03-03",1,Global health status
+47,1,NA,"2025-04-04",1,Global health status
+48,2,61.68787873,"2025-04-04",1,Global health status
+49,4,31.62722151,"2025-04-04",1,Global health status
+50,5,31.67796622,"2025-04-04",1,Global health status
+51,7,8.211303366,"2025-04-04",1,Global health status
+52,8,30.44505653,"2025-04-04",1,Global health status
+53,10,51.1362897,"2025-04-04",1,Global health status
+54,1,77.21072985,"2025-05-05",1,Global health status
+55,3,51.90450279,"2025-05-05",1,Global health status
+56,4,31.48003516,"2025-05-05",1,Global health status
+57,6,48.61424903,"2025-05-05",1,Global health status
+58,7,5.059185036,"2025-05-05",1,Global health status
+59,9,50.99621719,"2025-05-05",1,Global health status
+60,10,40.98967884,"2025-05-05",1,Global health status
+61,2,63.66115643,"2025-06-06",1,Global health status
+62,3,61.1050549,"2025-06-06",1,Global health status
+63,5,37.0662097,"2025-06-06",1,Global health status
+64,6,47.59740659,"2025-06-06",1,Global health status
+65,8,30.0482122,"2025-06-06",1,Global health status
+66,9,54.081149,"2025-06-06",1,Global health status
+67,1,90.1177206,"2025-07-07",1,Global health status
+68,2,71.24609005,"2025-07-07",1,Global health status
+69,4,39.54997175,"2025-07-07",1,Global health status
+70,5,42.66002047,"2025-07-07",1,Global health status
+71,7,12.49803014,"2025-07-07",1,Global health status
+72,8,29.53981587,"2025-07-07",1,Global health status
+73,10,59.22766744,"2025-07-07",1,Global health status
+74,1,92.61277697,"2025-08-08",1,Global health status
+75,3,49.58975945,"2025-08-08",1,Global health status
+76,4,13.16475046,"2025-08-08",1,Global health status
+77,6,39.45319603,"2025-08-08",1,Global health status
+78,7,9.795057146,"2025-08-08",1,Global health status
+79,9,39.01650644,"2025-08-08",1,Global health status
+80,10,46.79224615,"2025-08-08",1,Global health status
+81,11,28.49530558,"2025-02-02",2,Global health status
+82,12,31.00236945,"2025-02-02",2,Global health status
+83,13,47.74132503,"2025-02-02",2,Global health status
+84,14,35.22760252,"2025-02-02",2,Global health status
+85,15,50.10989858,"2025-02-02",2,Global health status
+86,16,33.08588794,"2025-02-02",2,Global health status
+87,17,25.9795531,"2025-02-02",2,Global health status
+88,18,43.43979388,"2025-02-02",2,Global health status
+89,19,43.45999511,"2025-02-02",2,Global health status
+90,20,41.7570492,"2025-02-02",2,Global health status
+91,11,34.11021234,"2025-03-03",2,Global health status
+92,12,33.99043488,"2025-03-03",2,Global health status
+93,14,40.84921422,"2025-03-03",2,Global health status
+94,15,50.97322008,"2025-03-03",2,Global health status
+95,17,27.13802229,"2025-03-03",2,Global health status
+96,18,42.49593185,"2025-03-03",2,Global health status
+97,20,41.36333026,"2025-03-03",2,Global health status
+98,11,32.58918274,"2025-04-04",2,Global health status
+99,13,48.34623635,"2025-04-04",2,Global health status
+100,14,36.46896518,"2025-04-04",2,Global health status
+101,16,33.80572228,"2025-04-04",2,Global health status
+102,17,24.84378268,"2025-04-04",2,Global health status
+103,19,41.78929222,"2025-04-04",2,Global health status
+104,20,42.1286623,"2025-04-04",2,Global health status
+105,12,29.97516515,"2025-05-05",2,Global health status
+106,13,51.15101666,"2025-05-05",2,Global health status
+107,15,42.65004029,"2025-05-05",2,Global health status
+108,16,36.17005533,"2025-05-05",2,Global health status
+109,18,36.6696904,"2025-05-05",2,Global health status
+110,19,36.47136427,"2025-05-05",2,Global health status
+111,11,41.79587593,"2025-06-06",2,Global health status
+112,12,31.87659692,"2025-06-06",2,Global health status
+113,14,56.38069263,"2025-06-06",2,Global health status
+114,15,NA,"2025-06-06",2,Global health status
+115,17,18.31916485,"2025-06-06",2,Global health status
+116,18,44.37072145,"2025-06-06",2,Global health status
+117,20,47.75567905,"2025-06-06",2,Global health status
+118,11,44.40538338,"2025-07-07",2,Global health status
+119,13,63.06365198,"2025-07-07",2,Global health status
+120,14,41.34058315,"2025-07-07",2,Global health status
+121,16,39.01674291,"2025-07-07",2,Global health status
+122,17,28.90541957,"2025-07-07",2,Global health status
+123,19,42.76605867,"2025-07-07",2,Global health status
+124,20,51.73649615,"2025-07-07",2,Global health status
+125,12,29.53297211,"2025-08-08",2,Global health status
+126,13,47.1762755,"2025-08-08",2,Global health status
+127,15,43.45472176,"2025-08-08",2,Global health status
+128,16,10.59885289,"2025-08-08",2,Global health status
+129,18,40.36039976,"2025-08-08",2,Global health status
+130,19,37.51733316,"2025-08-08",2,Global health status
+131,21,45.43475032,"2025-02-02",3,Global health status
+132,22,26.79068774,"2025-02-02",3,Global health status
+133,23,31.64281134,"2025-02-02",3,Global health status
+134,24,60.70083937,"2025-02-02",3,Global health status
+135,25,65.3854936,"2025-02-02",3,Global health status
+136,26,22.18367221,"2025-02-02",3,Global health status
+137,27,35.58649374,"2025-02-02",3,Global health status
+138,28,63.63636235,"2025-02-02",3,Global health status
+139,29,59.85712728,"2025-02-02",3,Global health status
+140,30,29.00212344,"2025-02-02",3,Global health status
+141,21,45.3159002,"2025-03-03",3,Global health status
+142,23,29.3062393,"2025-03-03",3,Global health status
+143,24,58.67280449,"2025-03-03",3,Global health status
+144,26,27.07589638,"2025-03-03",3,Global health status
+145,27,38.26151602,"2025-03-03",3,Global health status
+146,29,63.69460581,"2025-03-03",3,Global health status
+147,30,36.04244291,"2025-03-03",3,Global health status
+148,22,24.18172961,"2025-04-04",3,Global health status
+149,23,NA,"2025-04-04",3,Global health status
+150,25,64.04615022,"2025-04-04",3,Global health status
+151,26,25.47820441,"2025-04-04",3,Global health status
+152,28,64.28019575,"2025-04-04",3,Global health status
+153,29,55.10546365,"2025-04-04",3,Global health status
+154,21,41.84646171,"2025-05-05",3,Global health status
+155,22,16.37233061,"2025-05-05",3,Global health status
+156,24,53.17026917,"2025-05-05",3,Global health status
+157,25,61.06623037,"2025-05-05",3,Global health status
+158,27,30.68459695,"2025-05-05",3,Global health status
+159,28,61.76455908,"2025-05-05",3,Global health status
+160,30,30.63337214,"2025-05-05",3,Global health status
+161,21,52.02405063,"2025-06-06",3,Global health status
+162,23,38.26818504,"2025-06-06",3,Global health status
+163,24,64.40858256,"2025-06-06",3,Global health status
+164,26,29.38311672,"2025-06-06",3,Global health status
+165,27,40.71844507,"2025-06-06",3,Global health status
+166,29,63.07628123,"2025-06-06",3,Global health status
+167,30,38.8768453,"2025-06-06",3,Global health status
+168,22,28.92042328,"2025-07-07",3,Global health status
+169,23,45.23024861,"2025-07-07",3,Global health status
+170,25,73.43231298,"2025-07-07",3,Global health status
+171,26,33.41338041,"2025-07-07",3,Global health status
+172,28,68.06163956,"2025-07-07",3,Global health status
+173,29,64.48893089,"2025-07-07",3,Global health status
+174,21,41.3664444,"2025-08-08",3,Global health status
+175,22,13.51933975,"2025-08-08",3,Global health status
+176,24,42.43791962,"2025-08-08",3,Global health status
+177,25,62.21732699,"2025-08-08",3,Global health status
+178,27,25.96214949,"2025-08-08",3,Global health status
+179,28,73.26626896,"2025-08-08",3,Global health status
+180,30,33.55201513,"2025-08-08",3,Global health status
+181,1,77.04004304,"2025-01-01",1,Physical functioning
+182,2,46.65382364,"2025-01-01",1,Physical functioning
+183,3,57.58330339,"2025-01-01",1,Physical functioning
+184,4,59.91421181,"2025-01-01",1,Physical functioning
+185,5,85.32488272,"2025-01-01",1,Physical functioning
+186,6,78.93125087,"2025-01-01",1,Physical functioning
+187,7,50.55567155,"2025-01-01",1,Physical functioning
+188,8,67.54679692,"2025-01-01",1,Physical functioning
+189,9,50.33892114,"2025-01-01",1,Physical functioning
+190,10,101.084114,"2025-01-01",1,Physical functioning
+191,11,58.38905159,"2025-01-01",2,Physical functioning
+192,12,53.7005128,"2025-01-01",2,Physical functioning
+193,13,45.72474374,"2025-01-01",2,Physical functioning
+194,14,68.5638013,"2025-01-01",2,Physical functioning
+195,15,59.04284001,"2025-01-01",2,Physical functioning
+196,16,54.1804369,"2025-01-01",2,Physical functioning
+197,17,31.43415702,"2025-01-01",2,Physical functioning
+198,18,67.87090479,"2025-01-01",2,Physical functioning
+199,19,39.38277879,"2025-01-01",2,Physical functioning
+200,20,90.2708665,"2025-01-01",2,Physical functioning
+201,21,NA,"2025-01-01",3,Physical functioning
+202,22,103.5237434,"2025-01-01",3,Physical functioning
+203,23,44.03383642,"2025-01-01",3,Physical functioning
+204,24,71.70748267,"2025-01-01",3,Physical functioning
+205,25,90.52556563,"2025-01-01",3,Physical functioning
+206,26,54.77534795,"2025-01-01",3,Physical functioning
+207,27,NA,"2025-01-01",3,Physical functioning
+208,28,NA,"2025-01-01",3,Physical functioning
+209,29,36.80901254,"2025-01-01",3,Physical functioning
+210,30,64.47004284,"2025-01-01",3,Physical functioning
+211,1,89.40601127,"2025-02-02",1,Physical functioning
+212,2,44.46318648,"2025-02-02",1,Physical functioning
+213,3,62.34438989,"2025-02-02",1,Physical functioning
+214,4,66.0040659,"2025-02-02",1,Physical functioning
+215,5,86.67177335,"2025-02-02",1,Physical functioning
+216,6,82.26357309,"2025-02-02",1,Physical functioning
+217,7,47.34203813,"2025-02-02",1,Physical functioning
+218,8,71.1434086,"2025-02-02",1,Physical functioning
+219,9,NA,"2025-02-02",1,Physical functioning
+220,10,105.9012798,"2025-02-02",1,Physical functioning
+221,2,NA,"2025-03-03",1,Physical functioning
+222,3,NA,"2025-03-03",1,Physical functioning
+223,5,87.74627075,"2025-03-03",1,Physical functioning
+224,6,82.02079229,"2025-03-03",1,Physical functioning
+225,8,NA,"2025-03-03",1,Physical functioning
+226,9,49.27567511,"2025-03-03",1,Physical functioning
+227,1,NA,"2025-04-04",1,Physical functioning
+228,2,44.91659709,"2025-04-04",1,Physical functioning
+229,4,67.31049874,"2025-04-04",1,Physical functioning
+230,5,88.64182402,"2025-04-04",1,Physical functioning
+231,7,46.97904712,"2025-04-04",1,Physical functioning
+232,8,71.05735666,"2025-04-04",1,Physical functioning
+233,10,105.6112127,"2025-04-04",1,Physical functioning
+234,1,86.18718082,"2025-05-05",1,Physical functioning
+235,3,63.13423557,"2025-05-05",1,Physical functioning
+236,4,62.51970824,"2025-05-05",1,Physical functioning
+237,6,79.32648237,"2025-05-05",1,Physical functioning
+238,7,43.93138941,"2025-05-05",1,Physical functioning
+239,9,45.49947709,"2025-05-05",1,Physical functioning
+240,10,103.2710335,"2025-05-05",1,Physical functioning
+241,2,47.71531734,"2025-06-06",1,Physical functioning
+242,3,NA,"2025-06-06",1,Physical functioning
+243,5,85.21075503,"2025-06-06",1,Physical functioning
+244,6,83.33414192,"2025-06-06",1,Physical functioning
+245,8,74.6854872,"2025-06-06",1,Physical functioning
+246,9,52.14802902,"2025-06-06",1,Physical functioning
+247,1,93.02634146,"2025-07-07",1,Physical functioning
+248,2,44.9968415,"2025-07-07",1,Physical functioning
+249,4,73.49734708,"2025-07-07",1,Physical functioning
+250,5,82.601597,"2025-07-07",1,Physical functioning
+251,7,NA,"2025-07-07",1,Physical functioning
+252,8,76.12072154,"2025-07-07",1,Physical functioning
+253,10,111.2128666,"2025-07-07",1,Physical functioning
+254,1,85.98802415,"2025-08-08",1,Physical functioning
+255,3,56.543528,"2025-08-08",1,Physical functioning
+256,4,NA,"2025-08-08",1,Physical functioning
+257,6,76.73089057,"2025-08-08",1,Physical functioning
+258,7,40.45821457,"2025-08-08",1,Physical functioning
+259,9,44.5330258,"2025-08-08",1,Physical functioning
+260,10,106.2570642,"2025-08-08",1,Physical functioning
+261,11,49.87532866,"2025-02-02",2,Physical functioning
+262,12,51.18790825,"2025-02-02",2,Physical functioning
+263,13,37.63705561,"2025-02-02",2,Physical functioning
+264,14,62.71387632,"2025-02-02",2,Physical functioning
+265,15,47.30291395,"2025-02-02",2,Physical functioning
+266,16,50.60359486,"2025-02-02",2,Physical functioning
+267,17,31.31504631,"2025-02-02",2,Physical functioning
+268,18,64.81201068,"2025-02-02",2,Physical functioning
+269,19,26.43268167,"2025-02-02",2,Physical functioning
+270,20,84.00738093,"2025-02-02",2,Physical functioning
+271,11,50.95405265,"2025-03-03",2,Physical functioning
+272,12,52.74621269,"2025-03-03",2,Physical functioning
+273,14,63.50685875,"2025-03-03",2,Physical functioning
+274,15,48.59677668,"2025-03-03",2,Physical functioning
+275,17,33.53153871,"2025-03-03",2,Physical functioning
+276,18,66.3073852,"2025-03-03",2,Physical functioning
+277,20,85.34816394,"2025-03-03",2,Physical functioning
+278,11,51.05626071,"2025-04-04",2,Physical functioning
+279,13,38.78215172,"2025-04-04",2,Physical functioning
+280,14,62.8505118,"2025-04-04",2,Physical functioning
+281,16,50.71110638,"2025-04-04",2,Physical functioning
+282,17,32.30881263,"2025-04-04",2,Physical functioning
+283,19,28.62279077,"2025-04-04",2,Physical functioning
+284,20,85.26540304,"2025-04-04",2,Physical functioning
+285,12,47.07721942,"2025-05-05",2,Physical functioning
+286,13,35.01116957,"2025-05-05",2,Physical functioning
+287,15,44.58278227,"2025-05-05",2,Physical functioning
+288,16,48.54092508,"2025-05-05",2,Physical functioning
+289,18,60.54837468,"2025-05-05",2,Physical functioning
+290,19,25.92751845,"2025-05-05",2,Physical functioning
+291,11,52.37986036,"2025-06-06",2,Physical functioning
+292,12,54.36951052,"2025-06-06",2,Physical functioning
+293,14,66.45919228,"2025-06-06",2,Physical functioning
+294,15,51.86656933,"2025-06-06",2,Physical functioning
+295,17,34.4110416,"2025-06-06",2,Physical functioning
+296,18,68.46949047,"2025-06-06",2,Physical functioning
+297,20,83.72928413,"2025-06-06",2,Physical functioning
+298,11,51.62421707,"2025-07-07",2,Physical functioning
+299,13,45.59630247,"2025-07-07",2,Physical functioning
+300,14,67.59506684,"2025-07-07",2,Physical functioning
+301,16,55.36792234,"2025-07-07",2,Physical functioning
+302,17,37.96888081,"2025-07-07",2,Physical functioning
+303,19,28.17784169,"2025-07-07",2,Physical functioning
+304,20,82.77968028,"2025-07-07",2,Physical functioning
+305,12,45.29015932,"2025-08-08",2,Physical functioning
+306,13,33.03314949,"2025-08-08",2,Physical functioning
+307,15,45.88901267,"2025-08-08",2,Physical functioning
+308,16,47.83234029,"2025-08-08",2,Physical functioning
+309,18,60.98260437,"2025-08-08",2,Physical functioning
+310,19,24.27542456,"2025-08-08",2,Physical functioning
+311,21,50.64471227,"2025-02-02",3,Physical functioning
+312,22,104.3915176,"2025-02-02",3,Physical functioning
+313,23,28.67621918,"2025-02-02",3,Physical functioning
+314,24,60.63268879,"2025-02-02",3,Physical functioning
+315,25,84.1752503,"2025-02-02",3,Physical functioning
+316,26,46.58942132,"2025-02-02",3,Physical functioning
+317,27,NA,"2025-02-02",3,Physical functioning
+318,28,NA,"2025-02-02",3,Physical functioning
+319,29,28.93667235,"2025-02-02",3,Physical functioning
+320,30,59.13823555,"2025-02-02",3,Physical functioning
+321,21,50.30173032,"2025-03-03",3,Physical functioning
+322,23,31.40206821,"2025-03-03",3,Physical functioning
+323,24,62.52346928,"2025-03-03",3,Physical functioning
+324,26,50.01663126,"2025-03-03",3,Physical functioning
+325,27,65.11840061,"2025-03-03",3,Physical functioning
+326,29,27.93317011,"2025-03-03",3,Physical functioning
+327,30,63.15476542,"2025-03-03",3,Physical functioning
+328,22,104.8524335,"2025-04-04",3,Physical functioning
+329,23,31.33938001,"2025-04-04",3,Physical functioning
+330,25,82.80756083,"2025-04-04",3,Physical functioning
+331,26,48.6321241,"2025-04-04",3,Physical functioning
+332,28,47.68905074,"2025-04-04",3,Physical functioning
+333,29,27.31200055,"2025-04-04",3,Physical functioning
+334,21,47.99559938,"2025-05-05",3,Physical functioning
+335,22,101.5361766,"2025-05-05",3,Physical functioning
+336,24,56.94507557,"2025-05-05",3,Physical functioning
+337,25,79.65666284,"2025-05-05",3,Physical functioning
+338,27,64.19699605,"2025-05-05",3,Physical functioning
+339,28,42.45831536,"2025-05-05",3,Physical functioning
+340,30,54.38060478,"2025-05-05",3,Physical functioning
+341,21,53.15589439,"2025-06-06",3,Physical functioning
+342,23,33.60400799,"2025-06-06",3,Physical functioning
+343,24,65.53920306,"2025-06-06",3,Physical functioning
+344,26,51.80158143,"2025-06-06",3,Physical functioning
+345,27,67.93667121,"2025-06-06",3,Physical functioning
+346,29,28.34596534,"2025-06-06",3,Physical functioning
+347,30,62.65282702,"2025-06-06",3,Physical functioning
+348,22,107.5325259,"2025-07-07",3,Physical functioning
+349,23,33.63696266,"2025-07-07",3,Physical functioning
+350,25,88.93896284,"2025-07-07",3,Physical functioning
+351,26,50.77257466,"2025-07-07",3,Physical functioning
+352,28,50.47533074,"2025-07-07",3,Physical functioning
+353,29,28.22265682,"2025-07-07",3,Physical functioning
+354,21,47.48932138,"2025-08-08",3,Physical functioning
+355,22,NA,"2025-08-08",3,Physical functioning
+356,24,58.30339562,"2025-08-08",3,Physical functioning
+357,25,82.98273485,"2025-08-08",3,Physical functioning
+358,27,61.57294753,"2025-08-08",3,Physical functioning
+359,28,40.28307345,"2025-08-08",3,Physical functioning
+360,30,52.0117611,"2025-08-08",3,Physical functioning
+361,1,12.89967331,"2025-01-01",1,Role functioning
+362,2,58.52750254,"2025-01-01",1,Role functioning
+363,3,43.95147755,"2025-01-01",1,Role functioning
+364,4,35.1008483,"2025-01-01",1,Role functioning
+365,5,72.46493988,"2025-01-01",1,Role functioning
+366,6,NA,"2025-01-01",1,Role functioning
+367,7,60.07043156,"2025-01-01",1,Role functioning
+368,8,80.54267223,"2025-01-01",1,Role functioning
+369,9,54.05958419,"2025-01-01",1,Role functioning
+370,10,NA,"2025-01-01",1,Role functioning
+371,11,80.85423996,"2025-01-01",2,Role functioning
+372,12,65.17872317,"2025-01-01",2,Role functioning
+373,13,60.11269577,"2025-01-01",2,Role functioning
+374,14,66.64934652,"2025-01-01",2,Role functioning
+375,15,80.05659209,"2025-01-01",2,Role functioning
+376,16,75.39482687,"2025-01-01",2,Role functioning
+377,17,90.01489435,"2025-01-01",2,Role functioning
+378,18,NA,"2025-01-01",2,Role functioning
+379,19,NA,"2025-01-01",2,Role functioning
+380,20,54.41430286,"2025-01-01",2,Role functioning
+381,21,88.30880529,"2025-01-01",3,Role functioning
+382,22,51.55423339,"2025-01-01",3,Role functioning
+383,23,37.75767582,"2025-01-01",3,Role functioning
+384,24,72.9544987,"2025-01-01",3,Role functioning
+385,25,NA,"2025-01-01",3,Role functioning
+386,26,25.19092224,"2025-01-01",3,Role functioning
+387,27,82.68997674,"2025-01-01",3,Role functioning
+388,28,61.87463268,"2025-01-01",3,Role functioning
+389,29,57.75060493,"2025-01-01",3,Role functioning
+390,30,96.20707237,"2025-01-01",3,Role functioning
+391,1,13.5687131,"2025-02-02",1,Role functioning
+392,2,58.96214925,"2025-02-02",1,Role functioning
+393,3,46.43542119,"2025-02-02",1,Role functioning
+394,4,26.02197386,"2025-02-02",1,Role functioning
+395,5,65.34666004,"2025-02-02",1,Role functioning
+396,6,62.44809924,"2025-02-02",1,Role functioning
+397,7,55.15788723,"2025-02-02",1,Role functioning
+398,8,78.54851777,"2025-02-02",1,Role functioning
+399,9,NA,"2025-02-02",1,Role functioning
+400,10,7.008254802,"2025-02-02",1,Role functioning
+401,2,57.90719747,"2025-03-03",1,Role functioning
+402,3,43.71115192,"2025-03-03",1,Role functioning
+403,5,64.44995195,"2025-03-03",1,Role functioning
+404,6,59.9238624,"2025-03-03",1,Role functioning
+405,8,79.29453173,"2025-03-03",1,Role functioning
+406,9,56.13460367,"2025-03-03",1,Role functioning
+407,1,11.20259164,"2025-04-04",1,Role functioning
+408,2,60.72479603,"2025-04-04",1,Role functioning
+409,4,27.96916066,"2025-04-04",1,Role functioning
+410,5,66.0698751,"2025-04-04",1,Role functioning
+411,7,55.04142547,"2025-04-04",1,Role functioning
+412,8,77.3110684,"2025-04-04",1,Role functioning
+413,10,5.200304511,"2025-04-04",1,Role functioning
+414,1,16.0073737,"2025-05-05",1,Role functioning
+415,3,51.70647128,"2025-05-05",1,Role functioning
+416,4,30.76027765,"2025-05-05",1,Role functioning
+417,6,65.87405363,"2025-05-05",1,Role functioning
+418,7,57.60832738,"2025-05-05",1,Role functioning
+419,9,56.73868762,"2025-05-05",1,Role functioning
+420,10,9.049081492,"2025-05-05",1,Role functioning
+421,2,55.24209893,"2025-06-06",1,Role functioning
+422,3,42.40959229,"2025-06-06",1,Role functioning
+423,5,60.64420109,"2025-06-06",1,Role functioning
+424,6,58.36545974,"2025-06-06",1,Role functioning
+425,8,NA,"2025-06-06",1,Role functioning
+426,9,52.60724886,"2025-06-06",1,Role functioning
+427,1,6.209328328,"2025-07-07",1,Role functioning
+428,2,54.4862594,"2025-07-07",1,Role functioning
+429,4,17.16785826,"2025-07-07",1,Role functioning
+430,5,61.97356732,"2025-07-07",1,Role functioning
+431,7,46.0533293,"2025-07-07",1,Role functioning
+432,8,68.67341695,"2025-07-07",1,Role functioning
+433,10,NA,"2025-07-07",1,Role functioning
+434,1,12.88137081,"2025-08-08",1,Role functioning
+435,3,NA,"2025-08-08",1,Role functioning
+436,4,35.64117289,"2025-08-08",1,Role functioning
+437,6,63.76681267,"2025-08-08",1,Role functioning
+438,7,NA,"2025-08-08",1,Role functioning
+439,9,61.37459786,"2025-08-08",1,Role functioning
+440,10,9.506435372,"2025-08-08",1,Role functioning
+441,11,60.66133561,"2025-02-02",2,Role functioning
+442,12,63.11151358,"2025-02-02",2,Role functioning
+443,13,54.73836266,"2025-02-02",2,Role functioning
+444,14,56.47804401,"2025-02-02",2,Role functioning
+445,15,66.50770313,"2025-02-02",2,Role functioning
+446,16,68.11936306,"2025-02-02",2,Role functioning
+447,17,83.32684251,"2025-02-02",2,Role functioning
+448,18,67.0445301,"2025-02-02",2,Role functioning
+449,19,60.34944036,"2025-02-02",2,Role functioning
+450,20,44.09041648,"2025-02-02",2,Role functioning
+451,11,56.74869647,"2025-03-03",2,Role functioning
+452,12,62.48275921,"2025-03-03",2,Role functioning
+453,14,55.39990822,"2025-03-03",2,Role functioning
+454,15,67.67707656,"2025-03-03",2,Role functioning
+455,17,NA,"2025-03-03",2,Role functioning
+456,18,66.99177,"2025-03-03",2,Role functioning
+457,20,44.73269057,"2025-03-03",2,Role functioning
+458,11,58.96168692,"2025-04-04",2,Role functioning
+459,13,57.29036847,"2025-04-04",2,Role functioning
+460,14,56.60126585,"2025-04-04",2,Role functioning
+461,16,66.45174275,"2025-04-04",2,Role functioning
+462,17,NA,"2025-04-04",2,Role functioning
+463,19,59.54205106,"2025-04-04",2,Role functioning
+464,20,43.45423428,"2025-04-04",2,Role functioning
+465,12,68.33334708,"2025-05-05",2,Role functioning
+466,13,57.86388119,"2025-05-05",2,Role functioning
+467,15,74.6203467,"2025-05-05",2,Role functioning
+468,16,70.0080869,"2025-05-05",2,Role functioning
+469,18,NA,"2025-05-05",2,Role functioning
+470,19,62.03254678,"2025-05-05",2,Role functioning
+471,11,56.65596581,"2025-06-06",2,Role functioning
+472,12,60.05187381,"2025-06-06",2,Role functioning
+473,14,49.14312409,"2025-06-06",2,Role functioning
+474,15,63.47790847,"2025-06-06",2,Role functioning
+475,17,81.44827853,"2025-06-06",2,Role functioning
+476,18,65.02090012,"2025-06-06",2,Role functioning
+477,20,40.76660194,"2025-06-06",2,Role functioning
+478,11,54.03268878,"2025-07-07",2,Role functioning
+479,13,49.52390058,"2025-07-07",2,Role functioning
+480,14,55.49887427,"2025-07-07",2,Role functioning
+481,16,66.75370174,"2025-07-07",2,Role functioning
+482,17,77.60834567,"2025-07-07",2,Role functioning
+483,19,54.55384877,"2025-07-07",2,Role functioning
+484,20,43.15610656,"2025-07-07",2,Role functioning
+485,12,68.92861764,"2025-08-08",2,Role functioning
+486,13,63.27575294,"2025-08-08",2,Role functioning
+487,15,72.24435962,"2025-08-08",2,Role functioning
+488,16,81.64413697,"2025-08-08",2,Role functioning
+489,18,67.62641294,"2025-08-08",2,Role functioning
+490,19,NA,"2025-08-08",2,Role functioning
+491,21,78.22389586,"2025-02-02",3,Role functioning
+492,22,46.73570898,"2025-02-02",3,Role functioning
+493,23,NA,"2025-02-02",3,Role functioning
+494,24,60.17135629,"2025-02-02",3,Role functioning
+495,25,52.3637971,"2025-02-02",3,Role functioning
+496,26,16.085875,"2025-02-02",3,Role functioning
+497,27,67.98083689,"2025-02-02",3,Role functioning
+498,28,45.01747169,"2025-02-02",3,Role functioning
+499,29,42.60718394,"2025-02-02",3,Role functioning
+500,30,85.90458343,"2025-02-02",3,Role functioning
+501,21,75.4698841,"2025-03-03",3,Role functioning
+502,23,19.33986843,"2025-03-03",3,Role functioning
+503,24,59.72474371,"2025-03-03",3,Role functioning
+504,26,13.0740731,"2025-03-03",3,Role functioning
+505,27,68.48025234,"2025-03-03",3,Role functioning
+506,29,42.63220491,"2025-03-03",3,Role functioning
+507,30,85.57252921,"2025-03-03",3,Role functioning
+508,22,46.57105507,"2025-04-04",3,Role functioning
+509,23,NA,"2025-04-04",3,Role functioning
+510,25,50.29631998,"2025-04-04",3,Role functioning
+511,26,14.21953422,"2025-04-04",3,Role functioning
+512,28,45.55275013,"2025-04-04",3,Role functioning
+513,29,41.43691619,"2025-04-04",3,Role functioning
+514,21,81.21787878,"2025-05-05",3,Role functioning
+515,22,49.86946879,"2025-05-05",3,Role functioning
+516,24,67.09983451,"2025-05-05",3,Role functioning
+517,25,54.94517376,"2025-05-05",3,Role functioning
+518,27,72.49863414,"2025-05-05",3,Role functioning
+519,28,49.04074286,"2025-05-05",3,Role functioning
+520,30,91.72408659,"2025-05-05",3,Role functioning
+521,21,NA,"2025-06-06",3,Role functioning
+522,23,18.10568527,"2025-06-06",3,Role functioning
+523,24,58.28396924,"2025-06-06",3,Role functioning
+524,26,9.699590286,"2025-06-06",3,Role functioning
+525,27,65.44005397,"2025-06-06",3,Role functioning
+526,29,39.25813009,"2025-06-06",3,Role functioning
+527,30,86.02708328,"2025-06-06",3,Role functioning
+528,22,37.27262162,"2025-07-07",3,Role functioning
+529,23,12.19348754,"2025-07-07",3,Role functioning
+530,25,42.43415971,"2025-07-07",3,Role functioning
+531,26,9.764318903,"2025-07-07",3,Role functioning
+532,28,40.21487678,"2025-07-07",3,Role functioning
+533,29,39.80305264,"2025-07-07",3,Role functioning
+534,21,82.49800486,"2025-08-08",3,Role functioning
+535,22,54.03288391,"2025-08-08",3,Role functioning
+536,24,68.50320579,"2025-08-08",3,Role functioning
+537,25,60.16518451,"2025-08-08",3,Role functioning
+538,27,70.07337922,"2025-08-08",3,Role functioning
+539,28,60.04543228,"2025-08-08",3,Role functioning
+540,30,92.05540464,"2025-08-08",3,Role functioning
+541,1,31.96083214,"2025-01-01",1,Emotional functioning
+542,2,85.87382107,"2025-01-01",1,Emotional functioning
+543,3,15.6481915,"2025-01-01",1,Emotional functioning
+544,4,56.96021279,"2025-01-01",1,Emotional functioning
+545,5,82.26515432,"2025-01-01",1,Emotional functioning
+546,6,23.12728625,"2025-01-01",1,Emotional functioning
+547,7,47.31541338,"2025-01-01",1,Emotional functioning
+548,8,60.52408714,"2025-01-01",1,Emotional functioning
+549,9,76.08853066,"2025-01-01",1,Emotional functioning
+550,10,57.04392322,"2025-01-01",1,Emotional functioning
+551,11,37.50100729,"2025-01-01",2,Emotional functioning
+552,12,NA,"2025-01-01",2,Emotional functioning
+553,13,52.9491805,"2025-01-01",2,Emotional functioning
+554,14,77.75008095,"2025-01-01",2,Emotional functioning
+555,15,54.31292386,"2025-01-01",2,Emotional functioning
+556,16,39.15296797,"2025-01-01",2,Emotional functioning
+557,17,66.9698532,"2025-01-01",2,Emotional functioning
+558,18,86.07177473,"2025-01-01",2,Emotional functioning
+559,19,77.66170767,"2025-01-01",2,Emotional functioning
+560,20,75.96953192,"2025-01-01",2,Emotional functioning
+561,21,18.2998218,"2025-01-01",3,Emotional functioning
+562,22,62.3197825,"2025-01-01",3,Emotional functioning
+563,23,44.12705363,"2025-01-01",3,Emotional functioning
+564,24,52.99797554,"2025-01-01",3,Emotional functioning
+565,25,73.40713039,"2025-01-01",3,Emotional functioning
+566,26,25.96101461,"2025-01-01",3,Emotional functioning
+567,27,86.23450541,"2025-01-01",3,Emotional functioning
+568,28,71.05145055,"2025-01-01",3,Emotional functioning
+569,29,89.48453018,"2025-01-01",3,Emotional functioning
+570,30,91.13250229,"2025-01-01",3,Emotional functioning
+571,1,29.03503632,"2025-02-02",1,Emotional functioning
+572,2,80.40816519,"2025-02-02",1,Emotional functioning
+573,3,8.087145626,"2025-02-02",1,Emotional functioning
+574,4,48.73365728,"2025-02-02",1,Emotional functioning
+575,5,85.06659691,"2025-02-02",1,Emotional functioning
+576,6,16.93463704,"2025-02-02",1,Emotional functioning
+577,7,48.87495444,"2025-02-02",1,Emotional functioning
+578,8,64.13288039,"2025-02-02",1,Emotional functioning
+579,9,80.03595708,"2025-02-02",1,Emotional functioning
+580,10,54.63664626,"2025-02-02",1,Emotional functioning
+581,2,NA,"2025-03-03",1,Emotional functioning
+582,3,7.771933442,"2025-03-03",1,Emotional functioning
+583,5,83.29663832,"2025-03-03",1,Emotional functioning
+584,6,13.88713505,"2025-03-03",1,Emotional functioning
+585,8,63.61152848,"2025-03-03",1,Emotional functioning
+586,9,77.79934996,"2025-03-03",1,Emotional functioning
+587,1,29.21829807,"2025-04-04",1,Emotional functioning
+588,2,77.15723647,"2025-04-04",1,Emotional functioning
+589,4,46.7065059,"2025-04-04",1,Emotional functioning
+590,5,84.20719078,"2025-04-04",1,Emotional functioning
+591,7,48.31816975,"2025-04-04",1,Emotional functioning
+592,8,64.81583847,"2025-04-04",1,Emotional functioning
+593,10,53.09033502,"2025-04-04",1,Emotional functioning
+594,1,34.15299338,"2025-05-05",1,Emotional functioning
+595,3,12.43792561,"2025-05-05",1,Emotional functioning
+596,4,55.18649411,"2025-05-05",1,Emotional functioning
+597,6,20.12890288,"2025-05-05",1,Emotional functioning
+598,7,53.16668789,"2025-05-05",1,Emotional functioning
+599,9,82.39718431,"2025-05-05",1,Emotional functioning
+600,10,58.83232589,"2025-05-05",1,Emotional functioning
+601,2,75.15146416,"2025-06-06",1,Emotional functioning
+602,3,3.31518781,"2025-06-06",1,Emotional functioning
+603,5,80.05549443,"2025-06-06",1,Emotional functioning
+604,6,10.11838235,"2025-06-06",1,Emotional functioning
+605,8,60.71522151,"2025-06-06",1,Emotional functioning
+606,9,75.77026009,"2025-06-06",1,Emotional functioning
+607,1,20.01862631,"2025-07-07",1,Emotional functioning
+608,2,72.72021127,"2025-07-07",1,Emotional functioning
+609,4,40.17557889,"2025-07-07",1,Emotional functioning
+610,5,74.54043829,"2025-07-07",1,Emotional functioning
+611,7,41.89259308,"2025-07-07",1,Emotional functioning
+612,8,54.80776906,"2025-07-07",1,Emotional functioning
+613,10,50.02745381,"2025-07-07",1,Emotional functioning
+614,1,33.23793949,"2025-08-08",1,Emotional functioning
+615,3,11.64469659,"2025-08-08",1,Emotional functioning
+616,4,56.8570516,"2025-08-08",1,Emotional functioning
+617,6,22.47904755,"2025-08-08",1,Emotional functioning
+618,7,55.01112878,"2025-08-08",1,Emotional functioning
+619,9,84.14170849,"2025-08-08",1,Emotional functioning
+620,10,54.20612298,"2025-08-08",1,Emotional functioning
+621,11,27.41521392,"2025-02-02",2,Emotional functioning
+622,12,57.90778498,"2025-02-02",2,Emotional functioning
+623,13,45.65017307,"2025-02-02",2,Emotional functioning
+624,14,68.74857598,"2025-02-02",2,Emotional functioning
+625,15,48.23524869,"2025-02-02",2,Emotional functioning
+626,16,28.81833949,"2025-02-02",2,Emotional functioning
+627,17,63.14315629,"2025-02-02",2,Emotional functioning
+628,18,81.71680024,"2025-02-02",2,Emotional functioning
+629,19,75.58300603,"2025-02-02",2,Emotional functioning
+630,20,80.09163584,"2025-02-02",2,Emotional functioning
+631,11,25.71035514,"2025-03-03",2,Emotional functioning
+632,12,NA,"2025-03-03",2,Emotional functioning
+633,14,68.11774355,"2025-03-03",2,Emotional functioning
+634,15,46.07704945,"2025-03-03",2,Emotional functioning
+635,17,61.01401765,"2025-03-03",2,Emotional functioning
+636,18,78.5900886,"2025-03-03",2,Emotional functioning
+637,20,78.02894172,"2025-03-03",2,Emotional functioning
+638,11,25.69648658,"2025-04-04",2,Emotional functioning
+639,13,NA,"2025-04-04",2,Emotional functioning
+640,14,70.70678066,"2025-04-04",2,Emotional functioning
+641,16,27.03406683,"2025-04-04",2,Emotional functioning
+642,17,63.72041562,"2025-04-04",2,Emotional functioning
+643,19,NA,"2025-04-04",2,Emotional functioning
+644,20,77.86853744,"2025-04-04",2,Emotional functioning
+645,12,66.34842447,"2025-05-05",2,Emotional functioning
+646,13,52.08687874,"2025-05-05",2,Emotional functioning
+647,15,53.26658977,"2025-05-05",2,Emotional functioning
+648,16,34.49520527,"2025-05-05",2,Emotional functioning
+649,18,87.91122452,"2025-05-05",2,Emotional functioning
+650,19,NA,"2025-05-05",2,Emotional functioning
+651,11,22.46199883,"2025-06-06",2,Emotional functioning
+652,12,53.95306835,"2025-06-06",2,Emotional functioning
+653,14,66.78092624,"2025-06-06",2,Emotional functioning
+654,15,45.0111592,"2025-06-06",2,Emotional functioning
+655,17,57.69947902,"2025-06-06",2,Emotional functioning
+656,18,78.33762472,"2025-06-06",2,Emotional functioning
+657,20,76.21914007,"2025-06-06",2,Emotional functioning
+658,11,18.89511351,"2025-07-07",2,Emotional functioning
+659,13,38.70951446,"2025-07-07",2,Emotional functioning
+660,14,58.09823744,"2025-07-07",2,Emotional functioning
+661,16,22.93314658,"2025-07-07",2,Emotional functioning
+662,17,50.76114834,"2025-07-07",2,Emotional functioning
+663,19,67.65357275,"2025-07-07",2,Emotional functioning
+664,20,70.7708101,"2025-07-07",2,Emotional functioning
+665,12,69.4431132,"2025-08-08",2,Emotional functioning
+666,13,NA,"2025-08-08",2,Emotional functioning
+667,15,54.21261516,"2025-08-08",2,Emotional functioning
+668,16,36.8281492,"2025-08-08",2,Emotional functioning
+669,18,88.74102534,"2025-08-08",2,Emotional functioning
+670,19,77.01743473,"2025-08-08",2,Emotional functioning
+671,21,NA,"2025-02-02",3,Emotional functioning
+672,22,47.12982147,"2025-02-02",3,Emotional functioning
+673,23,30.90846436,"2025-02-02",3,Emotional functioning
+674,24,32.45618083,"2025-02-02",3,Emotional functioning
+675,25,61.28217413,"2025-02-02",3,Emotional functioning
+676,26,11.2569302,"2025-02-02",3,Emotional functioning
+677,27,75.70709459,"2025-02-02",3,Emotional functioning
+678,28,58.16822506,"2025-02-02",3,Emotional functioning
+679,29,70.67520699,"2025-02-02",3,Emotional functioning
+680,30,78.84477889,"2025-02-02",3,Emotional functioning
+681,21,4.355159532,"2025-03-03",3,Emotional functioning
+682,23,28.65102164,"2025-03-03",3,Emotional functioning
+683,24,29.95659572,"2025-03-03",3,Emotional functioning
+684,26,9.086162598,"2025-03-03",3,Emotional functioning
+685,27,73.56881102,"2025-03-03",3,Emotional functioning
+686,29,68.47314357,"2025-03-03",3,Emotional functioning
+687,30,76.75843039,"2025-03-03",3,Emotional functioning
+688,22,46.4474105,"2025-04-04",3,Emotional functioning
+689,23,29.41612664,"2025-04-04",3,Emotional functioning
+690,25,61.37733135,"2025-04-04",3,Emotional functioning
+691,26,12.48184014,"2025-04-04",3,Emotional functioning
+692,28,57.31315638,"2025-04-04",3,Emotional functioning
+693,29,69.38734953,"2025-04-04",3,Emotional functioning
+694,21,11.23946857,"2025-05-05",3,Emotional functioning
+695,22,52.11006208,"2025-05-05",3,Emotional functioning
+696,24,37.90909246,"2025-05-05",3,Emotional functioning
+697,25,67.10595658,"2025-05-05",3,Emotional functioning
+698,27,81.77242211,"2025-05-05",3,Emotional functioning
+699,28,62.28469917,"2025-05-05",3,Emotional functioning
+700,30,84.41617461,"2025-05-05",3,Emotional functioning
+701,21,1.00837194,"2025-06-06",3,Emotional functioning
+702,23,26.22167326,"2025-06-06",3,Emotional functioning
+703,24,26.99025302,"2025-06-06",3,Emotional functioning
+704,26,8.087201762,"2025-06-06",3,Emotional functioning
+705,27,69.31119819,"2025-06-06",3,Emotional functioning
+706,29,65.93059176,"2025-06-06",3,Emotional functioning
+707,30,74.05640853,"2025-06-06",3,Emotional functioning
+708,22,36.47921782,"2025-07-07",3,Emotional functioning
+709,23,22.86792326,"2025-07-07",3,Emotional functioning
+710,25,52.21218707,"2025-07-07",3,Emotional functioning
+711,26,6.683313532,"2025-07-07",3,Emotional functioning
+712,28,50.05058774,"2025-07-07",3,Emotional functioning
+713,29,60.51923108,"2025-07-07",3,Emotional functioning
+714,21,11.84507493,"2025-08-08",3,Emotional functioning
+715,22,NA,"2025-08-08",3,Emotional functioning
+716,24,40.96620209,"2025-08-08",3,Emotional functioning
+717,25,67.68918364,"2025-08-08",3,Emotional functioning
+718,27,84.6119171,"2025-08-08",3,Emotional functioning
+719,28,67.28406916,"2025-08-08",3,Emotional functioning
+720,30,83.43113239,"2025-08-08",3,Emotional functioning
+721,1,92.51870908,"2025-01-01",1,Cognative functioning
+722,2,58.60826753,"2025-01-01",1,Cognative functioning
+723,3,88.30077536,"2025-01-01",1,Cognative functioning
+724,4,37.74883701,"2025-01-01",1,Cognative functioning
+725,5,44.22287307,"2025-01-01",1,Cognative functioning
+726,6,72.65446945,"2025-01-01",1,Cognative functioning
+727,7,65.90226416,"2025-01-01",1,Cognative functioning
+728,8,29.42949607,"2025-01-01",1,Cognative functioning
+729,9,87.77543435,"2025-01-01",1,Cognative functioning
+730,10,44.45790455,"2025-01-01",1,Cognative functioning
+731,11,75.78890414,"2025-01-01",2,Cognative functioning
+732,12,NA,"2025-01-01",2,Cognative functioning
+733,13,68.30828526,"2025-01-01",2,Cognative functioning
+734,14,83.31032179,"2025-01-01",2,Cognative functioning
+735,15,91.34997938,"2025-01-01",2,Cognative functioning
+736,16,50.51882302,"2025-01-01",2,Cognative functioning
+737,17,28.66761281,"2025-01-01",2,Cognative functioning
+738,18,73.07076452,"2025-01-01",2,Cognative functioning
+739,19,96.64029575,"2025-01-01",2,Cognative functioning
+740,20,37.26635993,"2025-01-01",2,Cognative functioning
+741,21,90.64178396,"2025-01-01",3,Cognative functioning
+742,22,63.27238975,"2025-01-01",3,Cognative functioning
+743,23,63.92862518,"2025-01-01",3,Cognative functioning
+744,24,57.31277965,"2025-01-01",3,Cognative functioning
+745,25,91.54008749,"2025-01-01",3,Cognative functioning
+746,26,42.25583356,"2025-01-01",3,Cognative functioning
+747,27,87.48391649,"2025-01-01",3,Cognative functioning
+748,28,61.29064161,"2025-01-01",3,Cognative functioning
+749,29,43.15347654,"2025-01-01",3,Cognative functioning
+750,30,80.94917517,"2025-01-01",3,Cognative functioning
+751,1,91.64316598,"2025-02-02",1,Cognative functioning
+752,2,60.24219717,"2025-02-02",1,Cognative functioning
+753,3,96.92413008,"2025-02-02",1,Cognative functioning
+754,4,37.69386539,"2025-02-02",1,Cognative functioning
+755,5,45.42596395,"2025-02-02",1,Cognative functioning
+756,6,71.89691816,"2025-02-02",1,Cognative functioning
+757,7,77.24393842,"2025-02-02",1,Cognative functioning
+758,8,36.51009671,"2025-02-02",1,Cognative functioning
+759,9,85.0528873,"2025-02-02",1,Cognative functioning
+760,10,44.05035895,"2025-02-02",1,Cognative functioning
+761,2,58.81446973,"2025-03-03",1,Cognative functioning
+762,3,94.37182187,"2025-03-03",1,Cognative functioning
+763,5,46.20118977,"2025-03-03",1,Cognative functioning
+764,6,NA,"2025-03-03",1,Cognative functioning
+765,8,35.29535837,"2025-03-03",1,Cognative functioning
+766,9,85.67670877,"2025-03-03",1,Cognative functioning
+767,1,90.29403149,"2025-04-04",1,Cognative functioning
+768,2,59.80007162,"2025-04-04",1,Cognative functioning
+769,4,37.98085654,"2025-04-04",1,Cognative functioning
+770,5,46.22167676,"2025-04-04",1,Cognative functioning
+771,7,75.17155207,"2025-04-04",1,Cognative functioning
+772,8,NA,"2025-04-04",1,Cognative functioning
+773,10,NA,"2025-04-04",1,Cognative functioning
+774,1,94.67436944,"2025-05-05",1,Cognative functioning
+775,3,97.90798342,"2025-05-05",1,Cognative functioning
+776,4,37.62602669,"2025-05-05",1,Cognative functioning
+777,6,74.0690735,"2025-05-05",1,Cognative functioning
+778,7,78.31442992,"2025-05-05",1,Cognative functioning
+779,9,85.65601762,"2025-05-05",1,Cognative functioning
+780,10,43.21749215,"2025-05-05",1,Cognative functioning
+781,2,62.01333479,"2025-06-06",1,Cognative functioning
+782,3,94.4889492,"2025-06-06",1,Cognative functioning
+783,5,41.30578012,"2025-06-06",1,Cognative functioning
+784,6,70.16038326,"2025-06-06",1,Cognative functioning
+785,8,32.37030452,"2025-06-06",1,Cognative functioning
+786,9,89.36932607,"2025-06-06",1,Cognative functioning
+787,1,85.94246227,"2025-07-07",1,Cognative functioning
+788,2,61.43251426,"2025-07-07",1,Cognative functioning
+789,4,NA,"2025-07-07",1,Cognative functioning
+790,5,45.61388093,"2025-07-07",1,Cognative functioning
+791,7,76.55529847,"2025-07-07",1,Cognative functioning
+792,8,31.37234875,"2025-07-07",1,Cognative functioning
+793,10,39.15948082,"2025-07-07",1,Cognative functioning
+794,1,92.56504468,"2025-08-08",1,Cognative functioning
+795,3,99.02282489,"2025-08-08",1,Cognative functioning
+796,4,40.09350205,"2025-08-08",1,Cognative functioning
+797,6,75.14954318,"2025-08-08",1,Cognative functioning
+798,7,81.70446701,"2025-08-08",1,Cognative functioning
+799,9,85.73083879,"2025-08-08",1,Cognative functioning
+800,10,47.2250482,"2025-08-08",1,Cognative functioning
+801,11,70.56127894,"2025-02-02",2,Cognative functioning
+802,12,72.32883966,"2025-02-02",2,Cognative functioning
+803,13,59.40378006,"2025-02-02",2,Cognative functioning
+804,14,78.68974408,"2025-02-02",2,Cognative functioning
+805,15,82.47620207,"2025-02-02",2,Cognative functioning
+806,16,NA,"2025-02-02",2,Cognative functioning
+807,17,27.90236017,"2025-02-02",2,Cognative functioning
+808,18,71.61592497,"2025-02-02",2,Cognative functioning
+809,19,88.97807408,"2025-02-02",2,Cognative functioning
+810,20,36.34331885,"2025-02-02",2,Cognative functioning
+811,11,69.13461591,"2025-03-03",2,Cognative functioning
+812,12,72.74535938,"2025-03-03",2,Cognative functioning
+813,14,78.31161958,"2025-03-03",2,Cognative functioning
+814,15,82.27131619,"2025-03-03",2,Cognative functioning
+815,17,26.30767925,"2025-03-03",2,Cognative functioning
+816,18,70.54336294,"2025-03-03",2,Cognative functioning
+817,20,38.98486878,"2025-03-03",2,Cognative functioning
+818,11,69.88330425,"2025-04-04",2,Cognative functioning
+819,13,58.39012593,"2025-04-04",2,Cognative functioning
+820,14,78.81750904,"2025-04-04",2,Cognative functioning
+821,16,NA,"2025-04-04",2,Cognative functioning
+822,17,26.6333227,"2025-04-04",2,Cognative functioning
+823,19,88.04471456,"2025-04-04",2,Cognative functioning
+824,20,38.16494446,"2025-04-04",2,Cognative functioning
+825,12,74.6413854,"2025-05-05",2,Cognative functioning
+826,13,59.77446386,"2025-05-05",2,Cognative functioning
+827,15,84.37946492,"2025-05-05",2,Cognative functioning
+828,16,38.54251238,"2025-05-05",2,Cognative functioning
+829,18,NA,"2025-05-05",2,Cognative functioning
+830,19,91.71843207,"2025-05-05",2,Cognative functioning
+831,11,66.3768777,"2025-06-06",2,Cognative functioning
+832,12,72.92377171,"2025-06-06",2,Cognative functioning
+833,14,76.40952656,"2025-06-06",2,Cognative functioning
+834,15,80.92026347,"2025-06-06",2,Cognative functioning
+835,17,27.01326135,"2025-06-06",2,Cognative functioning
+836,18,67.19917394,"2025-06-06",2,Cognative functioning
+837,20,38.07223317,"2025-06-06",2,Cognative functioning
+838,11,69.0535996,"2025-07-07",2,Cognative functioning
+839,13,58.76413016,"2025-07-07",2,Cognative functioning
+840,14,83.3091498,"2025-07-07",2,Cognative functioning
+841,16,42.4808601,"2025-07-07",2,Cognative functioning
+842,17,21.31610495,"2025-07-07",2,Cognative functioning
+843,19,NA,"2025-07-07",2,Cognative functioning
+844,20,32.51757628,"2025-07-07",2,Cognative functioning
+845,12,76.99238734,"2025-08-08",2,Cognative functioning
+846,13,65.870861,"2025-08-08",2,Cognative functioning
+847,15,84.14503305,"2025-08-08",2,Cognative functioning
+848,16,44.61703633,"2025-08-08",2,Cognative functioning
+849,18,74.14642279,"2025-08-08",2,Cognative functioning
+850,19,90.3062145,"2025-08-08",2,Cognative functioning
+851,21,79.45812668,"2025-02-02",3,Cognative functioning
+852,22,51.28780273,"2025-02-02",3,Cognative functioning
+853,23,48.25727646,"2025-02-02",3,Cognative functioning
+854,24,47.86595066,"2025-02-02",3,Cognative functioning
+855,25,NA,"2025-02-02",3,Cognative functioning
+856,26,32.32522865,"2025-02-02",3,Cognative functioning
+857,27,79.63478581,"2025-02-02",3,Cognative functioning
+858,28,56.12719748,"2025-02-02",3,Cognative functioning
+859,29,34.61034899,"2025-02-02",3,Cognative functioning
+860,30,76.86777396,"2025-02-02",3,Cognative functioning
+861,21,79.30891165,"2025-03-03",3,Cognative functioning
+862,23,NA,"2025-03-03",3,Cognative functioning
+863,24,47.01704426,"2025-03-03",3,Cognative functioning
+864,26,31.74973201,"2025-03-03",3,Cognative functioning
+865,27,78.98612673,"2025-03-03",3,Cognative functioning
+866,29,NA,"2025-03-03",3,Cognative functioning
+867,30,73.40757826,"2025-03-03",3,Cognative functioning
+868,22,51.25743101,"2025-04-04",3,Cognative functioning
+869,23,48.01289329,"2025-04-04",3,Cognative functioning
+870,25,79.7980621,"2025-04-04",3,Cognative functioning
+871,26,32.12482368,"2025-04-04",3,Cognative functioning
+872,28,54.54702809,"2025-04-04",3,Cognative functioning
+873,29,34.54806362,"2025-04-04",3,Cognative functioning
+874,21,81.39324641,"2025-05-05",3,Cognative functioning
+875,22,53.77695687,"2025-05-05",3,Cognative functioning
+876,24,49.06954343,"2025-05-05",3,Cognative functioning
+877,25,80.83396323,"2025-05-05",3,Cognative functioning
+878,27,82.32478465,"2025-05-05",3,Cognative functioning
+879,28,57.39201964,"2025-05-05",3,Cognative functioning
+880,30,78.58330305,"2025-05-05",3,Cognative functioning
+881,21,77.26220886,"2025-06-06",3,Cognative functioning
+882,23,50.0561228,"2025-06-06",3,Cognative functioning
+883,24,45.42191388,"2025-06-06",3,Cognative functioning
+884,26,NA,"2025-06-06",3,Cognative functioning
+885,27,80.48952185,"2025-06-06",3,Cognative functioning
+886,29,33.56604116,"2025-06-06",3,Cognative functioning
+887,30,73.40171505,"2025-06-06",3,Cognative functioning
+888,22,45.60686807,"2025-07-07",3,Cognative functioning
+889,23,48.44538515,"2025-07-07",3,Cognative functioning
+890,25,75.25611012,"2025-07-07",3,Cognative functioning
+891,26,31.85552961,"2025-07-07",3,Cognative functioning
+892,28,54.50972033,"2025-07-07",3,Cognative functioning
+893,29,33.13032393,"2025-07-07",3,Cognative functioning
+894,21,81.74468703,"2025-08-08",3,Cognative functioning
+895,22,57.33986405,"2025-08-08",3,Cognative functioning
+896,24,49.75046193,"2025-08-08",3,Cognative functioning
+897,25,NA,"2025-08-08",3,Cognative functioning
+898,27,80.51834685,"2025-08-08",3,Cognative functioning
+899,28,55.23172078,"2025-08-08",3,Cognative functioning
+900,30,78.22135988,"2025-08-08",3,Cognative functioning
+901,1,NA,"2025-01-01",1,Social functioning
+902,2,92.47699957,"2025-01-01",1,Social functioning
+903,3,64.92932446,"2025-01-01",1,Social functioning
+904,4,55.62031918,"2025-01-01",1,Social functioning
+905,5,30.13848917,"2025-01-01",1,Social functioning
+906,6,29.95509354,"2025-01-01",1,Social functioning
+907,7,65.50977831,"2025-01-01",1,Social functioning
+908,8,12.81229769,"2025-01-01",1,Social functioning
+909,9,NA,"2025-01-01",1,Social functioning
+910,10,63.83655403,"2025-01-01",1,Social functioning
+911,11,69.64681128,"2025-01-01",2,Social functioning
+912,12,58.3323075,"2025-01-01",2,Social functioning
+913,13,69.39489542,"2025-01-01",2,Social functioning
+914,14,93.43294154,"2025-01-01",2,Social functioning
+915,15,84.87870783,"2025-01-01",2,Social functioning
+916,16,18.89035936,"2025-01-01",2,Social functioning
+917,17,62.76590122,"2025-01-01",2,Social functioning
+918,18,73.63520964,"2025-01-01",2,Social functioning
+919,19,65.47952847,"2025-01-01",2,Social functioning
+920,20,79.11319804,"2025-01-01",2,Social functioning
+921,21,80.8774424,"2025-01-01",3,Social functioning
+922,22,66.72525746,"2025-01-01",3,Social functioning
+923,23,79.21540816,"2025-01-01",3,Social functioning
+924,24,24.31713771,"2025-01-01",3,Social functioning
+925,25,70.24857609,"2025-01-01",3,Social functioning
+926,26,75.42190034,"2025-01-01",3,Social functioning
+927,27,69.69604934,"2025-01-01",3,Social functioning
+928,28,35.10575411,"2025-01-01",3,Social functioning
+929,29,13.50042185,"2025-01-01",3,Social functioning
+930,30,70.02185912,"2025-01-01",3,Social functioning
+931,1,71.00235425,"2025-02-02",1,Social functioning
+932,2,87.19130644,"2025-02-02",1,Social functioning
+933,3,NA,"2025-02-02",1,Social functioning
+934,4,NA,"2025-02-02",1,Social functioning
+935,5,28.38904247,"2025-02-02",1,Social functioning
+936,6,28.52261544,"2025-02-02",1,Social functioning
+937,7,68.62950197,"2025-02-02",1,Social functioning
+938,8,8.369295352,"2025-02-02",1,Social functioning
+939,9,37.85235427,"2025-02-02",1,Social functioning
+940,10,66.51887746,"2025-02-02",1,Social functioning
+941,2,86.76512934,"2025-03-03",1,Social functioning
+942,3,64.33844043,"2025-03-03",1,Social functioning
+943,5,28.77618129,"2025-03-03",1,Social functioning
+944,6,27.91170214,"2025-03-03",1,Social functioning
+945,8,9.290376952,"2025-03-03",1,Social functioning
+946,9,37.2834307,"2025-03-03",1,Social functioning
+947,1,70.60451927,"2025-04-04",1,Social functioning
+948,2,86.94709662,"2025-04-04",1,Social functioning
+949,4,64.41576544,"2025-04-04",1,Social functioning
+950,5,27.00163193,"2025-04-04",1,Social functioning
+951,7,68.30481748,"2025-04-04",1,Social functioning
+952,8,7.029188554,"2025-04-04",1,Social functioning
+953,10,65.82359916,"2025-04-04",1,Social functioning
+954,1,70.24012855,"2025-05-05",1,Social functioning
+955,3,66.4445485,"2025-05-05",1,Social functioning
+956,4,62.78651002,"2025-05-05",1,Social functioning
+957,6,32.37422827,"2025-05-05",1,Social functioning
+958,7,67.59942232,"2025-05-05",1,Social functioning
+959,9,38.86161527,"2025-05-05",1,Social functioning
+960,10,65.57224846,"2025-05-05",1,Social functioning
+961,2,88.31431264,"2025-06-06",1,Social functioning
+962,3,64.29697349,"2025-06-06",1,Social functioning
+963,5,24.57929255,"2025-06-06",1,Social functioning
+964,6,28.96042149,"2025-06-06",1,Social functioning
+965,8,NA,"2025-06-06",1,Social functioning
+966,9,40.45347001,"2025-06-06",1,Social functioning
+967,1,NA,"2025-07-07",1,Social functioning
+968,2,89.84494217,"2025-07-07",1,Social functioning
+969,4,NA,"2025-07-07",1,Social functioning
+970,5,23.8953755,"2025-07-07",1,Social functioning
+971,7,69.02674904,"2025-07-07",1,Social functioning
+972,8,4.812575338,"2025-07-07",1,Social functioning
+973,10,65.34469228,"2025-07-07",1,Social functioning
+974,1,70.63016225,"2025-08-08",1,Social functioning
+975,3,65.22117302,"2025-08-08",1,Social functioning
+976,4,67.08723216,"2025-08-08",1,Social functioning
+977,6,25.40366594,"2025-08-08",1,Social functioning
+978,7,68.41308202,"2025-08-08",1,Social functioning
+979,9,38.84643112,"2025-08-08",1,Social functioning
+980,10,NA,"2025-08-08",1,Social functioning
+981,11,65.42602826,"2025-02-02",2,Social functioning
+982,12,46.70542636,"2025-02-02",2,Social functioning
+983,13,63.43823452,"2025-02-02",2,Social functioning
+984,14,99.93978605,"2025-02-02",2,Social functioning
+985,15,77.20112433,"2025-02-02",2,Social functioning
+986,16,16.45164165,"2025-02-02",2,Social functioning
+987,17,NA,"2025-02-02",2,Social functioning
+988,18,60.29608066,"2025-02-02",2,Social functioning
+989,19,63.58684562,"2025-02-02",2,Social functioning
+990,20,NA,"2025-02-02",2,Social functioning
+991,11,63.58947866,"2025-03-03",2,Social functioning
+992,12,44.61160903,"2025-03-03",2,Social functioning
+993,14,97.9972526,"2025-03-03",2,Social functioning
+994,15,77.60914681,"2025-03-03",2,Social functioning
+995,17,53.69274979,"2025-03-03",2,Social functioning
+996,18,60.69505676,"2025-03-03",2,Social functioning
+997,20,84.10266924,"2025-03-03",2,Social functioning
+998,11,66.11631438,"2025-04-04",2,Social functioning
+999,13,60.04813247,"2025-04-04",2,Social functioning
+1000,14,98.13825587,"2025-04-04",2,Social functioning
+1001,16,17.48087598,"2025-04-04",2,Social functioning
+1002,17,53.74505963,"2025-04-04",2,Social functioning
+1003,19,63.28725026,"2025-04-04",2,Social functioning
+1004,20,80.85752661,"2025-04-04",2,Social functioning
+1005,12,47.61702247,"2025-05-05",2,Social functioning
+1006,13,59.11716896,"2025-05-05",2,Social functioning
+1007,15,80.16696767,"2025-05-05",2,Social functioning
+1008,16,16.93386749,"2025-05-05",2,Social functioning
+1009,18,62.45561744,"2025-05-05",2,Social functioning
+1010,19,62.54232922,"2025-05-05",2,Social functioning
+1011,11,NA,"2025-06-06",2,Social functioning
+1012,12,45.50627803,"2025-06-06",2,Social functioning
+1013,14,96.97671755,"2025-06-06",2,Social functioning
+1014,15,77.52602722,"2025-06-06",2,Social functioning
+1015,17,54.9720093,"2025-06-06",2,Social functioning
+1016,18,59.08091332,"2025-06-06",2,Social functioning
+1017,20,78.97020774,"2025-06-06",2,Social functioning
+1018,11,62.08564532,"2025-07-07",2,Social functioning
+1019,13,57.84457945,"2025-07-07",2,Social functioning
+1020,14,91.55718382,"2025-07-07",2,Social functioning
+1021,16,17.91593102,"2025-07-07",2,Social functioning
+1022,17,49.89553026,"2025-07-07",2,Social functioning
+1023,19,69.32191309,"2025-07-07",2,Social functioning
+1024,20,72.558569,"2025-07-07",2,Social functioning
+1025,12,50.21694405,"2025-08-08",2,Social functioning
+1026,13,63.52184205,"2025-08-08",2,Social functioning
+1027,15,74.6732866,"2025-08-08",2,Social functioning
+1028,16,14.20725124,"2025-08-08",2,Social functioning
+1029,18,53.18974815,"2025-08-08",2,Social functioning
+1030,19,61.93536489,"2025-08-08",2,Social functioning
+1031,21,62.40611179,"2025-02-02",3,Social functioning
+1032,22,NA,"2025-02-02",3,Social functioning
+1033,23,70.69713547,"2025-02-02",3,Social functioning
+1034,24,12.44501098,"2025-02-02",3,Social functioning
+1035,25,NA,"2025-02-02",3,Social functioning
+1036,26,NA,"2025-02-02",3,Social functioning
+1037,27,58.3437648,"2025-02-02",3,Social functioning
+1038,28,NA,"2025-02-02",3,Social functioning
+1039,29,-0.593918984,"2025-02-02",3,Social functioning
+1040,30,65.7685718,"2025-02-02",3,Social functioning
+1041,21,62.83187741,"2025-03-03",3,Social functioning
+1042,23,70.55353097,"2025-03-03",3,Social functioning
+1043,24,12.65568624,"2025-03-03",3,Social functioning
+1044,26,59.26897337,"2025-03-03",3,Social functioning
+1045,27,57.9224803,"2025-03-03",3,Social functioning
+1046,29,-1.793404659,"2025-03-03",3,Social functioning
+1047,30,66.30587561,"2025-03-03",3,Social functioning
+1048,22,NA,"2025-04-04",3,Social functioning
+1049,23,68.05939774,"2025-04-04",3,Social functioning
+1050,25,69.73537873,"2025-04-04",3,Social functioning
+1051,26,60.54278749,"2025-04-04",3,Social functioning
+1052,28,29.01810976,"2025-04-04",3,Social functioning
+1053,29,-2.846558341,"2025-04-04",3,Social functioning
+1054,21,64.16972329,"2025-05-05",3,Social functioning
+1055,22,62.22656956,"2025-05-05",3,Social functioning
+1056,24,NA,"2025-05-05",3,Social functioning
+1057,25,66.83110479,"2025-05-05",3,Social functioning
+1058,27,61.88165851,"2025-05-05",3,Social functioning
+1059,28,27.74312046,"2025-05-05",3,Social functioning
+1060,30,67.21586246,"2025-05-05",3,Social functioning
+1061,21,59.59985022,"2025-06-06",3,Social functioning
+1062,23,68.62572269,"2025-06-06",3,Social functioning
+1063,24,12.68176768,"2025-06-06",3,Social functioning
+1064,26,62.47060925,"2025-06-06",3,Social functioning
+1065,27,56.25484632,"2025-06-06",3,Social functioning
+1066,29,-6.488378851,"2025-06-06",3,Social functioning
+1067,30,68.36506013,"2025-06-06",3,Social functioning
+1068,22,58.32612903,"2025-07-07",3,Social functioning
+1069,23,69.4947966,"2025-07-07",3,Social functioning
+1070,25,74.24072948,"2025-07-07",3,Social functioning
+1071,26,59.96229806,"2025-07-07",3,Social functioning
+1072,28,30.15174234,"2025-07-07",3,Social functioning
+1073,29,-0.240106731,"2025-07-07",3,Social functioning
+1074,21,66.19371959,"2025-08-08",3,Social functioning
+1075,22,57.83634158,"2025-08-08",3,Social functioning
+1076,24,5.65336712,"2025-08-08",3,Social functioning
+1077,25,70.08792221,"2025-08-08",3,Social functioning
+1078,27,NA,"2025-08-08",3,Social functioning
+1079,28,22.55985006,"2025-08-08",3,Social functioning
+1080,30,NA,"2025-08-08",3,Social functioning
