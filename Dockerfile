@@ -39,11 +39,11 @@ RUN apt-get clean && apt-get update --allow-insecure-repositories --allow-unauth
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
-# 8. Install additional R packages from CRAN and GitHub
+# 7. If needed, install additional R packages from CRAN and GitHub
 # RUN Rscript -e "install.packages('RPostgreSQL', repos='https://cloud.r-project.org')"
 # RUN Rscript -e "remotes::install_github('nvelden/NGLVieweR')"
 
-# 9. Expose and run the application
+# 8. Expose and run the application
 EXPOSE 3838
 CMD ["conda", "run", "--no-capture-output", "-n", "env-opt", "Rscript", "-e", "shiny::runApp('/app', port = 3838, host = '0.0.0.0')"]
 
