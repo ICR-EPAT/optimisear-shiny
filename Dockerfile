@@ -43,7 +43,12 @@ RUN apt-get clean && apt-get update --allow-insecure-repositories --allow-unauth
 # RUN Rscript -e "install.packages('RPostgreSQL', repos='https://cloud.r-project.org')"
 # RUN Rscript -e "remotes::install_github('nvelden/NGLVieweR')"
 
-# 8. Expose and run the application
+# 8. Copy necessary data
+RUN mkdir www
+COPY www ./www
+
+
+# 9. Expose and run the application
 EXPOSE 3838
 CMD ["conda", "run", "--no-capture-output", "-n", "env-opt", "Rscript", "-e", "shiny::runApp('/app', port = 3838, host = '0.0.0.0')"]
 
