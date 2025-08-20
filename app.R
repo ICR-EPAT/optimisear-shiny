@@ -97,7 +97,7 @@ ui <- div(page_navbar(
     card_body(
       p(strong("Required columns, {column name} and [input types]:")),
       p("- Patient ID, {id}, [numeric]"),
-      p("- Toxicity type, {toxicity}, [numeric or character]"),
+      p("- PRO domain, {toxicity}, [numeric or character]"),
       p("- Grade of response, {grade}, [1,2,3,4,5]"),
       p("- Dose Level, {dose}, [numeric]"),
       p("- Timepoint of current report, {timepoint},"),
@@ -1356,7 +1356,7 @@ output$graphC <- renderPlot({
     xlab("Timepoint") +
     ylab(paste0(
                 "Mean change from baseline across timepoints (with 95% CI) \n 
-                across PRO domains ",
+                in PRO domain ",
                 func_C())) +
     scale_fill_manual(name = "Threshold", values = c("palegreen1", "red"), label = c("Improvement", "Worsening")) +
     geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = 30),
@@ -1626,7 +1626,7 @@ output$graphE <- renderPlot({
     theme(plot.title = element_text(size = editE$titlesize, face = "bold"), axis.title = element_text(size = editE$axissize))
                                 }
                                 else {
-                                  g + xlab("Timepoint") + ylab(paste0("Score in category ", func_E())) +
+                                  g + xlab("Timepoint") + ylab(paste0("Score in PRO domain ", func_E())) +
     geom_segment(aes(x = 0.2, xend = 0.2, y = 0, yend = 100),
                  colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
                                                                 length = unit(0.1, "inches"))) + ylim(c(0, 100)) +
