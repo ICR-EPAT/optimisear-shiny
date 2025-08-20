@@ -18,7 +18,10 @@ conda create -n optimisear-shiny -c conda-forge \
   r-ggh4x \
   r-tidyr \
   r-gt \
-  r-svglite
+  r-svglite \
+  r-bsicons \
+  r-gridExtra \
+  r-survminer
 ```  
 
 **Activate the environment**  

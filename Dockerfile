@@ -43,8 +43,10 @@ COPY app.R .
 # 5. Install R dependencies
 RUN Rscript -e "install.packages( \
   c('shiny','ggplot2','shinydashboard','DT','magrittr','dplyr', \
-    'ggsurvfit','ggh4x','tidyr','gt','svglite','bslib'), \
+    'ggsurvfit','ggh4x','tidyr','gt','svglite','bslib', \
+    'bsicons','gridExtra','survminer'), \
   repos='https://cloud.r-project.org')"
+
   
 # 6. Run the application
 EXPOSE 3838
