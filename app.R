@@ -1356,7 +1356,7 @@ output$graphC <- renderPlot({
     xlab("Timepoint") +
     ylab(paste0(
                 "Mean change from baseline across timepoints (with 95% CI) \n 
-                for PRO domain ",
+                across PRO domains ",
                 func_C())) +
     scale_fill_manual(name = "Threshold", values = c("palegreen1", "red"), label = c("Improvement", "Worsening")) +
     geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = 30),
@@ -2018,7 +2018,7 @@ output$graphG <- renderPlot({
   ymax = c(25, -10),
   Threshold = factor(c("Improvement", "Worsening"))
 )
- formatterG <- function(end = end_t) {paste0("Functioning ", func_G())}
+ formatterG <- function(end = end_t) {paste0("PRO domain ", func_G())}
                                   g + ylim(c(-25, 25)) +
   scale_fill_manual(
     name = "Threshold",
@@ -2028,7 +2028,7 @@ output$graphG <- renderPlot({
             aes(xmin = -Inf, xmax = Inf, ymin = ymin, ymax = ymax, fill = Threshold),
             alpha = 0.3, inherit.aes = FALSE) +
     labs(
-    y = paste0("Mean change from baseline to timepoint ", final_tG(), "(with 95% CI) \n for EORTC QLQ-C30 functional domains"),
+    y = paste0("Mean change from baseline to timepoint ", final_tG(), "(with 95% CI) \n for PRO domain"),
     x = paste0("Dose (N= ", no_patient, ")")) +
   facet_wrap(~ as.factor(functioning), nrow = 1,labeller = as_labeller(formatterG), scales = "free_x") +
   scale_x_discrete(expand = expansion(add = c(1, 1))) +
