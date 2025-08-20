@@ -1,0 +1,22 @@
+name: env-opt
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+  - r
+dependencies:
+  - r-base=4.3.2
+  - r-dplyr
+  - r-dt
+  - r-ggh4x
+  - r-ggplot2
+  - r-ggsurvfit
+  - r-gt
+  - r-magrittr
+  - r-shiny
+  - r-shinydashboard
+  - r-svglite
+  - r-tidyr
+  - r-bsicons
+  - r-gridExtra
+  - r-survminer

@@ -9,44 +9,49 @@
 ##################################################################
 
 # 1. Base image
-FROM rocker/r-ver:4.3.2
+FROM continuumio/miniconda3
 
-# 2. System updates and installations
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    libcurl4-gnutls-dev \
-    libssl-dev \
-    libssh2-1-dev \
-    libxml2-dev \
-    libcairo2-dev \
-    libxt-dev \
-    libfontconfig1-dev \
-    libfreetype6-dev \
-    libpng-dev \
-    libtiff5-dev \
-    libjpeg-dev \
-    libharfbuzz-dev \
-    libfribidi-dev \
-    fonts-dejavu-core \
-    apt-file \
-    && rm -rf /var/lib/apt/lists/*
-
-# 3. Set the working directory
+# 2. Set the working directory
 WORKDIR /app
 
-# 4. Copy relevant app files
-# Copy relevant app files
-RUN mkdir www
-COPY www ./www
+# 3. Add and create the conda environment
+ADD local.yml .
+RUN conda env create -f local.yml
+
+# 5. Copy relevant app files
 COPY app.R .
 
-# 5. Install R dependencies
-RUN Rscript -e "install.packages( \
-  c('shiny','ggplot2','shinydashboard','DT','magrittr','dplyr', \
-    'ggsurvfit','ggh4x','tidyr','gt','svglite','bslib'), \
-  repos='https://cloud.r-project.org')"
-  
-# 6. Run the application
+# 6. Use the correct environment name (match your .yml file!)
+# Assuming your environment name is "env-opt"
+SHELL ["conda", "run", "--no-capture-output", "-n", "env-opt", "/bin/bash", "-c"]
+
+RUN apt-get clean && apt-get update --allow-insecure-repositories --allow-unauthenticated \
+    && apt-get install -y --no-install-recommends \
+    build-essential \
+    libcurl4-gnutls-dev \
+    libcairo2-dev \
+    libxt-dev \
+    libssl-dev \
+    libssh2-1-dev \
+    libpq-dev \
+    libgdal-dev \
+    apt-file && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+
+# 7. If needed, install additional R packages from CRAN and GitHub
+# RUN Rscript -e "install.packages('RPostgreSQL', repos='https://cloud.r-project.org')"
+# RUN Rscript -e "remotes::install_github('nvelden/NGLVieweR')"
+
+# 8. Copy necessary data
+RUN mkdir www
+COPY www ./www
+
+
+# 9. Expose and run the application
 EXPOSE 3838
-CMD Rscript -e "shiny::runApp('/app', port = 3838, host = '0.0.0.0')"
-# Should then be visible on http://localhost:3838/
+CMD ["conda", "run", "--no-capture-output", "-n", "env-opt", "Rscript", "-e", "shiny::runApp('/app', port = 3838, host = '0.0.0.0')"]
+
+
+RUN apt-get clean && apt-get update --allow-insecure-repositories --allow-unauthenticated \
+    && apt-get install -y --no-install-recommends 
