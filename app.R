@@ -112,8 +112,8 @@ ui <- div(page_navbar(
     card_body(
        p(strong("Required columns and input types:")),
        p("- Patient ID, {id}, [numeric]"),
-       p("- Functionality characteristic, {functioning}, [numeric or character]"),
-       p("- Score in the functionality category, {score}, [numeric]"),
+       p("- PRO domain, {functioning}, [numeric or character]"),
+       p("- Score for PRO domain, {score}, [numeric]"),
        p("- Dose Level, {dose}, [numeric]"),
        p("- Timepoint of current report, {timepoint},"),
        p("[integer OR date \"YYYY-MM-DD\"]"),
@@ -302,7 +302,7 @@ ui <- div(page_navbar(
                     checkboxGroupInput("numdoseC", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
                    sliderInput("tpointC", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-                   selectInput("functioningC", label = "Functioning of interest", choices = NULL), height = 800)),
+                   selectInput("functioningC", label = "PRO domain of interest", choices = NULL), height = 800)),
                    card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadC", style = "background-color: #d9bfd9")))
           ),
           card(card_header(class = "d-inline-flex justify-content-end bg-light",
@@ -343,7 +343,7 @@ ui <- div(page_navbar(
           card(card_header("Variables", style = "background-color: #bfd9bf"), card_body(
             checkboxGroupInput("numdoseE", label = "Dosage", selected = NULL, inline = TRUE),
             sliderInput("tpointE", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-            selectInput("functioningE", label = "Functioning of interest", choices = NULL), height = 800)),
+            selectInput("functioningE", label = "PRO domain of interest", choices = NULL), height = 800)),
             card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadE", style = "background-color: #d9bfd9")))),
             card(card_header(class = "d-inline-flex justify-content-end bg-light",
             popover(
@@ -379,7 +379,7 @@ ui <- div(page_navbar(
                     sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                     checkboxGroupInput("numdoseD", label = "Dosage",choices = NULL),
                     uiOutput("select_idD"),
-                    selectInput("functioningD", label = "Functioning of interest", choices = NULL), height = 800)),
+                    selectInput("functioningD", label = "PRO domain of interest", choices = NULL), height = 800)),
                     card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadD", style = "background-color: #d9bfd9")))),
                     card(card_header(class = "d-inline-flex justify-content-end bg-light",
                     popover(
@@ -416,7 +416,7 @@ ui <- div(page_navbar(
                    checkboxGroupInput("numdoseF", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
           sliderInput("tpointF", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-          checkboxGroupInput("functioningF", label = "Functioning of interest", selected = NULL, inline = TRUE), height = 800)),
+          checkboxGroupInput("functioningF", label = "PRO domain of interest", selected = NULL, inline = TRUE), height = 800)),
           card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadF", style = "background-color: #d9bfd9")))),
            card(card_header(class = "d-inline-flex justify-content-end bg-light",
            popover(
@@ -445,7 +445,7 @@ ui <- div(page_navbar(
           checkboxGroupInput("numdoseG", label = "Dosage",
                                                  selected = NULL, inline = TRUE),
           sliderInput("tpointG", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-          checkboxGroupInput("functioningG", label = "Functioning of interest", selected = NULL, inline = TRUE), height = 800)),
+          checkboxGroupInput("functioningG", label = "PRO domain of interest", selected = NULL, inline = TRUE), height = 800)),
           card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadG", style = "background-color: #d9bfd9")))),
           card(card_header(class = "d-inline-flex justify-content-end bg-light",
           popover(
@@ -1205,7 +1205,7 @@ observe({
   req(input$upload_cts)
   data <- continuous_data()
   func <- unique(data$functioning)
-  updateSelectInput(session, "functioningC", label = "Functionality of interest", choices = func, selected = NULL)
+  updateSelectInput(session, "functioningC", label = "PRO domain of interest", choices = func, selected = NULL)
 })
 ########## For the dummy set 
 observe({
@@ -1229,7 +1229,7 @@ observe({
   req(input$dummy_continuous)
   data <- continuous_data()
   func <- unique(data$functioning)
-  updateSelectInput(session, "functioningC", label = "Functionality of interest", choices = func, selected = NULL)
+  updateSelectInput(session, "functioningC", label = "PRO domain of interest", choices = func, selected = NULL)
 })
 
 observe({
@@ -1356,7 +1356,7 @@ output$graphC <- renderPlot({
     xlab("Timepoint") +
     ylab(paste0(
                 "Mean change from baseline across timepoints (with 95% CI) \n 
-                for EORTC QLQ-C30 Global status score for functioning ",
+                for PRO domain ",
                 func_C())) +
     scale_fill_manual(name = "Threshold", values = c("palegreen1", "red"), label = c("Improvement", "Worsening")) +
     geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = 30),
@@ -1387,7 +1387,7 @@ observe({
   req(input$upload_cts)
   data <- continuous_data()
   func <- unique(data$functioning)
-  updateSelectInput(session, "functioningD", label = "Functionality of interest", choices = func, selected = NULL)
+  updateSelectInput(session, "functioningD", label = "PRO domain of interest", choices = func, selected = NULL)
 })
 
 observe({
@@ -1411,7 +1411,7 @@ observe({
   req(input$dummy_continuous)
   data <- continuous_data()
   func <- unique(data$functioning)
-  updateSelectInput(session, "functioningD", label = "Functionality of interest", choices = func, selected = NULL)
+  updateSelectInput(session, "functioningD", label = "PRO domain of interest", choices = func, selected = NULL)
 })
 
 observe({
@@ -1508,7 +1508,7 @@ output$graphD <- renderPlot({
                                   g + ylim(c(0, 100)) +
       geom_point() +
       labs(
-        y = paste0("Score in functionality ", func_D()),
+        y = paste0("Score in PRO domain ", func_D()),
         x = "Timepoint",
         color = "Patient (Dose)") +
         geom_segment(x = 0.2, xend = 0.2, y = 0, yend = 100,
@@ -1542,7 +1542,7 @@ observe({
   req(input$upload_cts)
   data <- continuous_data()
   func <- unique(data$functioning)
-  updateSelectInput(session, "functioningE", label = "Functionality of interest", choices = func, selected = NULL)
+  updateSelectInput(session, "functioningE", label = "PRO domain of interest", choices = func, selected = NULL)
 })
 
 ########### for dummy set 
@@ -1567,7 +1567,7 @@ observe({
   req(input$dummy_continuous)
   data <- continuous_data()
   func <- unique(data$functioning)
-  updateSelectInput(session, "functioningE", label = "Functionality of interest", choices = func, selected = NULL)
+  updateSelectInput(session, "functioningE", label = "PRO domain of interest", choices = func, selected = NULL)
 })
 
 
@@ -1659,7 +1659,7 @@ observe({
   req(input$upload_cts)
   data <- continuous_data()
   func <- unique(data$functioning)
-  updateCheckboxGroupInput(session, "functioningF", label = "Functionality of interest", choices = func, selected = NULL)
+  updateCheckboxGroupInput(session, "functioningF", label = "PRO domain of interest", choices = func, selected = NULL)
 })
 ##### for dummy set
 observe({
@@ -1683,7 +1683,7 @@ observe({
   req(input$dummy_continuous)
   data <- continuous_data()
   func <- unique(data$functioning)
-  updateCheckboxGroupInput(session, "functioningF", label = "Functionality of interest", choices = func, selected = NULL)
+  updateCheckboxGroupInput(session, "functioningF", label = "PRO domain of interest", choices = func, selected = NULL)
 })
 
 #### Reactive Defining 
@@ -1819,7 +1819,7 @@ observe({
   req(input$upload_cts)
   data <- continuous_data()
   func <- unique(data$functioning)
-  updateCheckboxGroupInput(session, "functioningG", label = "Functionality of interest", choices = func, selected = NULL)
+  updateCheckboxGroupInput(session, "functioningG", label = "PRO domain of interest", choices = func, selected = NULL)
 })
 
 observe({
@@ -1855,7 +1855,7 @@ observe({
   req(input$dummy_continuous)
   data <- continuous_data()
   func <- unique(data$functioning)
-  updateCheckboxGroupInput(session, "functioningG", label = "Functionality of interest", choices = func, selected = NULL)
+  updateCheckboxGroupInput(session, "functioningG", label = "PRO domain of interest", choices = func, selected = NULL)
 })
 
 #### Reactive Defining 
