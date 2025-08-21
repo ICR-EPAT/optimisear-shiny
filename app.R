@@ -580,7 +580,7 @@ output$about_ordinal <- renderImage({
 output$about_continuous <- renderImage({
   about_continuous <- about_continuous()
   if (about_continuous == "graphC"){
-    list(src = "www/GraphExamples/graphC.jpeg")
+    list(src = "www/GraphExamples/graphC.svg")
   }
   else if (about_continuous == "graphD") {
      list(src = "www/GraphExamples/graphD.svg", height = "800px")
