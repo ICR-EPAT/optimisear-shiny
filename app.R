@@ -91,6 +91,7 @@ ui <- div(page_navbar(
     p("- If a patient experiences an intercurrent event (e.g., discontinuation or death), no further data should be entered beyond that timepoint."),
     p("- If a patient only partially reports a questionnaire at a given timepoint, record all available data and enter 'NA' for any unreported scores or grades."),
     p("- If a patient receives treatment but does not report any part of the questionnaire at that timepoint, record all scores or grades as 'NA'."),
+    p("Each row in the .csv file should contain the response to one question within the PRO questionnaire for a single patient. This means that if a questionnaire contains 10 questions and is fully completed by 10 patients at 6 timepoints, the .csv file should contain 600 rows."),
     p("For examplar data, you can toggle the dummy data on - please note, to use your own data the dummy dataset must be toggled off."),
    layout_columns(
     card(card_header(strong("Ordinal datasets"), style = "background-color: #bfd9bf"),
