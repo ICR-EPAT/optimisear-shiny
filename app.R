@@ -608,7 +608,7 @@ output$ordinal_information_about <- renderUI({
      html("This figure presents differences between ordinal PRO scores as both a magnitude of worsening/improvement between two timepoints of interest across doses and PRO domains. This figure also indicates the proportion of patients with unreported PRO data at timepoints of interest.It <br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The two timepoints you wish to compare, <br>- Which PRO domains you wish to display.")
   }
   else if (about_ordinal == "graphI") {
-     html("This figure presents maximum baseline-adjusted PRO score between two timepoints of interest across doses and PRO domains. 
+     html("This figure presents maximum baseline-adjusted PRO score between the baseline and a timepoint of interest across doses and PRO domains. 
      In cases where a patient's post-baseline PRO score increases by at least one compared to baseline, the maximum baseline-adjusted score is this maximum post-baseline value. Otherwise, if the patient's baseline and post-baseline score are always equal, their maximum baseline-adjusted score is 0 (or 'None')  <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final time point for analysis <br>- Which PRO domains you wish to display.")
   }
 })
@@ -626,10 +626,10 @@ output$continuous_information_about <- renderUI({
      html("This figure presents boxplots summarising the distribution of continuous PRO scores across time. <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint to display, <br>- The PRO domain you wish to display.")
   }
   else if (about_continuous == "graphF") {
-    html("This table indicates mean change from baseline in continuous PRO score between two timepoints with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
+    html("This table indicates mean change from baseline in continuous PRO score between the baseline and a selected timepoint with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
   }
   else if (about_continuous == "graphG") {
-    html("This figure indicates mean change from baseline in continuous PRO score between two timepoints with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
+    html("This figure indicates mean change from baseline in continuous PRO score between the baseline and a selected timepoint with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
   }
 })
 
