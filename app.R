@@ -623,7 +623,7 @@ output$continuous_information_about <- renderUI({
      html("This figure presents individual patient trajectories for continuous PRO scores. <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint to display, <br>- The PRO domain you wish to display, <br> - The patients you wish to display. ")
   }
   else if (about_continuous == "graphE") {
-     html("This figure presents boxplots summarising the distribution of continuous PRP scores across time. <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint to display, <br>- The PRO domain you wish to display.")
+     html("This figure presents boxplots summarising the distribution of continuous PRO scores across time. <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint to display, <br>- The PRO domain you wish to display.")
   }
   else if (about_continuous == "graphF") {
     html("This table indicates mean change from baseline in continuous PRO score between two timepoints with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
