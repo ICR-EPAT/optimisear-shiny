@@ -328,8 +328,6 @@ ui <- div(page_navbar(
              sliderInput("worseC", label = "Start and endpoint for worsening", min = -100, max = 100, value = c(-30, -10), step = 1),
              sliderInput("impTextC", label = "Position of Improvement text", min = -100, max = 100, value = 18, step = 2),
              sliderInput("worTextC", label = "Position of Worsening text", min = -100, max = 100, value = -18, step = 2),
-             p(strong("Note:")),
-             p("If value selected for bounds excludes minimum or maximum of the data, the app will instead set this as the value. This also applies to the text height."),
              actionButton("updateC", "Update"))
           ), card_body(plotOutput("graphC"), height = 1000), full_screen = TRUE)
             ))),
@@ -470,8 +468,6 @@ ui <- div(page_navbar(
              sliderInput("worseG", label = "Start and endpoint for worsening", min = -100, max = 100, value = c(-25, -10), step = 1),
              sliderInput("impTextG", label = "Position of Improvement text", min = -100, max = 100, value = 22, step = 2),
              sliderInput("worTextG", label = "Position of Worsening text", min = -100, max = 100, value = -22, step = 2),
-             p(strong("Note:")),
-             p("If value selected for bounds excludes minimum or maximum of the data, the app will instead set this as the value. This also applies to the text height."),
              actionButton("updateG", "Update")
           )), card_body(plotOutput("graphG"), height = 1000), full_screen = TRUE)
       )))),
