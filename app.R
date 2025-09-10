@@ -91,6 +91,7 @@ ui <- div(page_navbar(
     p("- If a patient experiences an intercurrent event (e.g., discontinuation or death), no further data should be entered beyond that timepoint."),
     p("- If a patient only partially reports a questionnaire at a given timepoint, record all available data and enter 'NA' for any unreported scores or grades."),
     p("- If a patient receives treatment but does not report any part of the questionnaire at that timepoint, record all scores or grades as 'NA'."),
+    p("Each row in the .csv file should contain the response to one question within the PRO questionnaire for a single patient. This means that if a questionnaire contains 10 questions and is fully completed by 10 patients at 6 timepoints, the .csv file should contain 600 rows."),
     p("For examplar data, you can toggle the dummy data on - please note, to use your own data the dummy dataset must be toggled off."),
    layout_columns(
     card(card_header(strong("Ordinal datasets"), style = "background-color: #bfd9bf"),
@@ -328,8 +329,6 @@ ui <- div(page_navbar(
              sliderInput("worseC", label = "Start and endpoint for worsening", min = -100, max = 100, value = c(-30, -10), step = 1),
              sliderInput("impTextC", label = "Position of Improvement text", min = -100, max = 100, value = 18, step = 2),
              sliderInput("worTextC", label = "Position of Worsening text", min = -100, max = 100, value = -18, step = 2),
-             p(strong("Note:")),
-             p("If value selected for bounds excludes minimum or maximum of the data, the app will instead set this as the value. This also applies to the text height."),
              actionButton("updateC", "Update"))
           ), card_body(plotOutput("graphC"), height = 1000), full_screen = TRUE)
             ))),
@@ -470,8 +469,6 @@ ui <- div(page_navbar(
              sliderInput("worseG", label = "Start and endpoint for worsening", min = -100, max = 100, value = c(-25, -10), step = 1),
              sliderInput("impTextG", label = "Position of Improvement text", min = -100, max = 100, value = 22, step = 2),
              sliderInput("worTextG", label = "Position of Worsening text", min = -100, max = 100, value = -22, step = 2),
-             p(strong("Note:")),
-             p("If value selected for bounds excludes minimum or maximum of the data, the app will instead set this as the value. This also applies to the text height."),
              actionButton("updateG", "Update")
           )), card_body(plotOutput("graphG"), height = 1000), full_screen = TRUE)
       )))),
@@ -612,7 +609,7 @@ output$ordinal_information_about <- renderUI({
      html("This figure presents differences between ordinal PRO scores as both a magnitude of worsening/improvement between two timepoints of interest across doses and PRO domains. This figure also indicates the proportion of patients with unreported PRO data at timepoints of interest.It <br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The two timepoints you wish to compare, <br>- Which PRO domains you wish to display.")
   }
   else if (about_ordinal == "graphI") {
-     html("This figure presents maximum baseline-adjusted PRO score between two timepoints of interest across doses and PRO domains. 
+     html("This figure presents maximum baseline-adjusted PRO score between the baseline and a timepoint of interest across doses and PRO domains. 
      In cases where a patient's post-baseline PRO score increases by at least one compared to baseline, the maximum baseline-adjusted score is this maximum post-baseline value. Otherwise, if the patient's baseline and post-baseline score are always equal, their maximum baseline-adjusted score is 0 (or 'None')  <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final time point for analysis <br>- Which PRO domains you wish to display.")
   }
 })
@@ -627,13 +624,13 @@ output$continuous_information_about <- renderUI({
      html("This figure presents individual patient trajectories for continuous PRO scores. <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint to display, <br>- The PRO domain you wish to display, <br> - The patients you wish to display. ")
   }
   else if (about_continuous == "graphE") {
-     html("This figure presents boxplots summarising the distribution of continuous PRP scores across time. <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint to display, <br>- The PRO domain you wish to display.")
+     html("This figure presents boxplots summarising the distribution of continuous PRO scores across time. <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint to display, <br>- The PRO domain you wish to display.")
   }
   else if (about_continuous == "graphF") {
-    html("This table indicates mean change from baseline in continuous PRO score between two timepoints with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
+    html("This table indicates mean change from baseline in continuous PRO score between the baseline and a selected timepoint with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
   }
   else if (about_continuous == "graphG") {
-    html("This figure indicates mean change from baseline in continuous PRO score between two timepoints with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
+    html("This figure indicates mean change from baseline in continuous PRO score between the baseline and a selected timepoint with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
   }
 })
 
