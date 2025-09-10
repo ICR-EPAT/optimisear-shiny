@@ -1939,13 +1939,15 @@ sum.dfG <- reactive({
   sum.df <- sum.df %>% mutate(u.ci = mean + (1.96 * se))
   sum.df <- sum.df %>% left_join(unrep(), by = c("dose", "functioning")) %>%
     mutate(custom_x = paste0("Dose=", dose, "\nUR=", na_count))
+  sum.df$functioning <- as.factor(sum.df$functioning)
   sum.df
 })
 
 
 arrowdf <- reactive({
-  first_fn <- as.symbol(as.character((func_G()[1])))
-  arrow <- tibble(functioning = as.character(first_fn))
+  first_fn <- as.symbol(as.character((sum.dfG()$functioning[1])))
+  arrow <- tibble(functioning = as.factor(as.character(first_fn)))
+  arrow
 })
 
 output$graphG <- renderPlot({
@@ -1981,7 +1983,7 @@ output$graphG <- renderPlot({
   ymax = c(impbound[2], worbound[2]),
   Threshold = factor(c("Improvement", "Worsening"))
 )
- formatterG <- function(end = end_t) {paste(editG$subgraph_lab, func_G(), sep = " ")}
+ formatterG <- function(functioning = sum.dfG()$functioning) {paste(editG$subgraph_lab, functioning, sep = " ")}
         g + ylim(c(lower, upper)) +
   scale_fill_manual(
     name = "Threshold",
@@ -2015,7 +2017,7 @@ output$graphG <- renderPlot({
   ymax = c(25, -10),
   Threshold = factor(c("Improvement", "Worsening"))
 )
- formatterG <- function(end = end_t) {paste0("PRO domain ", func_G())}
+ formatterG <- function(functioning = sum.dfG()$functioning) {paste0("PRO domain ", functioning)}
                                   g + ylim(c(-25, 25)) +
   scale_fill_manual(
     name = "Threshold",
