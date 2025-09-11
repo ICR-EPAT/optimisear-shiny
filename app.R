@@ -13,7 +13,6 @@ library(bslib)
 library(bsicons)
 library(gridExtra)
 library(survminer)
-library(gtable)
 
 ui <- div(page_navbar(
   theme = bslib::bs_theme("bslib-value-box-horizontal-break-point" = "1px"),
