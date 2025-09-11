@@ -422,8 +422,7 @@ ui <- div(page_navbar(
             actionButton("sizeF", "Size", value = FALSE, icon = icon("arrows-up-down-left-right"), style = "background-color: #bfd9bf"),
             title = "Adjust output size",
             id = "dimF",
-            sliderInput("widthF", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
-            sliderInput("heightF", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
+            sliderInput("widthF", "Adjust graph width", value = 600, min = 300, max = 1200, step = 100, width = "400px")),
           popover(
             actionButton("editF", "Edit", value = FALSE, icon = icon("pencil-square"), style = "background-color: #bfd9bf"),
              title = "Graph Editor",
@@ -662,7 +661,7 @@ output$continuous_edit <- renderUI({
      HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label  <br> - X axis label  <br> - Axis label font size <br> - Arrow label <br> - Y axis range <br> - Graph height and width")
   }
   else if (about_continuous == "graphF") {
-     HTML("This app supports the customising of the figure to your needs, including: <br> - Table title <br> - Table height and width")
+     HTML("This app supports the customising of the figure to your needs, including: <br> - Table title <br> - Table width")
   }
   else if (about_continuous == "graphG") {
      HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label <br> - Axis label font size <br> - Subgraph label format <br> - Boundaries for improvement <br> - Boundaries for worsening <br> - Position of improvement text <br> - Position of worsening text <br> - Graph height and width")
@@ -1689,6 +1688,14 @@ no_doseF <- reactive({
                       req(input$numdoseF)
                       input$numdoseF})
 
+observe({
+  req(input$numdoseF)
+  doses <- no_doseF()
+  minwidth <- 200 * length(unique(doses))
+  maxwidth <- 400 * length(unique(doses))
+  updateSliderInput(session, "widthF", min = minwidth, max = maxwidth, value = minwidth + 200, step = 100)
+})
+
 final_tF <- reactive({
   req(input$tpointF)
   input$tpointF
@@ -1784,10 +1791,11 @@ sum.df.wider.gtF <- reactive({
                                 else {
                                   sum.df.wider.gt
                                 }
+  sum.df.wider.gt %>% tab_options(table.width = px(input$widthF))
 })
 
 
-output$graphF <- render_gt(sum.df.wider.gtF(), height = input$heightF, width = input$widthF)
+output$graphF <- render_gt({sum.df.wider.gtF()})
 
 
 
@@ -1939,13 +1947,15 @@ sum.dfG <- reactive({
   sum.df <- sum.df %>% mutate(u.ci = mean + (1.96 * se))
   sum.df <- sum.df %>% left_join(unrep(), by = c("dose", "functioning")) %>%
     mutate(custom_x = paste0("Dose=", dose, "\nUR=", na_count))
+  sum.df$functioning <- as.factor(sum.df$functioning)
   sum.df
 })
 
 
 arrowdf <- reactive({
-  first_fn <- as.symbol(as.character((func_G()[1])))
-  arrow <- tibble(functioning = as.character(first_fn))
+  first_fn <- as.symbol(as.character((sum.dfG()$functioning[1])))
+  arrow <- tibble(functioning = as.factor(as.character(first_fn)))
+  arrow
 })
 
 output$graphG <- renderPlot({
@@ -1981,7 +1991,7 @@ output$graphG <- renderPlot({
   ymax = c(impbound[2], worbound[2]),
   Threshold = factor(c("Improvement", "Worsening"))
 )
- formatterG <- function(end = end_t) {paste(editG$subgraph_lab, func_G(), sep = " ")}
+ formatterG <- function(functioning = sum.dfG()$functioning) {paste(editG$subgraph_lab, functioning, sep = " ")}
         g + ylim(c(lower, upper)) +
   scale_fill_manual(
     name = "Threshold",
@@ -2015,7 +2025,7 @@ output$graphG <- renderPlot({
   ymax = c(25, -10),
   Threshold = factor(c("Improvement", "Worsening"))
 )
- formatterG <- function(end = end_t) {paste0("PRO domain ", func_G())}
+ formatterG <- function(functioning = sum.dfG()$functioning) {paste0("PRO domain ", functioning)}
                                   g + ylim(c(-25, 25)) +
   scale_fill_manual(
     name = "Threshold",
@@ -2541,7 +2551,7 @@ output$downloadF <- downloadHandler(
     paste0("change_baseline_functionings_table", Sys.Date(), ".svg")
   },
   content = function(file){
-    ggsave(file, plot = as_gtable(sum.df.wider.gtF()), device = "svg", height = input$heightF * 4, width = input$widthF * 4, units = "px")
+    ggsave(file, plot = as_gtable(sum.df.wider.gtF()), device = "svg", width = input$widthF * 6, units = "px")
   }
 )
 output$downloadG <- downloadHandler(
