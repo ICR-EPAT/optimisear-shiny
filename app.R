@@ -13,6 +13,7 @@ library(bslib)
 library(bsicons)
 library(gridExtra)
 library(survminer)
+library(gtable)
 
 ui <- div(page_navbar(
   theme = bslib::bs_theme("bslib-value-box-horizontal-break-point" = "1px"),
@@ -1688,6 +1689,14 @@ no_doseF <- reactive({
                       req(input$numdoseF)
                       input$numdoseF})
 
+observe({
+  req(input$numdoseF)
+  doses <- no_doseF()
+  minwidth <- 200 * length(unique(doses))
+  maxwidth <- 400 * length(unique(doses))
+  updateSliderInput(session, "widthF", min = minwidth, max = maxwidth, value = minwidth + 200, step = 100)
+})
+
 final_tF <- reactive({
   req(input$tpointF)
   input$tpointF
@@ -1783,10 +1792,11 @@ sum.df.wider.gtF <- reactive({
                                 else {
                                   sum.df.wider.gt
                                 }
+  sum.df.wider.gt %>% tab_options(table.width = px(input$widthF))
 })
 
 
-output$graphF <- render_gt({sum.df.wider.gtF() %>% tab_options(table.width = input$widthF)})
+output$graphF <- render_gt({sum.df.wider.gtF()})
 
 
 
@@ -2542,7 +2552,7 @@ output$downloadF <- downloadHandler(
     paste0("change_baseline_functionings_table", Sys.Date(), ".svg")
   },
   content = function(file){
-    ggsave(file, plot = as_gtable(sum.df.wider.gtF() %>% tab_options(table.width = input$widthF)), device = "svg", width = input$widthF * 4, units = "px")
+    ggsave(file, plot = as_gtable(sum.df.wider.gtF()), device = "svg", width = input$widthF * 6, units = "px")
   }
 )
 output$downloadG <- downloadHandler(
