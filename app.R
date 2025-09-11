@@ -422,7 +422,7 @@ ui <- div(page_navbar(
             actionButton("sizeF", "Size", value = FALSE, icon = icon("arrows-up-down-left-right"), style = "background-color: #bfd9bf"),
             title = "Adjust output size",
             id = "dimF",
-            sliderInput("widthF", "Adjust graph width", value = 800, min = 300, max = 1200, step = 100, width = "400px"),
+            sliderInput("widthF", "Adjust graph width", value = 600, min = 300, max = 1200, step = 100, width = "400px"),
             sliderInput("heightF", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
           popover(
             actionButton("editF", "Edit", value = FALSE, icon = icon("pencil-square"), style = "background-color: #bfd9bf"),
@@ -1787,7 +1787,7 @@ sum.df.wider.gtF <- reactive({
 })
 
 
-output$graphF <- render_gt(sum.df.wider.gtF(), height = input$heightF, width = input$widthF)
+output$graphF <- render_gt({sum.df.wider.gtF() %>% tab_options(table.width = input$widthF)}, height = input$heightF)
 
 
 
