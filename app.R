@@ -422,8 +422,7 @@ ui <- div(page_navbar(
             actionButton("sizeF", "Size", value = FALSE, icon = icon("arrows-up-down-left-right"), style = "background-color: #bfd9bf"),
             title = "Adjust output size",
             id = "dimF",
-            sliderInput("widthF", "Adjust graph width", value = 600, min = 300, max = 1200, step = 100, width = "400px"),
-            sliderInput("heightF", "Adjust graph height", value = 800, min = 300, max = 1000, step = 100, width = "400px")),
+            sliderInput("widthF", "Adjust graph width", value = 600, min = 300, max = 1200, step = 100, width = "400px")),
           popover(
             actionButton("editF", "Edit", value = FALSE, icon = icon("pencil-square"), style = "background-color: #bfd9bf"),
              title = "Graph Editor",
@@ -662,7 +661,7 @@ output$continuous_edit <- renderUI({
      HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label  <br> - X axis label  <br> - Axis label font size <br> - Arrow label <br> - Y axis range <br> - Graph height and width")
   }
   else if (about_continuous == "graphF") {
-     HTML("This app supports the customising of the figure to your needs, including: <br> - Table title <br> - Table height and width")
+     HTML("This app supports the customising of the figure to your needs, including: <br> - Table title <br> - Table width")
   }
   else if (about_continuous == "graphG") {
      HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label <br> - Axis label font size <br> - Subgraph label format <br> - Boundaries for improvement <br> - Boundaries for worsening <br> - Position of improvement text <br> - Position of worsening text <br> - Graph height and width")
@@ -1787,7 +1786,7 @@ sum.df.wider.gtF <- reactive({
 })
 
 
-output$graphF <- render_gt({sum.df.wider.gtF() %>% tab_options(table.width = input$widthF)}, height = input$heightF)
+output$graphF <- render_gt({sum.df.wider.gtF() %>% tab_options(table.width = input$widthF)})
 
 
 
@@ -2543,7 +2542,7 @@ output$downloadF <- downloadHandler(
     paste0("change_baseline_functionings_table", Sys.Date(), ".svg")
   },
   content = function(file){
-    ggsave(file, plot = as_gtable(sum.df.wider.gtF()), device = "svg", height = input$heightF * 4, width = input$widthF * 4, units = "px")
+    ggsave(file, plot = as_gtable(sum.df.wider.gtF() %>% tab_options(table.width = input$widthF)), device = "svg", width = input$widthF * 4, units = "px")
   }
 )
 output$downloadG <- downloadHandler(
