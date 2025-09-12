@@ -863,6 +863,32 @@ output$continuous_table <- renderTable(
     }
   })
 
+  observe({
+    if (isTruthy(input$upload)){
+      if (input$ordinal_date == FALSE){
+        ordinal_data <- ordinal_data()
+        maxTime <- max(as.numeric(ordinal_data$timepoint)) - min(as.numeric(ordinal_data$timepoint))
+        updateSliderInput(session, "box_xA", min = -0.5, max = 0.25 * maxTime, value = 0.1 * maxTime, step = 0.5)
+      }
+      else {
+        ordinal_data <- ordinal_data()
+        maxTime <- as.numeric(max(as.Date(ordinal_data$timepoint)) - min(as.Date(ordinal_data$timepoint)))
+        updateSliderInput(session, "box_xA", min = -0.5, max = 0.25 * maxTime, value = 0.1 * maxTime, step = 0.5)
+      }
+    }
+    else if (isTruthy(input$dummy_ordinal)){
+      if (input$ordinal_date == FALSE){
+        ordinal_data <- ordinal_data()
+        maxTime <- max(as.numeric(ordinal_data$timepoint)) - min(as.numeric(ordinal_data$timepoint))
+        updateSliderInput(session, "box_xA", min = -0.5, max = 0.25 * maxTime, value = 0.1 * maxTime, step = 0.5)
+      }
+      else {
+        ordinal_data <- ordinal_data()
+        maxTime <- as.numeric(max(as.Date(ordinal_data$timepoint)) - min(as.Date(ordinal_data$timepoint)))
+        updateSliderInput(session, "box_xA", min = -0.5, max = 0.25 * maxTime, value = 0.1 * maxTime, step = 0.5)
+      }
+    }
+  })
   #Define the relevant variables
   no_dose <- reactive({
                        req(input$numdose)
@@ -955,11 +981,11 @@ summary_dfA <- reactive({
                                   annotation_custom(
                                   tbl_grob(),
                                   xmin = editA$box_x, xmax = editA$box_x + 2, # x-position range for table
-                                  ymin =editA$box_y, ymax = editA$box_y + 0.3 # y-position range for table
+                                  ymin = editA$box_y, ymax = editA$box_y + 0.3 # y-position range for table
                                   )
                                 }
                                 else {
-                                  g + labs(y = "Probability of first baseline-adjusted \n Grade ≥3 PRO-CTCAE score" ) +
+                                  g + labs(y = paste0("Probability of first baseline-adjusted \n Grade ≥", baseA(), " PRO-CTCAE score") ) +
                                   annotation_custom(
                                   tbl_grob(),
                                   xmin = -0.5, xmax = 1.75, # x-position range for table
