@@ -175,7 +175,7 @@ ui <- div(page_navbar(
                             card_body(checkboxGroupInput("numdose", label = "Dosage", selected = NULL, inline = TRUE),
                                       selectInput("baseChange", label = "Change from baseline needed for an event", choices = c(1, 2, 3, 4, 5), selected = 3),
                                       uiOutput("toxicA"),
-                                      uiOutput("allA"),
+                                      input_switch("allA", label = "Select all PRO domains"),
                                       height = 800))
                , card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadA", style = "background-color: #d9bfd9")))),
           card(card_header(class = "d-inline-flex justify-content-end bg-light",
@@ -860,7 +860,6 @@ output$continuous_table <- renderTable(
       ordinal_data <- ordinal_data()
       toxic <- unique(ordinal_data$toxicity)
       selectizeInput("toxicA", label = "PRO domain categories to be checked for an event", choices = toxic, selected = NULL, multiple = TRUE)
-      input_switch("allA", label = "Select all PRO domains")
     }
   })
 
@@ -881,8 +880,11 @@ output$continuous_table <- renderTable(
   #Filter the data
   summary_df <- reactive({
                           req(input$numdose)
+                          req(input$baseChange)
+                          req(input$toxicA)
+                          change <-baseA()
                           ordinal_data <- ordinal_data()
-                          ordinal_data <- ordinal_data %>% filter(dose %in% no_dose())
+                          ordinal_data <- ordinal_data %>% filter(dose %in% no_dose()) %>% filter(toxicity %in% toxicA())
                           if (input$ordinal_date == TRUE){
                             ordinal_data <- ordinal_data %>%
                             group_by(id, toxicity) %>%
@@ -898,16 +900,16 @@ output$continuous_table <- renderTable(
                               summary_df <- ordinal_data %>%
                             group_by(id) %>%
                             summarise(
-                              time = if (any(base_adj == 3)) as.numeric(min(as.Date(timepoint[base_adj == 3])) - min(as.Date(timepoint))) else as.numeric(max(as.Date(timepoint))- min(as.Date(timepoint))),
-                              event = as.integer(any(base_adj == 3))  # 1 if grade 3 occurred, 0 if censored
+                              time = if (any(base_adj >= change)) as.numeric(min(as.Date(timepoint[base_adj >= change])) - min(as.Date(timepoint))) else as.numeric(max(as.Date(timepoint))- min(as.Date(timepoint))),
+                              event = as.integer(any(base_adj >= change))  # 1 if grade 3 occurred, 0 if censored
                             )
                             }
                             else{
                               summary_df <- ordinal_data %>%
                             group_by(id) %>%
                             summarise(
-                              time = if (any(base_adj == 3)) as.numeric(min(timepoint[base_adj == 3]) - min(timepoint)) else as.numeric(max(timepoint)- min(timepoint)),
-                              event = as.integer(any(base_adj == 3)))  # 1 if grade 3 occurred, 0 if censored
+                              time = if (any(base_adj >= change)) as.numeric(min(timepoint[base_adj >= change]) - min(timepoint)) else as.numeric(max(timepoint)- min(timepoint)),
+                              event = as.integer(any(base_adj >= change)))  # 1 if grade 3 occurred, 0 if censored
                             }
                           summary_df <- cbind(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose)))
                           colnames(summary_df)[5] <- "dose"
