@@ -859,7 +859,12 @@ output$continuous_table <- renderTable(
     else if (isTruthy(input$dummy_ordinal)){
       ordinal_data <- ordinal_data()
       toxic <- unique(ordinal_data$toxicity)
-      selectizeInput("toxicA", label = "PRO domain categories to be checked for an event", choices = toxic, selected = NULL, multiple = TRUE)
+      if (input$allA == FALSE){
+        selectizeInput("toxicA", label = "PRO domain categories to be checked for an event", choices = toxic, selected = NULL, multiple = TRUE)
+      }
+      else {
+        selectizeInput("toxicA", label = "PRO domain categories to be checked for an event", choices = toxic, selected = toxic, multiple = TRUE)
+      }
     }
   })
 
