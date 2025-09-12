@@ -868,6 +868,16 @@ output$continuous_table <- renderTable(
   no_dose <- reactive({
                        req(input$numdose)
                        input$numdose})
+  
+  toxicA <- reactive({
+    req(input$toxicA)
+    input$toxicA
+  })
+
+  baseA <- reactive({
+    req(input$baseChange)
+    as.numeric(input$baseChange)
+  })
   #Filter the data
   summary_df <- reactive({
                           req(input$numdose)
