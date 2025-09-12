@@ -171,8 +171,12 @@ ui <- div(page_navbar(
           card_header(textOutput("textHeaderA"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"),
         layout_sidebar(
           sidebar = sidebar(
-          card(card_header("Variables", style = "background-color: #bfd9bf"), card_body(checkboxGroupInput("numdose", label = "Dosage",
-                                                 selected = NULL, inline = TRUE), height = 800))
+          card(card_header("Variables", style = "background-color: #bfd9bf"),
+                            card_body(checkboxGroupInput("numdose", label = "Dosage", selected = NULL, inline = TRUE),
+                                      selectInput("baseChange", label = "Change from baseline needed for an event", choices = c(1, 2, 3, 4, 5), selected = 3),
+                                      uiOutput("toxicA"),
+                                      uiOutput("allA"),
+                                      height = 800))
                , card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadA", style = "background-color: #d9bfd9")))),
           card(card_header(class = "d-inline-flex justify-content-end bg-light",
           popover(
@@ -846,7 +850,19 @@ output$continuous_table <- renderTable(
     numdose <- unique(ordinal_data$dose)
     updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
   })
-
+  output$toxicA <- renderUI({
+    if (isTruthy(input$upload)){
+      ordinal_data <- ordinal_data()
+      toxic <- unique(ordinal_data$toxicity)
+      selectizeInput("toxicA", label = "PRO domain categories to be checked for an event", choices = toxic, selected = NULL, multiple = TRUE)
+    }
+    else if (isTruthy(input$dummy_ordinal)){
+      ordinal_data <- ordinal_data()
+      toxic <- unique(ordinal_data$toxicity)
+      selectizeInput("toxicA", label = "PRO domain categories to be checked for an event", choices = toxic, selected = NULL, multiple = TRUE)
+      input_switch("allA", label = "Select all PRO domains")
+    }
+  })
 
   #Define the relevant variables
   no_dose <- reactive({
