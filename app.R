@@ -26,11 +26,11 @@ ui <- div(page_navbar(
     card_body(
     p("OPTIMISE-AR (incOrporating PaTIent-reported outcoMes In doSE-finding trials–Analysis Recommendations) provides this shiny app to support the generation of patient-reported outcome (PRO) data visualisations for DFOT publications. Informed by critical PRO research objectives in DFOTs[1], this toolkit supports trialists wishing to present PRO data in line with three key PRO endpoint types:"),
     tags$b("Time-to-event PRO endpoints -"),
-    p("For DFOTs, a PRO objective could look to assess tolerability across dose levels by identifying whether patients at higher doses experience earlier undesirable PRO events e.g., symptom worsening or dose-limiting events compared to those at lower doses.  Such objectives are typically described using time-to-event endpoints."),
+    p("For DFOTs, a PRO objective could look to assess tolerability across doses by identifying whether patients at higher doses experience earlier undesirable PRO events e.g., symptom worsening or dose-limiting events compared to those at lower doses.  Such objectives are typically described using time-to-event endpoints."),
     tags$b("PRO endpoints across timepoints -"),
-    p("For DFOTs, a PRO objective could look to assess tolerability across dose levels by analysing the longitudinal tolerability profile of a treatment. Such endpoints may assess whether patients at higher doses experience worse tolerability than patients at lower doses at any timepoint within the trial."),
+    p("For DFOTs, a PRO objective could look to assess tolerability across doses by analysing the longitudinal tolerability profile of a treatment. Such endpoints may assess whether patients at higher doses experience worse tolerability than patients at lower doses at any timepoint within the trial."),
     tags$b("PRO endpoints between timepoints -"),
-    p("For DFOTs, a PRO objective could look to assess tolerability by analysing tolerability to treatment at two clinically meaningful timepoints across dose levels. For example, such endpoints may assess whether patients at higher doses experience worse tolerability at the final assessment timepoint than patients at lower doses when compared to baseline."),
+    p("For DFOTs, a PRO objective could look to assess tolerability by analysing tolerability to treatment at two clinically meaningful timepoints across doses. For example, such endpoints may assess whether patients at higher doses experience worse tolerability at the final assessment timepoint than patients at lower doses when compared to baseline."),
     p("[1] Alger E, et al. International consensus recommendations for PRO research in early-phase dose-finding oncology trials: OPTIMISE-ROR. ESMO Open. 2025;10:105438.")
   )),
   card(
@@ -100,7 +100,7 @@ ui <- div(page_navbar(
       p("- Patient ID, {id}, [numeric]"),
       p("- PRO domain, {toxicity}, [numeric or character]"),
       p("- Grade of response, {grade}, [1,2,3,4,5]"),
-      p("- Dose Level, {dose}, [numeric]"),
+      p("- Doses, {dose}, [numeric]"),
       p("- Timepoint of current report, {timepoint},"),
       p("[integer OR date \"YYYY-MM-DD\"]"),
       p("- Final reported time by the patient, {timepoint},"),
@@ -115,7 +115,7 @@ ui <- div(page_navbar(
        p("- Patient ID, {id}, [numeric]"),
        p("- PRO domain, {functioning}, [numeric or character]"),
        p("- Score for PRO domain, {score}, [numeric]"),
-       p("- Dose Level, {dose}, [numeric]"),
+       p("- Doses, {dose}, [numeric]"),
        p("- Timepoint of current report, {timepoint},"),
        p("[integer OR date \"YYYY-MM-DD\"]"),
        p("To switch to date format use toggle:"),
@@ -171,8 +171,12 @@ ui <- div(page_navbar(
           card_header(textOutput("textHeaderA"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"),
         layout_sidebar(
           sidebar = sidebar(
-          card(card_header("Variables", style = "background-color: #bfd9bf"), card_body(checkboxGroupInput("numdose", label = "Dosage",
-                                                 selected = NULL, inline = TRUE), height = 800))
+          card(card_header("Variables", style = "background-color: #bfd9bf"),
+                            card_body(checkboxGroupInput("numdose", label = "Dosage", selected = NULL, inline = TRUE),
+                                      selectInput("baseChange", label = "Minimum change from baseline score to define event", choices = c(1, 2, 3, 4, 5), selected = 3),
+                                      uiOutput("toxicA"),
+                                      input_switch("allA", label = "Select all PRO domains"),
+                                      height = 800))
                , card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadA", style = "background-color: #d9bfd9")))),
           card(card_header(class = "d-inline-flex justify-content-end bg-light",
           popover(
@@ -378,6 +382,7 @@ ui <- div(page_navbar(
                     sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                     checkboxGroupInput("numdoseD", label = "Dosage",choices = NULL),
                     uiOutput("select_idD"),
+                    uiOutput("allD"),
                     selectInput("functioningD", label = "PRO domain of interest", choices = NULL), height = 800)),
                     card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadD", style = "background-color: #d9bfd9")))),
                     card(card_header(class = "d-inline-flex justify-content-end bg-light",
@@ -597,19 +602,19 @@ output$about_continuous <- renderImage({
 output$ordinal_information_about <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "graphA"){
-    HTML("Kaplan-Meier figures present tolerability across dose levels by identifying whether patients at higher doses experience earlier undesirable PRO events (e.g., symptom worsening or dose-limiting events) compared to those at lower doses.
-    This Kaplan-Meier visulises the time to first baseline-adjusted Grade >= 3 score change. <br> In cases where a patient's post-baseline PRO score increases by at least one compared to baseline, the baseline-adjusted score is this post-baseline value. Otherwise, if the patient's baseline and post-baseline score are equal, their baseline-adjusted score is 0 (or 'None'). 
-    <br><br> This app allows you to select the doses you wish to display in your figure.")
+    HTML("Kaplan-Meier figures present tolerability across doses by identifying whether patients at higher doses experience earlier undesirable PRO events (e.g., symptom worsening or dose-limiting events) compared to those at lower doses.
+    This Kaplan-Meier visulises the time to first baseline-adjusted Grade >= a selected score change. <br> In cases where a patient's post-baseline PRO score increases by at least one compared to baseline, the baseline-adjusted score is this post-baseline value. Otherwise, if the patient's baseline and post-baseline score are equal, their baseline-adjusted score is 0 (or 'None'). 
+    <br><br> This app allows you to select: <br>- The doses you wish to display <br>- The minimum change from baseline score to define event (this is set to 3 by default) <br>- The PRO domain(s) defining event")
   }
   else if (about_ordinal == "graphB") {
-     html("This figure presents the proportion of patients experiencing each ordinal score across timepoints as well as the proportion of patients with unreported PRO data or who experience an intercurrent event.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint you wish to display, <br>- Which PRO domain you wish to display.")
+     html("This figure presents the proportion of patients experiencing each ordinal score across timepoints as well as the proportion of patients with unreported PRO data or who experience an intercurrent event.<br> <br> This app allows you to select: <br>- The doses you wish to display, <br>- The final timepoint you wish to display, <br>- Which PRO domain you wish to display.")
   }
   else if (about_ordinal == "graphH") {
-     html("This figure presents differences between ordinal PRO scores as both a magnitude of worsening/improvement between two timepoints of interest across doses and PRO domains. This figure also indicates the proportion of patients with unreported PRO data at timepoints of interest.It <br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The two timepoints you wish to compare, <br>- Which PRO domains you wish to display.")
+     html("This figure presents differences between ordinal PRO scores as both a magnitude of worsening/improvement between two timepoints of interest across doses and PRO domains. This figure also indicates the proportion of patients with unreported PRO data at timepoints of interest.It <br> <br> This app allows you to select: <br>- The doses you wish to display, <br>- The two timepoints you wish to compare, <br>- Which PRO domains you wish to display.")
   }
   else if (about_ordinal == "graphI") {
      html("This figure presents maximum baseline-adjusted PRO score between the baseline and a timepoint of interest across doses and PRO domains. 
-     In cases where a patient's post-baseline PRO score increases by at least one compared to baseline, the maximum baseline-adjusted score is this maximum post-baseline value. Otherwise, if the patient's baseline and post-baseline score are always equal, their maximum baseline-adjusted score is 0 (or 'None')  <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final time point for analysis <br>- Which PRO domains you wish to display.")
+     In cases where a patient's post-baseline PRO score increases by at least one compared to baseline, the maximum baseline-adjusted score is this maximum post-baseline value. Otherwise, if the patient's baseline and post-baseline score are always equal, their maximum baseline-adjusted score is 0 (or 'None')  <br> <br>This app allows you to select: <br>- The doses you wish to display, <br>- The final time point for analysis <br>- Which PRO domains you wish to display.")
   }
 })
 
@@ -617,19 +622,19 @@ output$continuous_information_about <- renderUI({
   about_continuous <- about_continuous()
   if (about_continuous == "graphC"){
     html("This figure evaluates mean change from baseline across time for continuous PRO scores. Associated improvement and worsening thresholds as well 95% confidence intervals for each timepoint are indicated.
-    <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint you wish to display, <br>- The PRO domain you wish to display.")
+    <br> <br>This app allows you to select: <br>- The doses you wish to display, <br>- The final timepoint you wish to display, <br>- The PRO domain you wish to display.")
   }
   else if (about_continuous == "graphD") {
-     html("This figure presents individual patient trajectories for continuous PRO scores. <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint to display, <br>- The PRO domain you wish to display, <br> - The patients you wish to display. ")
+     html("This figure presents individual patient trajectories for continuous PRO scores. <br> <br>This app allows you to select: <br>- The doses you wish to display, <br>- The final timepoint to display, <br>- The PRO domain you wish to display, <br> - The patients you wish to display. ")
   }
   else if (about_continuous == "graphE") {
-     html("This figure presents boxplots summarising the distribution of continuous PRO scores across time. <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint to display, <br>- The PRO domain you wish to display.")
+     html("This figure presents boxplots summarising the distribution of continuous PRO scores across time. <br> <br>This app allows you to select: <br>- The doses you wish to display, <br>- The final timepoint to display, <br>- The PRO domain you wish to display.")
   }
   else if (about_continuous == "graphF") {
-    html("This table indicates mean change from baseline in continuous PRO score between the baseline and a selected timepoint with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
+    html("This table indicates mean change from baseline in continuous PRO score between the baseline and a selected timepoint with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The doses you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
   }
   else if (about_continuous == "graphG") {
-    html("This figure indicates mean change from baseline in continuous PRO score between the baseline and a selected timepoint with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
+    html("This figure indicates mean change from baseline in continuous PRO score between the baseline and a selected timepoint with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The doses you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
   }
 })
 
@@ -847,16 +852,77 @@ output$continuous_table <- renderTable(
     updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
   })
 
+  output$toxicA <- renderUI({
+    if (isTruthy(input$upload)){
+      ordinal_data <- ordinal_data()
+      toxic <- unique(ordinal_data$toxicity)
+      if (input$allA == FALSE){
+        selectizeInput("toxicA", label = "PRO domain(s) defining event", choices = toxic, selected = NULL, multiple = TRUE)
+      }
+      else {
+        selectizeInput("toxicA", label = "PRO domain(s) defining event", choices = toxic, selected = toxic, multiple = TRUE)
+      }
+    }
+    else if (isTruthy(input$dummy_ordinal)){
+      ordinal_data <- ordinal_data()
+      toxic <- unique(ordinal_data$toxicity)
+      if (input$allA == FALSE){
+        selectizeInput("toxicA", label = "PRO domain(s) defining event", choices = toxic, selected = NULL, multiple = TRUE)
+      }
+      else {
+        selectizeInput("toxicA", label = "PRO domain(s) defining event", choices = toxic, selected = toxic, multiple = TRUE)
+      }
+    }
+  })
 
+  observe({
+    if (isTruthy(input$upload)){
+      if (input$ordinal_date == FALSE){
+        ordinal_data <- ordinal_data()
+        maxTime <- max(as.numeric(ordinal_data$timepoint)) - min(as.numeric(ordinal_data$timepoint))
+        updateSliderInput(session, "box_xA", min = -0.5, max = 0.25 * maxTime, value = 0.1 * maxTime, step = 0.5)
+      }
+      else {
+        ordinal_data <- ordinal_data()
+        maxTime <- as.numeric(max(as.Date(ordinal_data$timepoint)) - min(as.Date(ordinal_data$timepoint)))
+        updateSliderInput(session, "box_xA", min = -0.5, max = 0.25 * maxTime, value = 0.1 * maxTime, step = 0.5)
+      }
+    }
+    else if (isTruthy(input$dummy_ordinal)){
+      if (input$ordinal_date == FALSE){
+        ordinal_data <- ordinal_data()
+        maxTime <- max(as.numeric(ordinal_data$timepoint)) - min(as.numeric(ordinal_data$timepoint))
+        updateSliderInput(session, "box_xA", min = -0.5, max = 0.25 * maxTime, value = 0.1 * maxTime, step = 0.5)
+      }
+      else {
+        ordinal_data <- ordinal_data()
+        maxTime <- as.numeric(max(as.Date(ordinal_data$timepoint)) - min(as.Date(ordinal_data$timepoint)))
+        updateSliderInput(session, "box_xA", min = -0.5, max = 0.25 * maxTime, value = 0.1 * maxTime, step = 0.5)
+      }
+    }
+  })
   #Define the relevant variables
   no_dose <- reactive({
                        req(input$numdose)
                        input$numdose})
+  
+  toxicA <- reactive({
+    req(input$toxicA)
+    input$toxicA
+  })
+
+  baseA <- reactive({
+    req(input$baseChange)
+    as.numeric(input$baseChange)
+  })
   #Filter the data
   summary_df <- reactive({
                           req(input$numdose)
+                          req(input$baseChange)
+                          req(input$toxicA)
+                          change <-baseA()
                           ordinal_data <- ordinal_data()
-                          ordinal_data <- ordinal_data %>% filter(dose %in% no_dose())
+                          ordinal_data <- ordinal_data %>% filter(dose %in% no_dose()) %>% filter(toxicity %in% toxicA())
                           if (input$ordinal_date == TRUE){
                             ordinal_data <- ordinal_data %>%
                             group_by(id, toxicity) %>%
@@ -872,16 +938,16 @@ output$continuous_table <- renderTable(
                               summary_df <- ordinal_data %>%
                             group_by(id) %>%
                             summarise(
-                              time = if (any(base_adj == 3)) as.numeric(min(as.Date(timepoint[base_adj == 3])) - min(as.Date(timepoint))) else as.numeric(max(as.Date(timepoint))- min(as.Date(timepoint))),
-                              event = as.integer(any(base_adj == 3))  # 1 if grade 3 occurred, 0 if censored
+                              time = if (any(base_adj >= change)) as.numeric(min(as.Date(timepoint[base_adj >= change])) - min(as.Date(timepoint))) else as.numeric(max(as.Date(timepoint))- min(as.Date(timepoint))),
+                              event = as.integer(any(base_adj >= change))  # 1 if grade 3 occurred, 0 if censored
                             )
                             }
                             else{
                               summary_df <- ordinal_data %>%
                             group_by(id) %>%
                             summarise(
-                              time = if (any(base_adj == 3)) as.numeric(min(timepoint[base_adj == 3]) - min(timepoint)) else as.numeric(max(timepoint)- min(timepoint)),
-                              event = as.integer(any(base_adj == 3)))  # 1 if grade 3 occurred, 0 if censored
+                              time = if (any(base_adj >= change)) as.numeric(min(timepoint[base_adj >= change]) - min(timepoint)) else as.numeric(max(timepoint)- min(timepoint)),
+                              event = as.integer(any(base_adj >= change)))  # 1 if grade 3 occurred, 0 if censored
                             }
                           summary_df <- cbind(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose)))
                           colnames(summary_df)[5] <- "dose"
@@ -927,11 +993,11 @@ summary_dfA <- reactive({
                                   annotation_custom(
                                   tbl_grob(),
                                   xmin = editA$box_x, xmax = editA$box_x + 2, # x-position range for table
-                                  ymin =editA$box_y, ymax = editA$box_y + 0.3 # y-position range for table
+                                  ymin = editA$box_y, ymax = editA$box_y + 0.3 # y-position range for table
                                   )
                                 }
                                 else {
-                                  g + labs(y = "Probability of first baseline-adjusted \n Grade ≥3 PRO-CTCAE score" ) +
+                                  g + labs(y = paste0("Probability of first baseline-adjusted \n Grade ≥", baseA(), " PRO-CTCAE score") ) +
                                   annotation_custom(
                                   tbl_grob(),
                                   xmin = -0.5, xmax = 1.75, # x-position range for table
@@ -1121,13 +1187,13 @@ output$graphB <- renderPlot({
                                   g +
     labs(x = editB()$x_lab,
          y = "Proportion",
-         fill = "Severity Grade")+ ggtitle(editB()$title) + theme(plot.title = element_text(size = editB()$titlesize, face = "bold"), axis.title = element_text(size = editB()$axissize))
+         fill = "Severity Score")+ ggtitle(editB()$title) + theme(plot.title = element_text(size = editB()$titlesize, face = "bold"), axis.title = element_text(size = editB()$axissize))
                                 }
                                 else {
                                   g +
     labs(x = "Timepoint",
          y = "Proportion",
-         fill = "Severity Grade")
+         fill = "Severity Score")
                                 }
 }, height = function() input$heightB, width = function() input$widthB)
 
@@ -1434,12 +1500,22 @@ func_D <- reactive({
 })
 
 #### ID specific UI
+output$allD <- renderUI({
+  if (isTruthy(input$numdoseD) == TRUE){
+  input_switch("allD", label = "Select all IDs")
+  }
+})
 
 output$select_idD <- renderUI({
   data <- continuous_data()
   data <- data %>% filter(dose %in% no_doseD())
   id <- unique(data$id)
-  selectizeInput("select_idD", "Select IDs", choices = id, multiple = TRUE, selected = NULL)
+  if (isFALSE(input$allD)){
+    selectizeInput("select_idD", "Select IDs", choices = id, multiple = TRUE, selected = NULL)
+  }
+  else if (isTRUE(input$allD)) {
+    selectizeInput("select_idD", "Select IDs", choices = id, multiple = TRUE, selected = id)
+  }  
 })
 
 idD <- reactive({
@@ -2484,7 +2560,7 @@ output$graphI <- renderPlot({
                       guide = guide_legend(reverse = TRUE)) +
     labs(x = paste0("Dose (N=", paste(ice_n_patI()$n.pat, collapse = "; "), ")"),
           y = "Percentage (%)",
-          fill = "Severity Grade") +
+          fill = "Severity Score") +
     theme(
           strip.text.y = element_text(angle = 0)) +
                                   ggtitle(editI()$title) + theme(plot.title = element_text(size = editI()$titlesize, face = "bold"))
@@ -2499,7 +2575,7 @@ output$graphI <- renderPlot({
                       guide = guide_legend(reverse = TRUE)) +
     labs(x = paste0("Dose (N=", paste(ice_n_patI()$n.pat, collapse = "; "), ")"),
           y = "Percentage (%)",
-          fill = "Severity Grade") +
+          fill = "Severity Score") +
     theme(
           strip.text.y = element_text(angle = 0))
                                 }
