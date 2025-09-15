@@ -604,7 +604,7 @@ output$ordinal_information_about <- renderUI({
   if (about_ordinal == "graphA"){
     HTML("Kaplan-Meier figures present tolerability across doses by identifying whether patients at higher doses experience earlier undesirable PRO events (e.g., symptom worsening or dose-limiting events) compared to those at lower doses.
     This Kaplan-Meier visulises the time to first baseline-adjusted Grade >= a selected score change. <br> In cases where a patient's post-baseline PRO score increases by at least one compared to baseline, the baseline-adjusted score is this post-baseline value. Otherwise, if the patient's baseline and post-baseline score are equal, their baseline-adjusted score is 0 (or 'None'). 
-    <br><br> This app allows you to select: <br>- The doses you wish to display <br>- The change from baseline to be classed as an event (this is set to 3 by default) <br>- The PRO domains to be considered")
+    <br><br> This app allows you to select: <br>- The doses you wish to display <br>- The minimum change from baseline score to define event (this is set to 3 by default) <br>- The PRO domain(s) defining event")
   }
   else if (about_ordinal == "graphB") {
      html("This figure presents the proportion of patients experiencing each ordinal score across timepoints as well as the proportion of patients with unreported PRO data or who experience an intercurrent event.<br> <br> This app allows you to select: <br>- The doses you wish to display, <br>- The final timepoint you wish to display, <br>- Which PRO domain you wish to display.")
