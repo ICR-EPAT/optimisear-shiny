@@ -26,11 +26,11 @@ ui <- div(page_navbar(
     card_body(
     p("OPTIMISE-AR (incOrporating PaTIent-reported outcoMes In doSE-finding trials–Analysis Recommendations) provides this shiny app to support the generation of patient-reported outcome (PRO) data visualisations for DFOT publications. Informed by critical PRO research objectives in DFOTs[1], this toolkit supports trialists wishing to present PRO data in line with three key PRO endpoint types:"),
     tags$b("Time-to-event PRO endpoints -"),
-    p("For DFOTs, a PRO objective could look to assess tolerability across dose levels by identifying whether patients at higher doses experience earlier undesirable PRO events e.g., symptom worsening or dose-limiting events compared to those at lower doses.  Such objectives are typically described using time-to-event endpoints."),
+    p("For DFOTs, a PRO objective could look to assess tolerability across doses by identifying whether patients at higher doses experience earlier undesirable PRO events e.g., symptom worsening or dose-limiting events compared to those at lower doses.  Such objectives are typically described using time-to-event endpoints."),
     tags$b("PRO endpoints across timepoints -"),
-    p("For DFOTs, a PRO objective could look to assess tolerability across dose levels by analysing the longitudinal tolerability profile of a treatment. Such endpoints may assess whether patients at higher doses experience worse tolerability than patients at lower doses at any timepoint within the trial."),
+    p("For DFOTs, a PRO objective could look to assess tolerability across doses by analysing the longitudinal tolerability profile of a treatment. Such endpoints may assess whether patients at higher doses experience worse tolerability than patients at lower doses at any timepoint within the trial."),
     tags$b("PRO endpoints between timepoints -"),
-    p("For DFOTs, a PRO objective could look to assess tolerability by analysing tolerability to treatment at two clinically meaningful timepoints across dose levels. For example, such endpoints may assess whether patients at higher doses experience worse tolerability at the final assessment timepoint than patients at lower doses when compared to baseline."),
+    p("For DFOTs, a PRO objective could look to assess tolerability by analysing tolerability to treatment at two clinically meaningful timepoints across doses. For example, such endpoints may assess whether patients at higher doses experience worse tolerability at the final assessment timepoint than patients at lower doses when compared to baseline."),
     p("[1] Alger E, et al. International consensus recommendations for PRO research in early-phase dose-finding oncology trials: OPTIMISE-ROR. ESMO Open. 2025;10:105438.")
   )),
   card(
@@ -100,7 +100,7 @@ ui <- div(page_navbar(
       p("- Patient ID, {id}, [numeric]"),
       p("- PRO domain, {toxicity}, [numeric or character]"),
       p("- Grade of response, {grade}, [1,2,3,4,5]"),
-      p("- Dose Level, {dose}, [numeric]"),
+      p("- Doses, {dose}, [numeric]"),
       p("- Timepoint of current report, {timepoint},"),
       p("[integer OR date \"YYYY-MM-DD\"]"),
       p("- Final reported time by the patient, {timepoint},"),
@@ -115,7 +115,7 @@ ui <- div(page_navbar(
        p("- Patient ID, {id}, [numeric]"),
        p("- PRO domain, {functioning}, [numeric or character]"),
        p("- Score for PRO domain, {score}, [numeric]"),
-       p("- Dose Level, {dose}, [numeric]"),
+       p("- Doses, {dose}, [numeric]"),
        p("- Timepoint of current report, {timepoint},"),
        p("[integer OR date \"YYYY-MM-DD\"]"),
        p("To switch to date format use toggle:"),
@@ -602,19 +602,19 @@ output$about_continuous <- renderImage({
 output$ordinal_information_about <- renderUI({
   about_ordinal <- about_ordinal()
   if (about_ordinal == "graphA"){
-    HTML("Kaplan-Meier figures present tolerability across dose levels by identifying whether patients at higher doses experience earlier undesirable PRO events (e.g., symptom worsening or dose-limiting events) compared to those at lower doses.
+    HTML("Kaplan-Meier figures present tolerability across doses by identifying whether patients at higher doses experience earlier undesirable PRO events (e.g., symptom worsening or dose-limiting events) compared to those at lower doses.
     This Kaplan-Meier visulises the time to first baseline-adjusted Grade >= a selected score change. <br> In cases where a patient's post-baseline PRO score increases by at least one compared to baseline, the baseline-adjusted score is this post-baseline value. Otherwise, if the patient's baseline and post-baseline score are equal, their baseline-adjusted score is 0 (or 'None'). 
     <br><br> This app allows you to select: <br>- The doses you wish to display <br>- The change from baseline to be classed as an event (this is set to 3 by default) <br>- The PRO domains to be considered")
   }
   else if (about_ordinal == "graphB") {
-     html("This figure presents the proportion of patients experiencing each ordinal score across timepoints as well as the proportion of patients with unreported PRO data or who experience an intercurrent event.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint you wish to display, <br>- Which PRO domain you wish to display.")
+     html("This figure presents the proportion of patients experiencing each ordinal score across timepoints as well as the proportion of patients with unreported PRO data or who experience an intercurrent event.<br> <br> This app allows you to select: <br>- The doses you wish to display, <br>- The final timepoint you wish to display, <br>- Which PRO domain you wish to display.")
   }
   else if (about_ordinal == "graphH") {
-     html("This figure presents differences between ordinal PRO scores as both a magnitude of worsening/improvement between two timepoints of interest across doses and PRO domains. This figure also indicates the proportion of patients with unreported PRO data at timepoints of interest.It <br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The two timepoints you wish to compare, <br>- Which PRO domains you wish to display.")
+     html("This figure presents differences between ordinal PRO scores as both a magnitude of worsening/improvement between two timepoints of interest across doses and PRO domains. This figure also indicates the proportion of patients with unreported PRO data at timepoints of interest.It <br> <br> This app allows you to select: <br>- The doses you wish to display, <br>- The two timepoints you wish to compare, <br>- Which PRO domains you wish to display.")
   }
   else if (about_ordinal == "graphI") {
      html("This figure presents maximum baseline-adjusted PRO score between the baseline and a timepoint of interest across doses and PRO domains. 
-     In cases where a patient's post-baseline PRO score increases by at least one compared to baseline, the maximum baseline-adjusted score is this maximum post-baseline value. Otherwise, if the patient's baseline and post-baseline score are always equal, their maximum baseline-adjusted score is 0 (or 'None')  <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final time point for analysis <br>- Which PRO domains you wish to display.")
+     In cases where a patient's post-baseline PRO score increases by at least one compared to baseline, the maximum baseline-adjusted score is this maximum post-baseline value. Otherwise, if the patient's baseline and post-baseline score are always equal, their maximum baseline-adjusted score is 0 (or 'None')  <br> <br>This app allows you to select: <br>- The doses you wish to display, <br>- The final time point for analysis <br>- Which PRO domains you wish to display.")
   }
 })
 
@@ -622,19 +622,19 @@ output$continuous_information_about <- renderUI({
   about_continuous <- about_continuous()
   if (about_continuous == "graphC"){
     html("This figure evaluates mean change from baseline across time for continuous PRO scores. Associated improvement and worsening thresholds as well 95% confidence intervals for each timepoint are indicated.
-    <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint you wish to display, <br>- The PRO domain you wish to display.")
+    <br> <br>This app allows you to select: <br>- The doses you wish to display, <br>- The final timepoint you wish to display, <br>- The PRO domain you wish to display.")
   }
   else if (about_continuous == "graphD") {
-     html("This figure presents individual patient trajectories for continuous PRO scores. <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint to display, <br>- The PRO domain you wish to display, <br> - The patients you wish to display. ")
+     html("This figure presents individual patient trajectories for continuous PRO scores. <br> <br>This app allows you to select: <br>- The doses you wish to display, <br>- The final timepoint to display, <br>- The PRO domain you wish to display, <br> - The patients you wish to display. ")
   }
   else if (about_continuous == "graphE") {
-     html("This figure presents boxplots summarising the distribution of continuous PRO scores across time. <br> <br>This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint to display, <br>- The PRO domain you wish to display.")
+     html("This figure presents boxplots summarising the distribution of continuous PRO scores across time. <br> <br>This app allows you to select: <br>- The doses you wish to display, <br>- The final timepoint to display, <br>- The PRO domain you wish to display.")
   }
   else if (about_continuous == "graphF") {
-    html("This table indicates mean change from baseline in continuous PRO score between the baseline and a selected timepoint with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
+    html("This table indicates mean change from baseline in continuous PRO score between the baseline and a selected timepoint with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The doses you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
   }
   else if (about_continuous == "graphG") {
-    html("This figure indicates mean change from baseline in continuous PRO score between the baseline and a selected timepoint with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The dose levels you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
+    html("This figure indicates mean change from baseline in continuous PRO score between the baseline and a selected timepoint with standard error across different PRO domains. The number of patients who reported PROs at each dose is indicated.<br> <br> This app allows you to select: <br>- The doses you wish to display, <br>- The final timepoint for analysis, <br>- Which PRO domains you wish to display.")
   }
 })
 
