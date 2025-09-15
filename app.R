@@ -173,7 +173,7 @@ ui <- div(page_navbar(
           sidebar = sidebar(
           card(card_header("Variables", style = "background-color: #bfd9bf"),
                             card_body(checkboxGroupInput("numdose", label = "Dosage", selected = NULL, inline = TRUE),
-                                      selectInput("baseChange", label = "Change from baseline needed for an event", choices = c(1, 2, 3, 4, 5), selected = 3),
+                                      selectInput("baseChange", label = "Minimum change from baseline score to define event", choices = c(1, 2, 3, 4, 5), selected = 3),
                                       uiOutput("toxicA"),
                                       input_switch("allA", label = "Select all PRO domains"),
                                       height = 800))
@@ -854,16 +854,21 @@ output$continuous_table <- renderTable(
     if (isTruthy(input$upload)){
       ordinal_data <- ordinal_data()
       toxic <- unique(ordinal_data$toxicity)
-      selectizeInput("toxicA", label = "PRO domain categories to be checked for an event", choices = toxic, selected = NULL, multiple = TRUE)
+      if (input$allA == FALSE){
+        selectizeInput("toxicA", label = "PRO domain(s) defining event", choices = toxic, selected = NULL, multiple = TRUE)
+      }
+      else {
+        selectizeInput("toxicA", label = "PRO domain(s) defining event", choices = toxic, selected = toxic, multiple = TRUE)
+      }
     }
     else if (isTruthy(input$dummy_ordinal)){
       ordinal_data <- ordinal_data()
       toxic <- unique(ordinal_data$toxicity)
       if (input$allA == FALSE){
-        selectizeInput("toxicA", label = "PRO domain categories to be checked for an event", choices = toxic, selected = NULL, multiple = TRUE)
+        selectizeInput("toxicA", label = "PRO domain(s) defining event", choices = toxic, selected = NULL, multiple = TRUE)
       }
       else {
-        selectizeInput("toxicA", label = "PRO domain categories to be checked for an event", choices = toxic, selected = toxic, multiple = TRUE)
+        selectizeInput("toxicA", label = "PRO domain(s) defining event", choices = toxic, selected = toxic, multiple = TRUE)
       }
     }
   })
