@@ -382,6 +382,7 @@ ui <- div(page_navbar(
                     sliderInput("tpointD", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                     checkboxGroupInput("numdoseD", label = "Dosage",choices = NULL),
                     uiOutput("select_idD"),
+                    uiOutput("allD"),
                     selectInput("functioningD", label = "PRO domain of interest", choices = NULL), height = 800)),
                     card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadD", style = "background-color: #d9bfd9")))),
                     card(card_header(class = "d-inline-flex justify-content-end bg-light",
@@ -850,6 +851,7 @@ output$continuous_table <- renderTable(
     numdose <- unique(ordinal_data$dose)
     updateCheckboxGroupInput(session, "numdose", label = "Dosage", choices = numdose, selected = NULL)
   })
+
   output$toxicA <- renderUI({
     if (isTruthy(input$upload)){
       ordinal_data <- ordinal_data()
@@ -1498,12 +1500,22 @@ func_D <- reactive({
 })
 
 #### ID specific UI
+output$allD <- renderUI({
+  if (isTruthy(input$numdoseD) == TRUE){
+  input_switch("allD", label = "Select all IDs")
+  }
+})
 
 output$select_idD <- renderUI({
   data <- continuous_data()
   data <- data %>% filter(dose %in% no_doseD())
   id <- unique(data$id)
-  selectizeInput("select_idD", "Select IDs", choices = id, multiple = TRUE, selected = NULL)
+  if (isFALSE(input$allD)){
+    selectizeInput("select_idD", "Select IDs", choices = id, multiple = TRUE, selected = NULL)
+  }
+  else if (isTRUE(input$allD)) {
+    selectizeInput("select_idD", "Select IDs", choices = id, multiple = TRUE, selected = id)
+  }  
 })
 
 idD <- reactive({
