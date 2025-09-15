@@ -1187,13 +1187,13 @@ output$graphB <- renderPlot({
                                   g +
     labs(x = editB()$x_lab,
          y = "Proportion",
-         fill = "Severity Grade")+ ggtitle(editB()$title) + theme(plot.title = element_text(size = editB()$titlesize, face = "bold"), axis.title = element_text(size = editB()$axissize))
+         fill = "Severity Score")+ ggtitle(editB()$title) + theme(plot.title = element_text(size = editB()$titlesize, face = "bold"), axis.title = element_text(size = editB()$axissize))
                                 }
                                 else {
                                   g +
     labs(x = "Timepoint",
          y = "Proportion",
-         fill = "Severity Grade")
+         fill = "Severity Score")
                                 }
 }, height = function() input$heightB, width = function() input$widthB)
 
@@ -2560,7 +2560,7 @@ output$graphI <- renderPlot({
                       guide = guide_legend(reverse = TRUE)) +
     labs(x = paste0("Dose (N=", paste(ice_n_patI()$n.pat, collapse = "; "), ")"),
           y = "Percentage (%)",
-          fill = "Severity Grade") +
+          fill = "Severity Score") +
     theme(
           strip.text.y = element_text(angle = 0)) +
                                   ggtitle(editI()$title) + theme(plot.title = element_text(size = editI()$titlesize, face = "bold"))
@@ -2575,7 +2575,7 @@ output$graphI <- renderPlot({
                       guide = guide_legend(reverse = TRUE)) +
     labs(x = paste0("Dose (N=", paste(ice_n_patI()$n.pat, collapse = "; "), ")"),
           y = "Percentage (%)",
-          fill = "Severity Grade") +
+          fill = "Severity Score") +
     theme(
           strip.text.y = element_text(angle = 0))
                                 }
