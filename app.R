@@ -13,6 +13,10 @@ library(bslib)
 library(bsicons)
 library(gridExtra)
 library(survminer)
+library(pandoc)
+pandoc_install("2.11.4") 
+pandoc_activate("2.11.4") 
+
 
 ui <- div(page_navbar(
   theme = bslib::bs_theme("bslib-value-box-horizontal-break-point" = "1px"),
@@ -177,7 +181,8 @@ ui <- div(page_navbar(
                                       uiOutput("toxicA"),
                                       input_switch("allA", label = "Select all PRO domains"),
                                       height = 800))
-               , card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadA", style = "background-color: #d9bfd9")))),
+               , card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadA", style = "background-color: #d9bfd9"),
+               downloadButton("downloadAcode", style = "background-color: #d9bfd9", label = "Code")))),
           card(card_header(class = "d-inline-flex justify-content-end bg-light",
           popover(
             actionButton("sizeA", "Size", value = FALSE, icon = icon("arrows-up-down-left-right"), style = "background-color: #bfd9bf"),
@@ -2588,6 +2593,27 @@ output$downloadA <- downloadHandler(
   },
   content = function(file){
     ggsave(file, plot = last_plot(), device = "svg", height = input$heightA * 4, width = input$widthA * 4, units = "px")
+  }
+)
+output$downloadAcode <- downloadHandler(
+  filename = function(){
+    paste0("Kaplan-Meier-Code", Sys.Date(), ".html")
+  },
+  content = function(file){
+    tempReport <- tempfile(fileext = ".Rmd")
+    file.copy("codeDownload/Adownload.Rmd", tempReport, overwrite = TRUE)
+    params <- list(ordinal_data = ordinal_data(), 
+                   no_dose = input$numdose,
+                   toxicA = input$toxicA,
+                   baseA = input$baseChange,
+                   ordinal_date = input$ordinal_date, 
+                   graphtitle = input$titleA,
+                   titlesize = input$titlesizeA,
+                   x_lab = input$xlab_A,
+                   axissize = input$axisSizeA,
+                   box_x = input$box_xA,
+                   box_y = input$box_yA)
+    rmarkdown::render(tempReport, output_file = file, params = params, envir = new.env(parent = globalenv()))
   }
 )
 output$downloadB <- downloadHandler(
