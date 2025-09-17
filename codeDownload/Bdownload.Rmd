@@ -1,0 +1,134 @@
+---
+title: "R code to generate Barplot across timepoints"
+output: html_document
+params:
+    ordinal_data: NA
+    no_doseb: NA
+    toxic: NA
+    final_t: NA
+    ordinal_date: NA
+    title: NA
+    titlesize: NA
+    axissize: 30
+    x_lab: "Timepoint"
+---
+
+```{r}
+library(ggplot2)
+library(shinydashboard)
+library(DT)
+library(magrittr)
+library(dplyr)
+library(ggsurvfit)
+library(ggh4x)
+library(tidyr)
+library(gt)
+library(svglite)
+library(bslib)
+library(bsicons)
+library(gridExtra)
+library(survminer)
+
+print(params[-1])
+
+ordinal_data <- params$ordinal_data
+no_doseb <- params$no_doseb
+toxic <- params$toxic
+final_t <- params$final_t
+ordinal_date <- params$ordinal_date
+
+ordinal_data$grade[is.na(ordinal_data$grade)] <- "Unreported"
+
+if (ordinal_date == TRUE){
+    n_pat <- ordinal_data %>%
+        filter(timepoint == min(as.Date(timepoint)), toxicity == toxic) %>%
+        group_by(dose) %>%
+        summarise(n.pat = n())
+} else {
+    n_pat <- ordinal_data %>%
+        filter(timepoint == min(timepoint), toxicity == toxic) %>%
+        group_by(dose) %>%
+        summarise(n.pat = n())
+}
+
+prop <- ordinal_data %>%
+    group_by(toxicity, timepoint, dose) %>%
+    count(grade) %>%
+    left_join(n_pat, by = "dose") %>%
+    mutate(proportion = n / n.pat) %>%
+    dplyr::select(-n)
+
+colnames(prop) <- c("toxicity", "timepoint", "dose", "grade", "n.pat", "proportion")
+
+prop <- prop %>% dplyr::select(-n.pat)
+
+missing_layer <- prop %>%
+    group_by(toxicity, timepoint, dose) %>%
+    summarise(proportion = 1 - sum(proportion), .groups = "drop") %>%
+    filter(proportion > 0)
+
+missing_layer <- cbind(missing_layer, "Discontinued")
+
+colnames(missing_layer) <- c("toxicity", "timepoint", "dose", "proportion", "grade")
+
+missing_layer <- missing_layer %>% dplyr::select(names(prop))
+
+prop$grade <- as.character(prop$grade)
+prop <- bind_rows(prop, missing_layer)
+
+prop$toxicity <- as.factor(prop$toxicity)
+prop$grade <- as.factor(prop$grade)
+prop$dose <- as.factor(prop$dose)
+
+if (ordinal_date == TRUE){
+    prop <- prop %>% filter(as.Date(timepoint) <= as.Date(final_t))
+    prop$timepoint <- as.factor(as.Date(prop$timepoint))
+} else {
+    prop <- prop %>% filter(timepoint <= final_t)
+    prop$timepoint <- as.factor(prop$timepoint)
+}
+
+prop$dose <- factor(prop$dose, levels = no_doseb)
+prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))
+prop <- prop %>% filter(dose %in% no_doseb)
+
+if (ordinal_date == TRUE){
+    no_pat <- ordinal_data %>%
+        filter(timepoint == min(as.Date(timepoint)), toxicity == toxic) %>%
+        group_by(dose) %>%
+        filter(dose %in% no_doseb) %>%
+        summarise(n.pat = n(),.groups = "keep")
+} else {
+    no_pat <- ordinal_data %>%
+        filter(timepoint == min(timepoint), toxicity == toxic) %>%
+        group_by(dose) %>%
+        filter(dose %in% no_doseb) %>%
+        summarise(n.pat = n(),.groups = "keep")
+}
+
+no_pat <- no_pat$n.pat
+
+formatter <-  function(no.dose = no_doseb, no.pat = no_pat) {paste0("Dose ", no.dose, " (N=", no.pat, ")")}
+
+#Graph output
+prop %>% filter(toxicity == toxic) %>% ggplot(aes(x = as.factor(timepoint))) +
+    geom_bar(aes(x = as.factor(timepoint),
+                 y = proportion,
+                 fill = as.factor(grade)),
+             stat = "identity",
+             position = "stack") +
+    scale_fill_manual(breaks = rev(c(1:5, "Unreported", "Discontinued")),
+                      values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "grey", "grey30")),
+                      labels = rev(
+                        c("None", "Mild", "Moderate", "Severe", "Very Severe", "Unreported", "Discontinued")),
+                      guide = guide_legend(reverse = TRUE)) +
+    theme_bw(base_size = 14) +
+    facet_wrap2(~as.factor(dose),
+                nrow = 3,
+                strip.position = "left",
+                axes = "all",
+                labeller = as_labeller(formatter))+
+    labs(x = params$x_lab,
+         y = "Proportion",
+         fill = "Severity Score")+ ggtitle(params$title) + theme(plot.title = element_text(size = params$titlesize, face = "bold"), axis.title = element_text(size = params$axissize))                             
+```
