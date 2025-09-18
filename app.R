@@ -250,7 +250,7 @@ ui <- div(page_navbar(
                     sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1),
                     checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL, inline = TRUE), height = 800
           )), 
-          card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadH", style = "background-color: #d9bfd9")))),
+          card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadH", style = "background-color: #d9bfd9"), downloadButton("downloadHcode", style = "background-color: #d9bfd9", label = "Code")))),
           card(card_header(class = "d-inline-flex justify-content-end bg-light",
           popover(
             actionButton("sizeH", "Size", value = FALSE, icon = icon("arrows-up-down-left-right"), style = "background-color: #bfd9bf"),
@@ -2689,6 +2689,25 @@ output$downloadH <- downloadHandler(
   },
   content = function(file){
     ggsave(file, plot = last_plot(), device = "svg", height = input$heightH * 4, width = input$widthH * 4, units = "px")
+  }
+)
+output$downloadHcode <- downloadHandler(
+  filename = function(){
+    paste0("butterfly_code", Sys.Date(), ".html")
+  },
+  content = function(file){
+    tempReport <- tempfile(fileext = ".Rmd")
+    file.copy("codeDownload/Hdownload.Rmd", tempReport, overwrite = TRUE)
+    params <- list(ordinal_data = ordinal_data(), 
+                   no_doseH = input$numdoseH,
+                   toxicH = input$toxicH,
+                   times_H   = input$tpointH,
+                   ordinal_date = input$ordinal_date, 
+                   title = input$titleH,
+                   titlesize = input$titlesizeH,
+                   location = input$unrep_positionH,
+                   subtitle = input$subtitleH)
+    rmarkdown::render(tempReport, output_file = file, params = params, envir = new.env(parent = globalenv()))
   }
 )
 output$downloadI <- downloadHandler(
