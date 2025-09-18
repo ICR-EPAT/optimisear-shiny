@@ -173,7 +173,7 @@ ggplot(valH %>% subset(toxicity %in% toxicH), aes(x = dose, y = proportion, fill
               inherit.aes = FALSE) +
     geom_text(
       data = missing_H %>% filter(toxicity %in% toxicH),
-      aes(x = dose, y = loc, label = label, group = dose),  # 'toxicity' must also be in 'missing'
+      aes(x = dose, y = loc, label = label, group = dose),
       inherit.aes = FALSE,
       vjust = -0.5
     ) + ggtitle(params$title) + theme(plot.title = element_text(size = params$titlesize, face = "bold"))

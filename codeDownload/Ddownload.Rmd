@@ -1,0 +1,82 @@
+---
+title: "R code to generate Individual patient trajectory plot"
+output: html_document
+params:
+    continuous_data: NA
+    no_doseD: NA
+    func_D: NA
+    final_tD: NA
+    idD: NA
+    continuous_date: NA
+    title: NA
+    titlesize: NA
+    axissize: 30
+    x_lab: "Timepoint" 
+    y_lab: "Score in PRO domain" 
+    arrow_lab: "Better \n tolerability" 
+    range: c(0,100) 
+---
+
+```{r}
+library(ggplot2)
+library(DT)
+library(magrittr)
+library(dplyr)
+library(ggsurvfit)
+library(ggh4x)
+library(tidyr)
+library(gt)
+library(gridExtra)
+library(survminer)
+
+print(params[-1])
+
+continuous_data <- params$continuous_data
+no_doseD <- params$no_doseD
+func_D <- params$func_D
+final_tD <- params$final_tD
+idD <- params$idD
+continuous_date <- params$continuous_date
+
+
+if(continuous_date == TRUE){
+    continuous_data$timepoint == as.Date(continuous_data$timepoint)
+}
+  
+continuous_data <- continuous_data %>%
+    filter(dose %in% no_doseD) %>%
+    filter(id %in% idD) %>%
+    filter(timepoint <= final_tD) %>%
+    filter(functioning == func_D) %>%
+    filter(!is.na(score)) %>%
+    dplyr::select(-functioning)
+continuous_data <- data.frame(continuous_data)
+
+labels_D <- paste0("ID ", continuous_data$id, " (Dose: ", continuous_data$dose, ")")
+
+continuous_data$dose <- as.factor(continuous_data$dose)
+
+lims <- params$range
+minval <- min(continuous_data$score, na.rm = TRUE)
+maxval <- max(continuous_data$score, na.rm = TRUE)
+lower <- min(c(minval, lims[1]))
+upper <- max(c(maxval, lims[2]))
+
+ggplot(data = continuous_data, aes(x = as.factor(timepoint),
+                                   y = score, group = id, colour = labels_D, linetype = dose)) +
+      geom_line(size = 0.9) +
+      labs(linetype = "Dose") +
+      theme_minimal(base_size = 16) +
+      ylim(c(lower, upper)) +
+      geom_point() +
+      labs(
+            y = params$y_lab,
+            x = params$x_lab,
+            color = "Patient (Dose)") +
+      ggtitle(params$title) + theme(plot.title = element_text(size = params$titlesize, face = "bold"), axis.title = element_text(size = params$axissize)) +
+      geom_segment(x = 0.2, xend = 0.2, y = lower, yend = upper,
+                   colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                  length = unit(0.1, "inches")), inherit.aes = FALSE) +
+      geom_text(x = -0.2, y = upper * 0.9, label = params$arrow_lab, color = "black", inherit.aes = FALSE) +
+      scale_x_discrete(expand = expansion(add = c(2, 0)))
+```

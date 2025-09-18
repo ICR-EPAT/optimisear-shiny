@@ -1,0 +1,169 @@
+---
+title: "R code to generate Change from baseline across PRO domains (figure)" ######change
+output: html_document
+params:
+    continuous_data: NA
+    no_doseG: NA
+    func_G: NA
+    final_tG: NA
+    continuous_date: NA
+    title: NA
+    titlesize: NA
+    axissize: 30
+    subtitle: "PRO domain"
+    y_lab: "Mean change from baseline to timepoint (with 95% CI) \n for PRO domain"
+    improveG: "Improvement"
+    worseG: "Worsening"
+    impTextG: 17 
+    worTextG: -17 
+---
+
+```{r}
+library(ggplot2)
+library(DT)
+library(magrittr)
+library(dplyr)
+library(ggsurvfit)
+library(ggh4x)
+library(tidyr)
+library(gt)
+library(gridExtra)
+library(survminer)
+
+print(params[-1])
+
+continuous_data <- params$continuous_data
+no_doseG <- params$no_doseG
+func_G <- params$func_G
+final_tG <- params$final_tG
+continuous_date <- params$continuous_date
+
+no_patientG <- continuous_data  %>%
+  filter(dose %in% no_doseG) %>%
+  filter(timepoint == min(timepoint), functioning == func_G[1]) %>%
+  count(dose)
+
+
+continuous_data_filteredG <- continuous_data 
+
+if (continuous_date == TRUE){
+    continuous_data_filteredG$timepoint <- as.Date(continuous_data_filteredG$timepoint)
+}
+
+continuous_data_filteredG$functioning <- as.character(continuous_data_filteredG$functioning)
+  
+continuous_data_filteredG <- continuous_data_filteredG %>%
+  filter(dose %in% no_doseG) %>%
+  filter(functioning %in% func_G)
+
+
+ice_n_pat <- continuous_data_filteredG %>%
+  group_by(dose, id) %>%
+  summarise(n_timepoints = n_distinct(timepoint), .groups = "drop") %>%
+  group_by(dose) %>%
+  mutate(max_timepoints = final_tG) %>%
+  filter(n_timepoints < max_timepoints) %>%
+  summarise(n_patients_missing = n_distinct(id))
+
+endT_list <- unique(continuous_data %>% filter(timepoint <= final_tG) %>% select(timepoint))
+endT <- max(endT_list$timepoint)
+startT <- min(unique(continuous_data_filteredG$timepoint))
+tp_end <- sym(paste0("tp_", endT))
+tp_start <- sym(paste0("tp_", startT))
+
+dfG <- continuous_data_filteredG %>%
+  filter(timepoint <= endT) %>%
+  pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_") %>%
+  mutate(score = !!tp_end - !!tp_start) %>%
+  dplyr::select(id, score, dose, functioning)
+
+dfG <- dfG %>%
+    group_by(dose, functioning) %>%
+    mutate(non_na_count = sum(!is.na(score))) %>%
+    mutate(na_count = sum(is.na(score))) %>%
+    ungroup()
+
+unrep <- dfG %>% group_by(dose, functioning) %>% distinct(na_count) %>% ungroup()
+
+sum.dfG <- dfG %>%
+    group_by(dose, functioning) %>%
+    summarise(
+              mean = mean(score, na.rm=TRUE),non_na_count = unique(non_na_count),
+              se = sd(score, na.rm = TRUE) / sqrt(non_na_count), .groups = "keep")
+
+sum.dfG <- sum.dfG %>% mutate(l.ci = mean - (1.96 * se))
+sum.dfG <- sum.dfG %>% mutate(u.ci = mean + (1.96 * se))
+sum.dfG <- sum.dfG %>% left_join(unrep, by = c("dose", "functioning")) %>%
+    mutate(custom_x = paste0("Dose=", dose, "\nUR=", na_count))
+sum.dfG$functioning <- as.factor(sum.dfG$functioning)
+
+first_fn <- as.symbol(as.character((sum.dfG$functioning[1])))
+
+arrowdf <- tibble(functioning = as.factor(as.character(first_fn)))
+
+formatterG <- function(functioning = unique(sum.dfG$functioning), subtitle = params$subtitle) {paste(subtitle, functioning, sep = " ")}
+formatterG()
+
+impbound <- params$improveG
+worbound <- params$worseG
+
+minval <- min(dfG$score, na.rm = TRUE)
+maxval <- max(dfG$score, na.rm = TRUE)
+
+upper <- max(worbound[2],impbound[2], maxval)
+lower <- min(worbound[1], impbound[1], minval)
+
+worse_text <- if (worbound[1] < impbound[1]){
+    min(max(params$worTextG, worbound[1]), worbound[2])
+} else {
+    max(min(params$worTextG, worbound[2]), worbound[1])
+}
+
+improve_text <- if (worbound[1] < impbound[1]){
+max(min(params$impTextG, impbound[2]), impbound[1])
+} else {
+min(max(params$impTextG, impbound[1]), impbound[2])
+}
+
+thresholds <- data.frame(
+ymin = c(impbound[1], worbound[1]),
+ymax = c(impbound[2], worbound[2]),
+Threshold = factor(c("Improvement", "Worsening"))
+)
+
+
+no_patient <- unlist(no_patientG[2])
+no_patient <- paste(no_patient, collapse = ";")
+
+data.frame(sum.dfG) %>% ggplot(aes(x = custom_x, y = mean, colour = as.factor(dose))) +
+    geom_point(size = 3) +
+    scale_color_discrete(name = "Dose") +
+    geom_errorbar(aes(ymin = l.ci, ymax = u.ci), width = 0.2, size = 1.2) +
+    theme_minimal(base_size = 14)+ 
+    ylim(c(lower, upper)) +
+    scale_fill_manual(
+                      name = "Threshold",
+                      values = c("Improvement" = "palegreen1", "Worsening" = "red")) +
+    geom_rect(data = thresholds,
+              aes(xmin = -Inf, xmax = Inf, ymin = ymin, ymax = ymax, fill = Threshold),
+                  alpha = 0.3, inherit.aes = FALSE) +
+    labs(
+         y = paste0(params$y_lab),
+         x = paste0("Dose (N= ", no_patient, ")")) +
+    facet_wrap(~ as.factor(functioning), nrow = 1, labeller = as_labeller(formatterG), scales = "free_x") +
+    scale_x_discrete(expand = expansion(add = c(1, 1))) +
+    geom_segment(data = arrowdf,
+                 aes(x = 0.5, xend = 0.5, y = 0, yend = upper),
+                     colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                    length = unit(0.1, "inches"))) +
+    geom_segment(data = arrowdf,
+                 aes(x = 0.5, xend = 0.5, y = 0, yend = lower),
+                 colour = "darkgrey", size = 0.8, arrow = arrow(type="closed",
+                                                                length = unit(0.1, "inches"))) +
+    geom_text(data = arrowdf, aes(x = 2, y = improve_text, label = "Improvement"), 
+              inherit.aes = FALSE) +
+    geom_text(data = arrowdf, aes(x = 2, y = worse_text, label = "Worsening"), 
+              inherit.aes = FALSE) +
+    ggtitle(params$title) +
+    theme(plot.title = element_text(size = params$titlesize, face = "bold"), axis.title = element_text(size = params$axissize))
+```

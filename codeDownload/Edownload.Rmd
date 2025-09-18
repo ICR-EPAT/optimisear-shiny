@@ -1,0 +1,72 @@
+---
+title: "R code to generate Change from baseline across timepoints plot"
+output: html_document
+params:
+    continuous_data: NA
+    no_doseE: NA
+    func_E: NA
+    final_tE: NA
+    continuous_date: NA
+    title: NA
+    titlesize: NA
+    axissize: 30
+    x_lab: "Timepoint"
+    y_lab: "Score in PRO domain"
+    arrow_lab: "Better \n tolerability"
+    range: c(0,100)
+---
+
+```{r}
+library(ggplot2)
+library(DT)
+library(magrittr)
+library(dplyr)
+library(ggsurvfit)
+library(ggh4x)
+library(tidyr)
+library(gt)
+library(gridExtra)
+library(survminer)
+
+print(params[-1])
+
+continuous_data <- params$continuous_data
+no_doseE <- params$no_doseE
+func_E <- params$func_E
+final_tE <- params$final_tE
+continuous_date <- params$continuous_date
+
+
+
+if (continuous_date == TRUE){
+    continuous_data$timepoint <- as.Date(continuous_data$timepoint)
+}
+
+continuous_data <- continuous_data %>% filter(functioning == func_E) %>% dplyr::select(-functioning)
+continuous_data <- continuous_data %>%
+    filter(dose %in% no_doseE) %>%
+    filter(timepoint <= final_tE) %>%
+    filter(!is.na(score))
+
+bounds <- params$range
+maxval <- max(continuous_data$score, na.rm = TRUE)
+minval <- min(continuous_data$score, na.rm = TRUE)
+lower <- min(c(minval, bounds[1]))
+upper <- max(c(maxval, bounds[2]))
+
+
+
+ggplot(continuous_data, aes(x = as.factor(timepoint), y = score, fill = as.factor(dose))) +
+    labs(fill = "Dose") +
+    geom_boxplot() +
+    theme_minimal(base_size = 14) +
+    xlab(params$x_lab) +
+    ylab(params$y_lab) +
+    geom_segment(aes(x = 0.2, xend = 0.2, y = lower, yend = upper),
+                 colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches"))) + ylim(c(lower, upper)) +
+    scale_x_discrete(expand = expansion(add = c(2, 0))) +
+    geom_text(aes(x = -0.45, y = upper * 0.9, label = params$arrow_lab))+
+    ggtitle(params$title) +
+    theme(plot.title = element_text(size = params$titlesize, face = "bold"), axis.title = element_text(size = params$axissize))
+```
