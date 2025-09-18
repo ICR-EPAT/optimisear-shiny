@@ -1138,7 +1138,6 @@ prop <- reactive({
   prop$dose <- factor(prop$dose, levels = no_doseb())
   prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))
   prop <- prop %>% filter(dose %in% no_doseb())
-
   prop
 })
 
@@ -1164,13 +1163,23 @@ no_patient <- reactive({
   }
   no_pat$n.pat
 })
+formatter <- reactive({
+  if (isTruthy(input$updateB)){
+    if (isFALSE(editB()$showExtra)){
+      function(no_dose = no_doseb(), no_pat = no_patient()) {paste0("Dose ", no_dose, " (N=", no_pat, ")")}
+      } else{function(no_dose = no_doseb()) {paste0("Dose ", no_dose)}}
+  } 
+  else {
+    function(no_dose = no_doseb()) {paste0("Dose ", no_dose)}
+}
+})
+
 
 #Graph output
 output$graphB <- renderPlot({
   prop <- prop()
   no_dose <- no_doseb()
   no_patient <- no_patient()
-  formatter <- function(no_dose, no_pat = no_patient) { paste0("Dose ", no_dose, " (N=", no_pat, ")")}
   g <- prop %>% filter(toxicity == toxic()) %>% ggplot(aes(x = as.factor(timepoint))) +
     geom_bar(aes(x = as.factor(timepoint),
                  y = proportion,
@@ -1188,7 +1197,7 @@ output$graphB <- renderPlot({
                 nrow = 3,
                 strip.position = "left",
                 axes = "all",
-                labeller = as_labeller(formatter))
+                labeller = as_labeller(formatter()))
           if (isTruthy(input$updateB)){
                                   g +
     labs(x = editB()$x_lab,
