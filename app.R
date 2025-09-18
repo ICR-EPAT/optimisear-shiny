@@ -107,8 +107,6 @@ ui <- div(page_navbar(
       p("- Doses, {dose}, [numeric]"),
       p("- Timepoint of current report, {timepoint},"),
       p("[integer OR date \"YYYY-MM-DD\"]"),
-      p("- Final reported time by the patient, {timepoint},"),
-      p("[numeric OR date \"YYYY-MM-DD\"]"),
       p("To switch to date format use toggle:"),
       input_switch("ordinal_date", "Turn on date format"),
       p("Date format will toggle automatically but can also be toggled manually")
@@ -798,8 +796,7 @@ editI <- eventReactive(input$updateI,{
           need("toxicity" %in% colnames(data), "Missing toxicity column"),
           need("grade" %in% colnames(data), "Missing grade column"),
           need("timepoint" %in% colnames(data), "Missing timepoint column"),
-          need("dose" %in% colnames(data), "Missing dose column"),
-          need("time_last_report" %in% colnames(data), "Missing time_last_report column"), errorClass = "style")
+          need("dose" %in% colnames(data), "Missing dose column"), errorClass = "style")
        }
        data <- data %>% select(id, toxicity, grade, timepoint, dose, time_last_report)
        data
