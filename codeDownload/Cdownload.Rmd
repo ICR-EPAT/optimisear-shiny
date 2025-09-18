@@ -56,8 +56,6 @@ summaryC <- summaryC %>% filter(timepoint <= final_tC) %>% filter(dose %in% no_d
 
 pd <- position_dodge(width = 0.2)
 
-#### FIGURE GENERATION
-
 impbound <- params$improveC
 worbound <- params$worseC
 upper <- max(impbound[2], worbound[2], max(diffC$adjusted_value))

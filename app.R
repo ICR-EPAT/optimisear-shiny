@@ -452,7 +452,7 @@ ui <- div(page_navbar(
                                                  selected = NULL, inline = TRUE),
           sliderInput("tpointG", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
           checkboxGroupInput("functioningG", label = "PRO domain of interest", selected = NULL, inline = TRUE), height = 800)),
-          card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadG", style = "background-color: #d9bfd9")))),
+          card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadG", style = "background-color: #d9bfd9"), downloadButton("downloadGcode", style = "background-color: #d9bfd9", label = "Code")))),
           card(card_header(class = "d-inline-flex justify-content-end bg-light",
           popover(
             actionButton("sizeG", "Size", value = FALSE, icon = icon("arrows-up-down-left-right"), style = "background-color: #bfd9bf"),
@@ -469,7 +469,7 @@ ui <- div(page_navbar(
              sliderInput("titlesizeG", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_G", label = NULL, placeholder = "Enter y-axis label"),
              sliderInput("axisSizeG", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
-             textInput("sublab_G", label = NULL, placeholder = "Enter subgraph label"),
+             textInput("sublab_G", label = NULL, placeholder = "Enter subgraph label", value = "PRO domain"),
              p(strong("Note:")),
              p("Upper bound for improvement and lower bound for worsening will be taken as range"),
              sliderInput("improveG", label = "Start and endpoint for improvement", min = -100, max = 100, value = c(10, 25), step = 1),
@@ -2660,8 +2660,8 @@ output$downloadCcode <- downloadHandler(
                    func_C = input$functioningC,
                    final_tC = input$tpointC,
                    continuous_date = input$continuous_date, 
-                   title = input$titleB,
-                   titlesize = input$titlesizeB,
+                   title = input$titleC,
+                   titlesize = input$titlesizeC,
                    axissize = input$axisSizeC,
                    x_lab = input$xlab_C,
                    y_lab = input$ylab_C,
@@ -2768,6 +2768,31 @@ output$downloadG <- downloadHandler(
   },
   content = function(file){
     ggsave(file, plot = last_plot(), device = "svg", height = input$heightG * 4, width = input$widthG * 4, units = "px")
+  }
+)
+output$downloadGcode <- downloadHandler(
+  filename = function(){
+    paste0("change_baseline_timepoints_code", Sys.Date(), ".html")
+  },
+  content = function(file){
+    tempReport <- tempfile(fileext = ".Rmd")
+    file.copy("codeDownload/Gdownload.Rmd", tempReport, overwrite = TRUE)
+    params <- list(continuous_data = continuous_data(), 
+                   no_doseG = input$numdoseG,
+                   func_G = input$functioningG,
+                   final_tG = input$tpointG,
+                   continuous_date = input$continuous_date, 
+                   title = input$titleG,
+                   titlesize = input$titlesizeG,
+                   axissize = input$axisSizeG,
+                   subtitle = input$sublab_G,
+                   y_lab = input$ylab_G,
+                   improveG = input$improveG,
+                   worseG = input$worseG,
+                   impTextG = input$impTextG,
+                   worTextG =input$worTextG
+                   )
+    rmarkdown::render(tempReport, output_file = file, params = params, envir = new.env(parent = globalenv()))
   }
 )
 output$downloadH <- downloadHandler(
