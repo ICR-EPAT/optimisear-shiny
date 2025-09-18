@@ -18,7 +18,6 @@ params:
 
 ```{r}
 library(ggplot2)
-library(shinydashboard)
 library(DT)
 library(magrittr)
 library(dplyr)
@@ -26,9 +25,6 @@ library(ggsurvfit)
 library(ggh4x)
 library(tidyr)
 library(gt)
-library(svglite)
-library(bslib)
-library(bsicons)
 library(gridExtra)
 library(survminer)
 

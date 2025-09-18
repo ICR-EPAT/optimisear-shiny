@@ -282,7 +282,7 @@ ui <- div(page_navbar(
                     sliderInput("tpointI", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                     checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE), height = 800) 
           ), 
-          card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadI", style = "background-color: #d9bfd9")))),
+          card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadI", style = "background-color: #d9bfd9"), downloadButton("downloadIcode", style = "background-color: #d9bfd9", label = "Code")))),
           card(card_header(class = "d-inline-flex justify-content-end bg-light",
           popover(
             actionButton("sizeI", "Size", value = FALSE, icon = icon("arrows-up-down-left-right"), style = "background-color: #bfd9bf"),
@@ -2716,6 +2716,24 @@ output$downloadI <- downloadHandler(
   },
   content = function(file){
     ggsave(file, plot = last_plot(), device = "svg", height = input$heightI * 4, width = input$widthI * 4, units = "px")
+  }
+)
+output$downloadIcode <- downloadHandler(
+  filename = function(){
+    paste0("baseline_adjusted_barplot_code", Sys.Date(), ".html")
+  },
+  content = function(file){
+    tempReport <- tempfile(fileext = ".Rmd")
+    file.copy("codeDownload/Idownload.Rmd", tempReport, overwrite = TRUE)
+    params <- list(ordinal_data = ordinal_data(), 
+                   no_doseI = input$numdoseI,
+                   toxicI = input$toxicI,
+                   times_I   = input$tpointI,
+                   ordinal_date = input$ordinal_date, 
+                   title = input$titleI,
+                   titlesize = input$titlesizeI,
+                   subtitle = input$subtitleI)
+    rmarkdown::render(tempReport, output_file = file, params = params, envir = new.env(parent = globalenv()))
   }
 )
 }
