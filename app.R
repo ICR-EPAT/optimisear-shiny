@@ -13,6 +13,10 @@ library(bslib)
 library(bsicons)
 library(gridExtra)
 library(survminer)
+library(pandoc)
+pandoc_install("2.11.4") 
+pandoc_activate("2.11.4") 
+
 
 ui <- div(page_navbar(
   theme = bslib::bs_theme("bslib-value-box-horizontal-break-point" = "1px"),
@@ -103,8 +107,6 @@ ui <- div(page_navbar(
       p("- Doses, {dose}, [numeric]"),
       p("- Timepoint of current report, {timepoint},"),
       p("[integer OR date \"YYYY-MM-DD\"]"),
-      p("- Final reported time by the patient, {timepoint},"),
-      p("[numeric OR date \"YYYY-MM-DD\"]"),
       p("To switch to date format use toggle:"),
       input_switch("ordinal_date", "Turn on date format"),
       p("Date format will toggle automatically but can also be toggled manually")
@@ -177,7 +179,8 @@ ui <- div(page_navbar(
                                       uiOutput("toxicA"),
                                       input_switch("allA", label = "Select all PRO domains"),
                                       height = 800))
-               , card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadA", style = "background-color: #d9bfd9")))),
+               , card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadA", style = "background-color: #d9bfd9"),
+               downloadButton("downloadAcode", style = "background-color: #d9bfd9", label = "Code")))),
           card(card_header(class = "d-inline-flex justify-content-end bg-light",
           popover(
             actionButton("sizeA", "Size", value = FALSE, icon = icon("arrows-up-down-left-right"), style = "background-color: #bfd9bf"),
@@ -211,7 +214,7 @@ ui <- div(page_navbar(
                                                  selected = NULL, inline = TRUE),
                     sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                     selectInput("toxicB", label = "Toxicity of interest", choices = NULL), height = 800)
-          ), card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadB", style = "background-color: #d9bfd9"))))
+          ), card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadB", style = "background-color: #d9bfd9"), downloadButton("downloadBcode", style = "background-color: #d9bfd9", label = "Code"))))
           ,
           card(card_header(class = "d-inline-flex justify-content-end bg-light",
           popover(
@@ -245,7 +248,7 @@ ui <- div(page_navbar(
                     sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0,1), step = 1),
                     checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL, inline = TRUE), height = 800
           )), 
-          card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadH", style = "background-color: #d9bfd9")))),
+          card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadH", style = "background-color: #d9bfd9"), downloadButton("downloadHcode", style = "background-color: #d9bfd9", label = "Code")))),
           card(card_header(class = "d-inline-flex justify-content-end bg-light",
           popover(
             actionButton("sizeH", "Size", value = FALSE, icon = icon("arrows-up-down-left-right"), style = "background-color: #bfd9bf"),
@@ -277,7 +280,7 @@ ui <- div(page_navbar(
                     sliderInput("tpointI", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                     checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE), height = 800) 
           ), 
-          card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadI", style = "background-color: #d9bfd9")))),
+          card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadI", style = "background-color: #d9bfd9"), downloadButton("downloadIcode", style = "background-color: #d9bfd9", label = "Code")))),
           card(card_header(class = "d-inline-flex justify-content-end bg-light",
           popover(
             actionButton("sizeI", "Size", value = FALSE, icon = icon("arrows-up-down-left-right"), style = "background-color: #bfd9bf"),
@@ -793,8 +796,7 @@ editI <- eventReactive(input$updateI,{
           need("toxicity" %in% colnames(data), "Missing toxicity column"),
           need("grade" %in% colnames(data), "Missing grade column"),
           need("timepoint" %in% colnames(data), "Missing timepoint column"),
-          need("dose" %in% colnames(data), "Missing dose column"),
-          need("time_last_report" %in% colnames(data), "Missing time_last_report column"), errorClass = "style")
+          need("dose" %in% colnames(data), "Missing dose column"), errorClass = "style")
        }
        data <- data %>% select(id, toxicity, grade, timepoint, dose, time_last_report)
        data
@@ -2590,12 +2592,52 @@ output$downloadA <- downloadHandler(
     ggsave(file, plot = last_plot(), device = "svg", height = input$heightA * 4, width = input$widthA * 4, units = "px")
   }
 )
+output$downloadAcode <- downloadHandler(
+  filename = function(){
+    paste0("Kaplan_Meier_code", Sys.Date(), ".html")
+  },
+  content = function(file){
+    tempReport <- tempfile(fileext = ".Rmd")
+    file.copy("codeDownload/Adownload.Rmd", tempReport, overwrite = TRUE)
+    params <- list(ordinal_data = ordinal_data(), 
+                   no_dose = input$numdose,
+                   toxicA = input$toxicA,
+                   baseA = input$baseChange,
+                   ordinal_date = input$ordinal_date, 
+                   graphtitle = input$titleA,
+                   titlesize = input$titlesizeA,
+                   x_lab = input$xlab_A,
+                   axissize = input$axisSizeA,
+                   box_x = input$box_xA,
+                   box_y = input$box_yA)
+    rmarkdown::render(tempReport, output_file = file, params = params, envir = new.env(parent = globalenv()))
+  }
+)
 output$downloadB <- downloadHandler(
   filename = function(){
     paste0("barplot_across_timepoints", Sys.Date(), ".svg")
   },
   content = function(file){
     ggsave(file, plot = last_plot(), device = "svg", height = input$heightB * 4, width = input$widthB * 4, units = "px")
+  }
+)
+output$downloadBcode <- downloadHandler(
+  filename = function(){
+    paste0("barplot_across_timepoints_code", Sys.Date(), ".html")
+  },
+  content = function(file){
+    tempReport <- tempfile(fileext = ".Rmd")
+    file.copy("codeDownload/Bdownload.Rmd", tempReport, overwrite = TRUE)
+    params <- list(ordinal_data = ordinal_data(), 
+                   no_doseb = input$numdoseB,
+                   toxic = input$toxicB,
+                   final_t = input$tpointB,
+                   ordinal_date = input$ordinal_date, 
+                   title = input$titleB,
+                   titlesize = input$titlesizeB,
+                   x_lab = input$xlab_B,
+                   axissize = input$axisSizeB)
+    rmarkdown::render(tempReport, output_file = file, params = params, envir = new.env(parent = globalenv()))
   }
 )
 output$downloadC <- downloadHandler(
@@ -2646,12 +2688,49 @@ output$downloadH <- downloadHandler(
     ggsave(file, plot = last_plot(), device = "svg", height = input$heightH * 4, width = input$widthH * 4, units = "px")
   }
 )
+output$downloadHcode <- downloadHandler(
+  filename = function(){
+    paste0("butterfly_code", Sys.Date(), ".html")
+  },
+  content = function(file){
+    tempReport <- tempfile(fileext = ".Rmd")
+    file.copy("codeDownload/Hdownload.Rmd", tempReport, overwrite = TRUE)
+    params <- list(ordinal_data = ordinal_data(), 
+                   no_doseH = input$numdoseH,
+                   toxicH = input$toxicH,
+                   times_H   = input$tpointH,
+                   ordinal_date = input$ordinal_date, 
+                   title = input$titleH,
+                   titlesize = input$titlesizeH,
+                   location = input$unrep_positionH,
+                   subtitle = input$subtitleH)
+    rmarkdown::render(tempReport, output_file = file, params = params, envir = new.env(parent = globalenv()))
+  }
+)
 output$downloadI <- downloadHandler(
   filename = function(){
     paste0("baseline_adjusted_barplot", Sys.Date(), ".svg")
   },
   content = function(file){
     ggsave(file, plot = last_plot(), device = "svg", height = input$heightI * 4, width = input$widthI * 4, units = "px")
+  }
+)
+output$downloadIcode <- downloadHandler(
+  filename = function(){
+    paste0("baseline_adjusted_barplot_code", Sys.Date(), ".html")
+  },
+  content = function(file){
+    tempReport <- tempfile(fileext = ".Rmd")
+    file.copy("codeDownload/Idownload.Rmd", tempReport, overwrite = TRUE)
+    params <- list(ordinal_data = ordinal_data(), 
+                   no_doseI = input$numdoseI,
+                   toxicI = input$toxicI,
+                   times_I   = input$tpointI,
+                   ordinal_date = input$ordinal_date, 
+                   title = input$titleI,
+                   titlesize = input$titlesizeI,
+                   subtitle = input$subtitleI)
+    rmarkdown::render(tempReport, output_file = file, params = params, envir = new.env(parent = globalenv()))
   }
 )
 }

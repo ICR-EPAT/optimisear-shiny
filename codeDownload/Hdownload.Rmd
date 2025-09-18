@@ -1,0 +1,181 @@
+---
+title: "R code to generate Butterfly Plot"
+output: html_document
+params:
+    ordinal_data: NA
+    no_doseH: NA
+    toxicH: NA
+    times_H: NA
+    ordinal_date: NA
+    title: NA
+    titlesize: NA
+    location: 0.7
+    subtitle: "Symptomatic Adverse Event"
+---
+
+```{r}
+library(ggplot2)
+library(DT)
+library(magrittr)
+library(dplyr)
+library(ggsurvfit)
+library(ggh4x)
+library(tidyr)
+library(gt)
+library(gridExtra)
+library(survminer)
+
+print(params[-1])
+
+ordinal_data <- params$ordinal_data
+no_doseH <- params$no_doseH
+toxicH <- params$toxicH
+tps <- params$times_H
+ordinal_date <- params$ordinal_date
+
+list_T <- unique(ordinal_data %>% filter(timepoint <= tps[2] & timepoint >= tps[1]) %>% select(timepoint))
+
+tps[1] <- min(list_T$timepoint)
+tp_first <- as.symbol(paste0("tp_", tps[1]))
+
+tps[2] <- max(list_T$timepoint)
+tp_last <- as.symbol(paste0("tp_", tps[2]))
+
+ordinal_dataH <- ordinal_data %>%
+    filter(dose %in% no_doseH) %>%
+    filter(toxicity %in% toxicH) %>%
+    group_by(id) %>%
+    mutate(has_tp = any(timepoint == tps[2])) %>%
+    filter(timepoint %in% c(tps[1], tps[2])) %>%
+    pivot_wider(names_from = timepoint, values_from = grade, names_prefix = "tp_") %>%
+    mutate(grade_change = case_when(
+                                    has_tp == FALSE ~ "ICE",
+                                    TRUE ~  as.character(!!tp_first - !!tp_last)))
+
+ordinal_dataH$grade_change[is.na(ordinal_dataH$grade_change) == TRUE] <- "Missing"
+
+levs <- rev(no_doseH)
+dose_labelsH <-  paste0("Dose ", levs)
+
+propH <- ordinal_dataH
+propH <- propH %>% group_by(toxicity, dose) %>%
+         count(grade_change) %>%
+         ungroup() %>%
+         mutate(original = TRUE) %>%
+         complete(toxicity, dose, grade_change, fill = list(n = 0)) %>%
+         group_by(toxicity, dose) %>%
+         mutate(n.pat = sum(n[grade_change != "ICE"], na.rm = TRUE)) %>%
+         ungroup() %>%
+         mutate(proportion = n / n.pat) %>% dplyr::select(-n)
+
+propH$toxicity <- as.factor(propH$toxicity)
+propH$dose <- as.factor(propH$dose)
+propH$dose <- factor(propH$dose, levels = rev(levels(propH$dose)))
+propH$grade_change <- as.character(propH$grade_change)
+
+missing_H <- propH %>%
+             subset(grade_change == "Missing") %>%
+             mutate(label = paste0("Unreported: ", round(proportion, 2) * 100, "%"))
+
+missing_H <- cbind(missing_H, rep(params$location, times = nrow(missing_H)))
+colnames(missing_H)[8] <- "loc"
+levels(missing_H$dose) <-  dose_labelsH
+    
+
+
+
+propHadj <- propH
+propHadj <- propHadj %>% mutate(proportion = ifelse(grade_change >= 0, proportion, -proportion))
+propHadj <- propHadj %>% subset(grade_change != "Missing") %>% subset(grade_change != 0)
+propHadj <- propHadj %>% filter(original)
+
+valH <- propHadj
+valH <- valH %>%
+        group_by(dose, toxicity) %>%
+        arrange(dose, toxicity, grade_change) %>%
+        mutate(percent = paste0(round(abs(proportion) * 100, 1), "%")) %>%
+        mutate(
+                cumsum_pos = if_else(proportion > 0, cumsum(if_else(proportion > 0, proportion, 0)), NA_real_),
+                cumsum_neg = if_else(proportion < 0, cumsum(if_else(proportion < 0, proportion, 0)), NA_real_)
+                ) %>%
+        mutate(
+                pos = case_when(
+                                proportion > 0 ~ cumsum_pos - 0.5 * proportion,
+                                proportion < 0 ~ cumsum_neg - 0.5 * proportion,
+                                TRUE ~ 0  # fallback for proportion == 0
+                                )
+                )
+valH <- valH %>% subset(grade_change != "ICE")
+valH$grade_change <- factor(valH$grade_change)
+levels(valH$dose) <-  dose_labelsH
+
+arrowdfH <- tibble(
+  toxicity = factor(as.character(unique(toxicH)), levels = levels(valH$toxicity)),
+  x = 0.5,
+  xend = 0.5,
+  y = 0,
+  yend = 1
+)
+
+arrowdf.revH <- tibble(
+  toxicity = factor(as.character(unique(toxicH)), levels = levels(valH$toxicity)),
+  x = 0.5,
+  xend = 0.5,
+  y = 0,
+  yend = -1
+)
+
+ice_n_patH <- propHadj %>% distinct(dose, n.pat)
+
+labels <- cbind(c(-5, -4, -3, -2, -1, 1, 2, 3, 4, 5),
+                c("red", "deeppink", "orange", "gold", "lightyellow3", "lightblue",
+                  "darkseagreen3", "darkolivegreen3", "chartreuse3", "chartreuse4"),
+                rev(c("Improve by 5", "Improve by 4", "Improve by 3", "Improve by 2", "Improve by 1", "Worsen by 1",
+                      "Worsen by 2", "Worsen by 3", "Worsen by 4", "Worsen by 5")))
+
+colnames(labels) <- c("score", "colour", "leg")
+
+formatterH <- function(toxic = toxicH, subtitle = params$subtitle) {paste(subtitle, toxicH, sep = " ")}
+
+ggplot(valH %>% subset(toxicity %in% toxicH), aes(x = dose, y = proportion, fill = grade_change, group = dose)) +
+    geom_bar(stat = "identity", position = "stack") +
+    coord_flip() +
+    scale_y_continuous(labels = abs, breaks = c(0), limits = c(-1, 1)) +
+    theme_minimal(base_size = 15) +
+    theme(
+          strip.text.y = element_text(angle = 0)) +
+    facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterH)) +
+    scale_fill_manual(breaks = labels[,1],
+                      values=labels[,2],
+                      labels=labels[,3]) +
+    geom_text(aes(y = pos, label = percent), size = 3, color = "black") +
+    labs(x = paste0("Dose (N=", paste(ice_n_patH$n.pat, collapse = "; "), ")"),
+         y = "Percentage (%)",
+         fill = "Change in Severity ") +
+    geom_hline(yintercept = 0, color = "grey", size = 1) +
+    geom_segment(data = arrowdfH,
+                 aes(x = x, xend = xend, y = y, yend = yend),
+                 colour = "darkgrey",
+                 size = 0.8,
+                 arrow = arrow(type = "closed", length = unit(0.1, "inches")),
+                 inherit.aes = FALSE) +
+    scale_x_discrete(expand = expansion(mult = c(1.5, 0))) +
+    geom_segment(data = arrowdf.revH,
+                 aes(x = x, xend = xend, y = y, yend = yend),
+                 colour = "darkgrey",
+                 size = 0.8,
+                 arrow = arrow(type = "closed", length = unit(0.1, "inches")),
+                 inherit.aes = FALSE) +
+    geom_text(data = data.frame(x = -0.25, y = 0.5, label = "Improvement"), aes(x = x, y = y, label = label),
+              inherit.aes = FALSE) +
+    geom_text(data = data.frame(x = -0.25, y = -0.5, label = "Worsening"),
+    aes(x = x, y = y, label = label),
+              inherit.aes = FALSE) +
+    geom_text(
+      data = missing_H %>% filter(toxicity %in% toxicH),
+      aes(x = dose, y = loc, label = label, group = dose),  # 'toxicity' must also be in 'missing'
+      inherit.aes = FALSE,
+      vjust = -0.5
+    ) + ggtitle(params$title) + theme(plot.title = element_text(size = params$titlesize, face = "bold"))
+                                
+```
