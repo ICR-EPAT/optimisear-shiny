@@ -414,7 +414,7 @@ ui <- div(page_navbar(
         ))),
 
 ############################################################################################################ F UI
-           tabPanel("Change from baseline across functionings (table)",     card(
+           tabPanel("Change from baseline across PRO domains (table)",     card(
           card_header(textOutput("textHeaderF"), style = "background-color: #bfd9bf; font-size: 25px; height: 50px; vertical-align: middle; padding: 12.5px"
         ),
           layout_sidebar(
@@ -424,7 +424,7 @@ ui <- div(page_navbar(
                                                  selected = NULL, inline = TRUE),
           sliderInput("tpointF", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
           checkboxGroupInput("functioningF", label = "PRO domain of interest", selected = NULL, inline = TRUE), height = 800)),
-          card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadF", style = "background-color: #d9bfd9")))),
+          card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadF", style = "background-color: #d9bfd9"), downloadButton("downloadFcode", style = "background-color: #d9bfd9", label = "Code")))),
            card(card_header(class = "d-inline-flex justify-content-end bg-light",
            popover(
             actionButton("sizeF", "Size", value = FALSE, icon = icon("arrows-up-down-left-right"), style = "background-color: #bfd9bf"),
@@ -1837,7 +1837,7 @@ dfF <- reactive({
 
 sum.dfF <- reactive({
   sum.df <- dfF() %>%
-    group_by(dose, functioning) %>% ################### I think the issue may be here ish?
+    group_by(dose, functioning) %>%
     summarise(mean = mean(score, na.rm = TRUE),
               non_na_count = unique(non_na_count),
               se = sd(score, na.rm = TRUE) / sqrt(non_na_count), .groups = "keep")
@@ -2742,6 +2742,24 @@ output$downloadF <- downloadHandler(
   },
   content = function(file){
     ggsave(file, plot = as_gtable(sum.df.wider.gtF()), device = "svg", width = input$widthF * 6, units = "px")
+  }
+)
+output$downloadFcode <- downloadHandler(
+  filename = function(){
+    paste0("change_baseline_functionings_table_code", Sys.Date(), ".html")
+  },
+  content = function(file){
+    tempReport <- tempfile(fileext = ".Rmd")
+    file.copy("codeDownload/Fdownload.Rmd", tempReport, overwrite = TRUE)
+    params <- list(continuous_data = continuous_data(), 
+                   no_doseF = input$numdoseF,
+                   func_F = input$functioningF,
+                   final_tF = input$tpointF,
+                   continuous_date = input$continuous_date, 
+                   title = input$titleF,
+                   width = input$widthF
+                   )
+    rmarkdown::render(tempReport, output_file = file, params = params, envir = new.env(parent = globalenv()))
   }
 )
 output$downloadG <- downloadHandler(
