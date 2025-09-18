@@ -1,0 +1,103 @@
+---
+title: "R code to generate Change from baseline across timepoints plot"
+output: html_document
+params:
+    continuous_data: NA
+    no_doseC: NA
+    func_C: NA
+    final_tC: NA
+    continuous_date: NA
+    title: NA
+    titlesize: NA
+    axissize: 30
+    x_lab: "Timepoint"
+    y_lab: "Mean change from baseline across timepoints (with 95% CI) \n in PRO domain"
+    improveC: "Improvement"
+    worseC: "Worsening"
+    impTextC: 17 
+    worTextC: -17 
+---
+
+```{r}
+library(ggplot2)
+library(DT)
+library(magrittr)
+library(dplyr)
+library(ggsurvfit)
+library(ggh4x)
+library(tidyr)
+library(gt)
+library(gridExtra)
+library(survminer)
+
+print(params[-1])
+
+continuous_data <- params$continuous_data
+no_doseC <- params$no_doseC
+func_C <- params$func_C
+final_tC <- params$final_tC
+continuous_date <- params$continuous_date
+
+continuous_data_filtered <- continuous_data %>% filter(functioning == func_C) %>% dplyr::select(-functioning)
+if (params$continuous_date == TRUE){
+    continuous_data_filtered$timepoint == as.Date(continuous_data_filtered$timepoint)
+}
+  
+diffC <- continuous_data_filtered %>%
+    group_by(id) %>%
+    mutate(baseline = score[timepoint == min(timepoint)], adjusted_value = score - baseline) %>%
+    ungroup()
+
+summaryC <- diffC %>%
+    group_by(dose, timepoint) %>%
+    summarise(mean = mean(adjusted_value, na.rm = TRUE), sd = sd(adjusted_value, na.rm = TRUE) / sqrt(n()), .groups = "keep")
+summaryC <- summaryC %>% mutate(l.ci = mean - (1.96 * sd)) %>% mutate(u.ci = mean + (1.96 * sd))
+summaryC <- summaryC %>% filter(timepoint <= final_tC) %>% filter(dose %in% no_doseC)
+
+pd <- position_dodge(width = 0.2)
+
+#### FIGURE GENERATION
+
+impbound <- params$improveC
+worbound <- params$worseC
+upper <- max(impbound[2], worbound[2], max(diffC$adjusted_value))
+lower <- min(impbound[1], worbound[1], min(diffC$adjusted_value))
+
+worse_text <- if (worbound[1] < impbound[1]){
+        min(max(params$worTextC, worbound[1]), worbound[2])
+    } else {
+         max(min(params$worTextC, worbound[2]), worbound[1])
+    }
+
+improve_text <- if (worbound[1] < impbound[1]){
+        max(min(params$impTextC, impbound[2]), impbound[1])
+    } else {
+        min(max(params$impTextC, impbound[1]), impbound[2])
+    }
+
+summaryC %>% ggplot(
+           aes(x = as.factor(timepoint),
+               y = mean, group = as.factor(dose), shape = as.factor(dose), colour = as.factor(dose))) +
+    geom_ribbon(aes(ymin = impbound[1], ymax = impbound[2], fill = "palegreen1"), alpha = 0.3, colour = NA) +
+    geom_ribbon(aes(ymin = worbound[1], ymax = worbound[2], fill = "red"), alpha = 0.1, colour = NA) +
+    geom_point(position = pd, size=3) + geom_line(size = 1.5) +
+    geom_errorbar(position = pd, aes(ymin = l.ci, ymax = u.ci), width = 0.2, size = 1.2) +
+    theme_minimal(base_size = 14) +
+    guides(shape = guide_legend(title = "Dose"),
+           colour = guide_legend(title = "Dose")) +
+    theme_minimal(base_size = 14) +
+    xlab(params$x_lab) +
+    ylab(paste0(params$y_lab)) +
+    scale_fill_manual(name = "Threshold", values = c("palegreen1", "red"), label = c("Improvement", "Worsening")) +
+    geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = max(impbound[2], worbound[2])),
+                 colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches"))) +
+    geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = min(impbound[1], worbound[1])),
+                 colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
+                                                                length = unit(0.1, "inches"))) +
+    geom_text(data = data.frame(x = 1.6, y = params$impTextC, label = "Improvement"), aes(x = x, y = y, label = label),
+              inherit.aes = FALSE) +
+    geom_text(data = data.frame(x = 1.6, y = params$worTextC, label = "Worsening"), aes(x = x, y = y, label = label),
+              inherit.aes = FALSE) +
+              ggtitle(params$title) + theme(plot.title = element_text(size = params$titlesize, face = "bold"), axis.title = element_text(size = params$axissize)) + ylim(lower, upper)                        
+##```

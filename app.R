@@ -311,7 +311,7 @@ ui <- div(page_navbar(
                                                  selected = NULL, inline = TRUE),
                    sliderInput("tpointC", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
                    selectInput("functioningC", label = "PRO domain of interest", choices = NULL), height = 800)),
-                   card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadC", style = "background-color: #d9bfd9")))
+                   card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadC", style = "background-color: #d9bfd9"), downloadButton("downloadCcode", style = "background-color: #d9bfd9", label = "Code")))
           ),
           card(card_header(class = "d-inline-flex justify-content-end bg-light",
           popover(
@@ -1365,8 +1365,8 @@ output$graphC <- renderPlot({
     editC <- editC()
     impbound <- editC$imp_bound
     worbound <- editC$wor_bound
-    upper <- max(editC$wor_bound[2], editC$wor_bound[2], max(diffC()$adjusted_value))
-    lower <- min(editC$wor_bound[1], editC$wor_bound[1], min(diffC()$adjusted_value))
+    upper <- max(editC$imp_bound[2], editC$wor_bound[2], max(diffC()$adjusted_value))
+    lower <- min(editC$imp_bound[1], editC$wor_bound[1], min(diffC()$adjusted_value))
     worse_text <- if (worbound[1] < impbound[1]){
       min(max(editC$wor_text, worbound[1]), worbound[2])}
       else {
@@ -2646,6 +2646,31 @@ output$downloadC <- downloadHandler(
   },
   content = function(file){
     ggsave(file, plot = last_plot(), device = "svg", height = input$heightC * 4, width = input$widthC * 4, units = "px")
+  }
+)
+output$downloadCcode <- downloadHandler(
+  filename = function(){
+    paste0("change_baseline_timepoints_code", Sys.Date(), ".html")
+  },
+  content = function(file){
+    tempReport <- tempfile(fileext = ".Rmd")
+    file.copy("codeDownload/Cdownload.Rmd", tempReport, overwrite = TRUE)
+    params <- list(continuous_data = continuous_data(), 
+                   no_doseC = input$numdoseC,
+                   func_C = input$functioningC,
+                   final_tC = input$tpointC,
+                   continuous_date = input$continuous_date, 
+                   title = input$titleB,
+                   titlesize = input$titlesizeB,
+                   axissize = input$axisSizeC,
+                   x_lab = input$xlab_C,
+                   y_lab = input$ylab_C,
+                   improveC = input$improveC,
+                   worseC = input$worseC,
+                   impTextC = input$impTextC,
+                   worTextC =input$worTextC
+                   )
+    rmarkdown::render(tempReport, output_file = file, params = params, envir = new.env(parent = globalenv()))
   }
 )
 output$downloadD <- downloadHandler(
