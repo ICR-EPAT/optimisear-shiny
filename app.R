@@ -387,7 +387,7 @@ ui <- div(page_navbar(
                     uiOutput("select_idD"),
                     uiOutput("allD"),
                     selectInput("functioningD", label = "PRO domain of interest", choices = NULL), height = 800)),
-                    card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadD", style = "background-color: #d9bfd9")))),
+                    card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadD", style = "background-color: #d9bfd9"), downloadButton("downloadDcode", style = "background-color: #d9bfd9", label = "Code")))),
                     card(card_header(class = "d-inline-flex justify-content-end bg-light",
                     popover(
             actionButton("sizeD", "Size", value = FALSE, icon = icon("arrows-up-down-left-right"), style = "background-color: #bfd9bf"),
@@ -2679,6 +2679,30 @@ output$downloadD <- downloadHandler(
   },
   content = function(file){
     ggsave(file, plot = last_plot(), device = "svg", height = input$heightD * 4, width = input$widthD * 4, units = "px")
+  }
+)
+output$downloadDcode <- downloadHandler(
+  filename = function(){
+    paste0("individual_patient_trajectory", Sys.Date(), ".html")
+  },
+  content = function(file){
+    tempReport <- tempfile(fileext = ".Rmd")
+    file.copy("codeDownload/Ddownload.Rmd", tempReport, overwrite = TRUE)
+    params <- list(continuous_data = continuous_data(), 
+                   no_doseD = input$numdoseD,
+                   func_D = input$functioningD,
+                   final_tD = input$tpointD,
+                   idD = input$select_idD,
+                   continuous_date = input$continuous_date, 
+                   title = input$titleD,
+                   titlesize = input$titlesizeD,
+                   axissize = input$axisSizeD,
+                   x_lab = input$xlab_D,
+                   y_lab = input$ylab_D,
+                   arrow_lab = input$arrowlab_D,
+                   range = input$rangeD
+                   )
+    rmarkdown::render(tempReport, output_file = file, params = params, envir = new.env(parent = globalenv()))
   }
 )
 output$downloadE <- downloadHandler(
