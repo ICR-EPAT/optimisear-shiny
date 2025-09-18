@@ -100,4 +100,4 @@ summaryC %>% ggplot(
     geom_text(data = data.frame(x = 1.6, y = params$worTextC, label = "Worsening"), aes(x = x, y = y, label = label),
               inherit.aes = FALSE) +
               ggtitle(params$title) + theme(plot.title = element_text(size = params$titlesize, face = "bold"), axis.title = element_text(size = params$axissize)) + ylim(lower, upper)                        
-##```
+```
