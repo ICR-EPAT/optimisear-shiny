@@ -232,6 +232,7 @@ ui <- div(page_navbar(
              sliderInput("titlesizeB", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("xlab_B", label = NULL, placeholder = "Enter x-axis label"),
              sliderInput("axisSizeB", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
+             input_switch("showExtraB", label = "Show Unreported and Discontinued", value = TRUE),
              actionButton("updateB", "Update")
           )), card_body(plotOutput("graphB"), height = 1000), full_screen = TRUE)
             ))),
@@ -296,6 +297,7 @@ ui <- div(page_navbar(
              textInput("titleI", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeI", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("subtitleI", label = NULL, placeholder = "Enter subgraph label"),
+             input_switch("showExtraI", label = "Show Unreported and Discontinued", value = TRUE),
              actionButton("updateI", "Update")
           )), card_body(plotOutput("graphI"), height = 1000), full_screen = TRUE)
             )))),
@@ -726,7 +728,8 @@ editB <- eventReactive(input$updateB,{
   list(title = input$titleB,
   titlesize = input$titlesizeB,
   x_lab = input$xlab_B,
-  axissize = input$axisSizeB)
+  axissize = input$axisSizeB,
+  showExtra = input$showExtraB)
 })
 editC <- eventReactive(input$updateC,{
   list(title = input$titleC,
@@ -780,7 +783,8 @@ editH <- eventReactive(input$updateH,{
 editI <- eventReactive(input$updateI,{
     list(title = input$titleI,
   titlesize = input$titlesizeI,
-  subtitle = input$subtitleI)
+  subtitle = input$subtitleI,
+  showExtra = input$showExtraI)
 })
 #############################################################################################################Graph A
   #Import the data
