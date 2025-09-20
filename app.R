@@ -2586,7 +2586,7 @@ output$graphI <- renderPlot({
                       values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "darkgrey")),
                       labels = rev(c("None", "Mild", "Moderate", "Severe", "Very Severe", "Unreported")),
                       guide = guide_legend(reverse = TRUE)) +
-    labs(x = paste0("Dose (N=", paste(ice_n_patI()$n.pat, collapse = "; "), ")"),
+    labs(x = if (editI()$showExtra == FALSE){paste0("Dose")} else{paste0("Dose (N=", paste(ice_n_patI()$n.pat, collapse = "; "), ")")},
           y = "Percentage (%)",
           fill = "Severity Score") +
     theme(
@@ -2867,7 +2867,8 @@ output$downloadIcode <- downloadHandler(
                    no_doseI = input$numdoseI,
                    toxicI = input$toxicI,
                    times_I   = input$tpointI,
-                   ordinal_date = input$ordinal_date, 
+                   ordinal_date = input$ordinal_date,
+                   showExtra = input$showExtraI, 
                    title = input$titleI,
                    titlesize = input$titlesizeI,
                    subtitle = input$subtitleI)
