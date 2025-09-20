@@ -471,7 +471,7 @@ ui <- div(page_navbar(
              sliderInput("titlesizeG", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_G", label = NULL, placeholder = "Enter y-axis label"),
              sliderInput("axisSizeG", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
-             textInput("sublab_G", label = NULL, placeholder = "Enter subgraph label", value = "PRO domain"),
+             textInput("sublab_G", label = NULL, placeholder = "Enter subgraph label"),
              p(strong("Note:")),
              p("Upper bound for improvement and lower bound for worsening will be taken as range"),
              sliderInput("improveG", label = "Start and endpoint for improvement", min = -100, max = 100, value = c(10, 25), step = 1),
@@ -2527,6 +2527,11 @@ ordinal_dataI <- reactive({
                                 TRUE ~  ifelse(grade_change > 0, as.character(!!tp_end), as.character(1))))
 
   ordinal_data$base_adj[is.na(ordinal_data$base_adj) == TRUE] <- "Unreported"
+  if (isTruthy(input$updateI)){
+    if (editI()$showExtra == FALSE){
+      ordinal_data <- ordinal_data %>% filter(base_adj != "Unreported")
+    }
+  }
   ordinal_data
 })
 # Data Manipulation
@@ -2566,7 +2571,15 @@ output$graphI <- renderPlot({
   g <- propI() %>% ggplot(aes(fill = base_adj, x = dose, y = proportion * 100)) +
     geom_bar(position = "stack", stat = "identity") + coord_flip()
               if (isTruthy(input$updateI)){
-                formatterI <- function(SAE = toxicI()) {paste(editI()$subtitle, SAE, sep = " ")}
+                if (editI()$showExtra == FALSE){
+                  groupsizes <- c()
+                  for (i in toxicI()){
+                    pat_numbs <- propI() %>% filter(toxicity == !!i) %>% distinct(dose, n.pat) %>% select(n.pat)
+                    groupsizes <- append(groupsizes, paste(unlist(pat_numbs), collapse ="; "))
+                  }
+                formatterI <- function(SAE = toxicI()) {paste(editI()$subtitle, SAE, paste0("(N=", groupsizes, ")"), sep = " ")}
+                } else{
+                formatterI <- function(SAE = toxicI()) {paste(editI()$subtitle, SAE, sep = " ")}}
                                   g +
     facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterI)) +
     scale_fill_manual(breaks = rev(c(1:5, "Unreported")),
