@@ -1136,7 +1136,7 @@ prop <- reactive({
   colnames(prop) <- c("toxicity", "timepoint", "dose", "grade", "n.pat", "proportion")
 
   prop <- prop %>% dplyr::select(-n.pat)
-##########################################################################################################THIS SECTION IS PROBLEMATIC FOR THE NO MISSING STUFF VERSION - NEED TO FIX
+
   missing_layer <- prop %>%
     group_by(toxicity, timepoint, dose) %>%
     summarise(proportion = 1 - sum(proportion), .groups = "drop") %>%
@@ -1151,7 +1151,7 @@ if(nrow(missing_layer) != 0){
     prop$grade <- as.character(prop$grade)
     prop <- bind_rows(prop, missing_layer)
 }
-###########################################################################################################################
+
   prop$toxicity <- as.factor(prop$toxicity)
   prop$grade <- as.factor(prop$grade)
   prop$dose <- as.factor(prop$dose)
@@ -2704,7 +2704,8 @@ output$downloadBcode <- downloadHandler(
                    no_doseb = input$numdoseB,
                    toxic = input$toxicB,
                    final_t = input$tpointB,
-                   ordinal_date = input$ordinal_date, 
+                   ordinal_date = input$ordinal_date,
+                   showExtra = input$showExtraB, 
                    title = input$titleB,
                    titlesize = input$titlesizeB,
                    x_lab = input$xlab_B,
