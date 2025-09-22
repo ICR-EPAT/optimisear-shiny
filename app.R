@@ -1086,6 +1086,8 @@ prop <- reactive({
   ordinal_data <- ordinal_data()
   ordinal_data$grade[is.na(ordinal_data$grade)] <- "Unreported"
 
+  ordinal_data <- ordinal_data %>% filter(dose %in% no_doseb()) %>% filter(toxicity %in% toxic())
+
   if (input$ordinal_date == TRUE){
     n_pat <- ordinal_data %>%
     filter(timepoint == min(as.Date(timepoint)), toxicity == toxic()) %>%
@@ -1105,29 +1107,57 @@ prop <- reactive({
     left_join(n_pat, by = "dose") %>%
     mutate(proportion = n / n.pat) %>%
     dplyr::select(-n)
+  
+    if (isTruthy(input$updateB)){
+    if (editB()$showExtra == FALSE){
+      ordinal_data <- ordinal_data %>% filter(grade != "Unreported")
+        if (input$ordinal_date == TRUE){
+    n_pat <- ordinal_data %>%
+    filter(toxicity == toxic()) %>%
+    group_by(dose, timepoint) %>%
+    summarise(n.pat = n())
+    }
+    else {
+     n_pat <- ordinal_data %>%
+    filter(toxicity == toxic()) %>%
+    group_by(dose, timepoint) %>%
+    summarise(n.pat = n())
+    }
+
+  prop <- ordinal_data %>%
+    group_by(toxicity, timepoint, dose) %>%
+    count(grade) %>%
+    left_join(n_pat, by = c("dose", "timepoint")) %>%
+    mutate(proportion = n / n.pat) %>%
+    dplyr::select(-n)
+    }
+  }
 
   colnames(prop) <- c("toxicity", "timepoint", "dose", "grade", "n.pat", "proportion")
 
   prop <- prop %>% dplyr::select(-n.pat)
-
+##########################################################################################################THIS SECTION IS PROBLEMATIC FOR THE NO MISSING STUFF VERSION - NEED TO FIX
   missing_layer <- prop %>%
     group_by(toxicity, timepoint, dose) %>%
     summarise(proportion = 1 - sum(proportion), .groups = "drop") %>%
     filter(proportion > 0)
+if(nrow(missing_layer) != 0){
+    missing_layer <- cbind(missing_layer, "Discontinued")
+    colnames(missing_layer) <- c("toxicity", "timepoint", "dose", "proportion", "grade")
 
-  missing_layer <- cbind(missing_layer, "Discontinued")
-  colnames(missing_layer) <- c("toxicity", "timepoint", "dose", "proportion", "grade")
+    missing_layer <- missing_layer %>%
+      dplyr::select(names(prop))
 
-  missing_layer <- missing_layer %>%
-    dplyr::select(names(prop))
-
-  prop$grade <- as.character(prop$grade)
-  prop <- bind_rows(prop, missing_layer)
-
+    prop$grade <- as.character(prop$grade)
+    prop <- bind_rows(prop, missing_layer)
+}
+###########################################################################################################################
   prop$toxicity <- as.factor(prop$toxicity)
   prop$grade <- as.factor(prop$grade)
   prop$dose <- as.factor(prop$dose)
-  if (input$ordinal_date == TRUE){
+  prop$dose <- factor(prop$dose, levels = no_doseb())
+  prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))
+    if (input$ordinal_date == TRUE){
     prop <- prop %>% filter(as.Date(timepoint) <= as.Date(final_t()))
     prop$timepoint <- as.factor(as.Date(prop$timepoint))
   }
@@ -1135,9 +1165,7 @@ prop <- reactive({
     prop <- prop %>% filter(timepoint <= final_t())
     prop$timepoint <- as.factor(prop$timepoint)
   }
-  prop$dose <- factor(prop$dose, levels = no_doseb())
-  prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))
-  prop <- prop %>% filter(dose %in% no_doseb())
+
   prop
 })
 
@@ -1166,7 +1194,25 @@ no_patient <- reactive({
 formatter <- reactive({
   if (isTruthy(input$updateB)){
     if (isFALSE(editB()$showExtra)){
-      function(no_dose = no_doseb(), no_pat = no_patient()) {paste0("Dose ", no_dose, " (N=", no_pat, ")")}
+      ordinal_data <- ordinal_data() %>% filter(dose %in% no_doseb()) %>% filter(toxicity %in% toxic()) %>% filter(grade != "Unreported")
+      if (input$ordinal_date == TRUE){
+        n_pat <- ordinal_data %>%
+        filter(toxicity == toxic()) %>%
+        group_by(dose, timepoint) %>%
+        summarise(n.pat = n())
+      }
+      else {
+        n_pat <- ordinal_data %>%
+        filter(toxicity == toxic()) %>%
+        group_by(dose, timepoint) %>%
+        summarise(n.pat = n())
+      }
+      groupsizes <- c()
+      for (i in no_doseb()){
+        pat_numbs <- n_pat %>% filter(dose == !!i)  %>% distinct(timepoint, n.pat) %>% group_by(dose, timepoint)
+        groupsizes <- append(groupsizes, paste(unlist(pat_numbs$n.pat), collapse ="; "))
+      }
+      function(no_dose = no_doseb(), no_pat = groupsizes) {paste0("Dose ", no_dose, " (N=", no_pat, ")")}
       } else{function(no_dose = no_doseb()) {paste0("Dose ", no_dose)}}
   } 
   else {
