@@ -47,7 +47,8 @@ ui <- div(page_navbar(
   p("4. Visualise your graphs with the 'Ordinal' and 'Continuous' data tabs."),
   p(" - Customise the size and layout of figures,"),
   p(" - Customise axis and main titles."),
-  p("6. Click 'Download' to export your graphs as .svg files."),
+  p("5. Click 'Download' to export your graphs as .svg files."),
+  p("6. Click 'Code' to export a .html file of the code (Note: graph aesthetics are determined by the \"Edit\" section)."),
   p("Below, we provide further details on each data visualisation approach. While the examples focus on specific PRO measures (e.g., PRO-CTCAE and EORTC QLQ-C30), the Shiny app can be applied to any PRO measure, provided the data matches the required type for each figure (Ordinal or Continuous).")
   ))),
   card(card_body(
@@ -232,6 +233,8 @@ ui <- div(page_navbar(
              sliderInput("titlesizeB", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("xlab_B", label = NULL, placeholder = "Enter x-axis label"),
              sliderInput("axisSizeB", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
+             input_switch("showExtraB", label = "Show Unreported and Discontinued", value = TRUE),
+             input_switch("invertB", label = "Reverse order of grades", value = FALSE),
              actionButton("updateB", "Update")
           )), card_body(plotOutput("graphB"), height = 1000), full_screen = TRUE)
             ))),
@@ -296,6 +299,8 @@ ui <- div(page_navbar(
              textInput("titleI", label = NULL, placeholder = "Enter graph title"),
              sliderInput("titlesizeI", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("subtitleI", label = NULL, placeholder = "Enter subgraph label"),
+             input_switch("showExtraI", label = "Show Unreported and Discontinued", value = TRUE),
+             input_switch("invertI", label = "Reverse order of grades", value = FALSE),
              actionButton("updateI", "Update")
           )), card_body(plotOutput("graphI"), height = 1000), full_screen = TRUE)
             )))),
@@ -469,7 +474,7 @@ ui <- div(page_navbar(
              sliderInput("titlesizeG", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("ylab_G", label = NULL, placeholder = "Enter y-axis label"),
              sliderInput("axisSizeG", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
-             textInput("sublab_G", label = NULL, placeholder = "Enter subgraph label", value = "PRO domain"),
+             textInput("sublab_G", label = NULL, placeholder = "Enter subgraph label"),
              p(strong("Note:")),
              p("Upper bound for improvement and lower bound for worsening will be taken as range"),
              sliderInput("improveG", label = "Start and endpoint for improvement", min = -100, max = 100, value = c(10, 25), step = 1),
@@ -726,7 +731,8 @@ editB <- eventReactive(input$updateB,{
   list(title = input$titleB,
   titlesize = input$titlesizeB,
   x_lab = input$xlab_B,
-  axissize = input$axisSizeB)
+  axissize = input$axisSizeB,
+  showExtra = input$showExtraB)
 })
 editC <- eventReactive(input$updateC,{
   list(title = input$titleC,
@@ -780,7 +786,8 @@ editH <- eventReactive(input$updateH,{
 editI <- eventReactive(input$updateI,{
     list(title = input$titleI,
   titlesize = input$titlesizeI,
-  subtitle = input$subtitleI)
+  subtitle = input$subtitleI,
+  showExtra = input$showExtraI)
 })
 #############################################################################################################Graph A
   #Import the data
@@ -1082,6 +1089,8 @@ prop <- reactive({
   ordinal_data <- ordinal_data()
   ordinal_data$grade[is.na(ordinal_data$grade)] <- "Unreported"
 
+  ordinal_data <- ordinal_data %>% filter(dose %in% no_doseb()) %>% filter(toxicity %in% toxic())
+
   if (input$ordinal_date == TRUE){
     n_pat <- ordinal_data %>%
     filter(timepoint == min(as.Date(timepoint)), toxicity == toxic()) %>%
@@ -1101,6 +1110,31 @@ prop <- reactive({
     left_join(n_pat, by = "dose") %>%
     mutate(proportion = n / n.pat) %>%
     dplyr::select(-n)
+  
+    if (isTruthy(input$updateB)){
+    if (editB()$showExtra == FALSE){
+      ordinal_data <- ordinal_data %>% filter(grade != "Unreported")
+        if (input$ordinal_date == TRUE){
+    n_pat <- ordinal_data %>%
+    filter(toxicity == toxic()) %>%
+    group_by(dose, timepoint) %>%
+    summarise(n.pat = n())
+    }
+    else {
+     n_pat <- ordinal_data %>%
+    filter(toxicity == toxic()) %>%
+    group_by(dose, timepoint) %>%
+    summarise(n.pat = n())
+    }
+
+  prop <- ordinal_data %>%
+    group_by(toxicity, timepoint, dose) %>%
+    count(grade) %>%
+    left_join(n_pat, by = c("dose", "timepoint")) %>%
+    mutate(proportion = n / n.pat) %>%
+    dplyr::select(-n)
+    }
+  }
 
   colnames(prop) <- c("toxicity", "timepoint", "dose", "grade", "n.pat", "proportion")
 
@@ -1110,20 +1144,23 @@ prop <- reactive({
     group_by(toxicity, timepoint, dose) %>%
     summarise(proportion = 1 - sum(proportion), .groups = "drop") %>%
     filter(proportion > 0)
+if(nrow(missing_layer) != 0){
+    missing_layer <- cbind(missing_layer, "Discontinued")
+    colnames(missing_layer) <- c("toxicity", "timepoint", "dose", "proportion", "grade")
 
-  missing_layer <- cbind(missing_layer, "Discontinued")
-  colnames(missing_layer) <- c("toxicity", "timepoint", "dose", "proportion", "grade")
+    missing_layer <- missing_layer %>%
+      dplyr::select(names(prop))
 
-  missing_layer <- missing_layer %>%
-    dplyr::select(names(prop))
-
-  prop$grade <- as.character(prop$grade)
-  prop <- bind_rows(prop, missing_layer)
+    prop$grade <- as.character(prop$grade)
+    prop <- bind_rows(prop, missing_layer)
+}
 
   prop$toxicity <- as.factor(prop$toxicity)
   prop$grade <- as.factor(prop$grade)
   prop$dose <- as.factor(prop$dose)
-  if (input$ordinal_date == TRUE){
+  prop$dose <- factor(prop$dose, levels = no_doseb())
+  prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))
+    if (input$ordinal_date == TRUE){
     prop <- prop %>% filter(as.Date(timepoint) <= as.Date(final_t()))
     prop$timepoint <- as.factor(as.Date(prop$timepoint))
   }
@@ -1131,9 +1168,6 @@ prop <- reactive({
     prop <- prop %>% filter(timepoint <= final_t())
     prop$timepoint <- as.factor(prop$timepoint)
   }
-  prop$dose <- factor(prop$dose, levels = no_doseb())
-  prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))
-  prop <- prop %>% filter(dose %in% no_doseb())
 
   prop
 })
@@ -1160,13 +1194,43 @@ no_patient <- reactive({
   }
   no_pat$n.pat
 })
+formatter <- reactive({
+  if (isTruthy(input$updateB)){
+    if (isFALSE(editB()$showExtra)){
+      ordinal_data <- ordinal_data() %>% filter(dose %in% no_doseb()) %>% filter(toxicity %in% toxic()) %>% filter(grade != "Unreported")
+      if (input$ordinal_date == TRUE){
+        n_pat <- ordinal_data %>%
+        filter(toxicity == toxic()) %>%
+        filter(as.Date(timepoint) <= final_t()) %>%
+        group_by(dose, timepoint) %>%
+        summarise(n.pat = n())
+      }
+      else {
+        n_pat <- ordinal_data %>%
+        filter(toxicity == toxic()) %>%
+        filter(timepoint <= final_t()) %>%
+        group_by(dose, timepoint) %>%
+        summarise(n.pat = n())
+      }
+      groupsizes <- c()
+      for (i in no_doseb()){
+        pat_numbs <- n_pat %>% filter(dose == !!i)  %>% distinct(timepoint, n.pat) %>% group_by(dose, timepoint)
+        groupsizes <- append(groupsizes, paste(unlist(pat_numbs$n.pat), collapse ="; "))
+      }
+      function(no_dose = no_doseb(), no_pat = groupsizes) {paste0("Dose ", no_dose, " (N=", no_pat, ")")}
+      } else{function(no.dose = no_doseb(), no.pat = no_patient()) {paste0("Dose ", no.dose, " (N=", no.pat, ")")}}
+  } 
+  else {
+    function(no.dose = no_doseb(), no.pat = no_patient()) {paste0("Dose ", no.dose, " (N=", no.pat, ")")}
+}
+})
+
 
 #Graph output
 output$graphB <- renderPlot({
   prop <- prop()
   no_dose <- no_doseb()
   no_patient <- no_patient()
-  formatter <- function(no_dose, no_pat = no_patient) { paste0("Dose ", no_dose, " (N=", no_pat, ")")}
   g <- prop %>% filter(toxicity == toxic()) %>% ggplot(aes(x = as.factor(timepoint))) +
     geom_bar(aes(x = as.factor(timepoint),
                  y = proportion,
@@ -1184,7 +1248,7 @@ output$graphB <- renderPlot({
                 nrow = 3,
                 strip.position = "left",
                 axes = "all",
-                labeller = as_labeller(formatter))
+                labeller = as_labeller(formatter()))
           if (isTruthy(input$updateB)){
                                   g +
     labs(x = editB()$x_lab,
@@ -2514,6 +2578,11 @@ ordinal_dataI <- reactive({
                                 TRUE ~  ifelse(grade_change > 0, as.character(!!tp_end), as.character(1))))
 
   ordinal_data$base_adj[is.na(ordinal_data$base_adj) == TRUE] <- "Unreported"
+  if (isTruthy(input$updateI)){
+    if (editI()$showExtra == FALSE){
+      ordinal_data <- ordinal_data %>% filter(base_adj != "Unreported")
+    }
+  }
   ordinal_data
 })
 # Data Manipulation
@@ -2553,14 +2622,22 @@ output$graphI <- renderPlot({
   g <- propI() %>% ggplot(aes(fill = base_adj, x = dose, y = proportion * 100)) +
     geom_bar(position = "stack", stat = "identity") + coord_flip()
               if (isTruthy(input$updateI)){
-                formatterI <- function(SAE = toxicI()) {paste(editI()$subtitle, SAE, sep = " ")}
+                if (editI()$showExtra == FALSE){
+                  groupsizes <- c()
+                  for (i in toxicI()){
+                    pat_numbs <- propI() %>% filter(toxicity == !!i) %>% distinct(dose, n.pat) %>% select(n.pat)
+                    groupsizes <- append(groupsizes, paste(unlist(pat_numbs), collapse ="; "))
+                  }
+                formatterI <- function(SAE = toxicI()) {paste(editI()$subtitle, SAE, paste0("(N=", groupsizes, ")"), sep = " ")}
+                } else{
+                formatterI <- function(SAE = toxicI()) {paste(editI()$subtitle, SAE, sep = " ")}}
                                   g +
     facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterI)) +
     scale_fill_manual(breaks = rev(c(1:5, "Unreported")),
                       values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "darkgrey")),
                       labels = rev(c("None", "Mild", "Moderate", "Severe", "Very Severe", "Unreported")),
                       guide = guide_legend(reverse = TRUE)) +
-    labs(x = paste0("Dose (N=", paste(ice_n_patI()$n.pat, collapse = "; "), ")"),
+    labs(x = if (editI()$showExtra == FALSE){paste0("Dose")} else{paste0("Dose (N=", paste(ice_n_patI()$n.pat, collapse = "; "), ")")},
           y = "Percentage (%)",
           fill = "Severity Score") +
     theme(
@@ -2632,7 +2709,8 @@ output$downloadBcode <- downloadHandler(
                    no_doseb = input$numdoseB,
                    toxic = input$toxicB,
                    final_t = input$tpointB,
-                   ordinal_date = input$ordinal_date, 
+                   ordinal_date = input$ordinal_date,
+                   showExtra = input$showExtraB, 
                    title = input$titleB,
                    titlesize = input$titlesizeB,
                    x_lab = input$xlab_B,
@@ -2841,7 +2919,8 @@ output$downloadIcode <- downloadHandler(
                    no_doseI = input$numdoseI,
                    toxicI = input$toxicI,
                    times_I   = input$tpointI,
-                   ordinal_date = input$ordinal_date, 
+                   ordinal_date = input$ordinal_date,
+                   showExtra = input$showExtraI, 
                    title = input$titleI,
                    titlesize = input$titlesizeI,
                    subtitle = input$subtitleI)

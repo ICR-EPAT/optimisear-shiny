@@ -7,6 +7,7 @@ params:
     toxicI: NA
     times_I: NA
     ordinal_date: NA
+    showExtra: NA
     title: NA
     titlesize: NA
     subtitle: "Symptomatic Adverse Event"
@@ -55,6 +56,10 @@ ordinal_data <- ordinal_data %>%
 
 ordinal_data$base_adj[is.na(ordinal_data$base_adj) == TRUE] <- "Unreported"
 
+if (params$showExtra == FALSE){
+    ordinal_data <- ordinal_data %>% filter(base_adj != "Unreported")
+}
+
 prop <- ordinal_data %>%
           group_by(toxicity, dose) %>%
           count(base_adj) %>%
@@ -78,6 +83,16 @@ prop$base_adj <- factor(prop$base_adj, levels = c("Unreported", 5, 4, 3, 2, 1))
 ice_n_patI <- prop %>% distinct(dose, n.pat)
 
 formatterI <- function(SAE = toxicI, subtitle = params$subtitle) {paste(subtitle, SAE, sep = " ")}
+if (params$showExtra == FALSE){
+    groupsizes <- c()
+    for (i in toxicI){
+      pat_numbs <- prop %>% filter(toxicity == !!i) %>% distinct(dose, n.pat) %>% select(n.pat)
+      groupsizes <- append(groupsizes, paste(unlist(pat_numbs), collapse ="; "))
+    }
+    formatterI <- function(SAE = toxicI) {paste(params$subtitle, SAE, paste0("(N=", groupsizes, ")"), sep = " ")}
+  } else{
+    formatterI <- function(SAE = toxicI) {paste(params$subtitle, SAE, sep = " ")}
+}
 
 prop %>% ggplot(aes(fill = base_adj, x = dose, y = proportion * 100)) +
   geom_bar(position = "stack", stat = "identity") +
@@ -87,7 +102,7 @@ prop %>% ggplot(aes(fill = base_adj, x = dose, y = proportion * 100)) +
                     values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "darkgrey")),
                     labels = rev(c("None", "Mild", "Moderate", "Severe", "Very Severe", "Unreported")),
                     guide = guide_legend(reverse = TRUE)) +
-  labs(x = paste0("Dose (N=", paste(ice_n_patI$n.pat, collapse = "; "), ")"),
+  labs(x = if (params$showExtra == FALSE){paste0("Dose")} else{paste0("Dose (N=", paste(ice_n_patI$n.pat, collapse = "; "), ")")},
        y = "Percentage (%)",
        fill = "Severity Score") +
   theme(strip.text.y = element_text(angle = 0)) +
