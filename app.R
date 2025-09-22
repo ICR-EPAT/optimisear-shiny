@@ -47,7 +47,8 @@ ui <- div(page_navbar(
   p("4. Visualise your graphs with the 'Ordinal' and 'Continuous' data tabs."),
   p(" - Customise the size and layout of figures,"),
   p(" - Customise axis and main titles."),
-  p("6. Click 'Download' to export your graphs as .svg files."),
+  p("5. Click 'Download' to export your graphs as .svg files."),
+  p("6. Click 'Code' to export a .html file of the code (Note: graph aesthetics are determined by the \"Edit\" section)."),
   p("Below, we provide further details on each data visualisation approach. While the examples focus on specific PRO measures (e.g., PRO-CTCAE and EORTC QLQ-C30), the Shiny app can be applied to any PRO measure, provided the data matches the required type for each figure (Ordinal or Continuous).")
   ))),
   card(card_body(
