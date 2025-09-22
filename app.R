@@ -233,6 +233,7 @@ ui <- div(page_navbar(
              textInput("xlab_B", label = NULL, placeholder = "Enter x-axis label"),
              sliderInput("axisSizeB", label = "Axis title size", min = 5, max = 40, value = 10, step = 5),
              input_switch("showExtraB", label = "Show Unreported and Discontinued", value = TRUE),
+             input_switch("invertB", label = "Reverse order of grades", value = FALSE),
              actionButton("updateB", "Update")
           )), card_body(plotOutput("graphB"), height = 1000), full_screen = TRUE)
             ))),
@@ -298,6 +299,7 @@ ui <- div(page_navbar(
              sliderInput("titlesizeI", label = "Title size", min = 10, max = 50, value = 20, step = 5),
              textInput("subtitleI", label = NULL, placeholder = "Enter subgraph label"),
              input_switch("showExtraI", label = "Show Unreported and Discontinued", value = TRUE),
+             input_switch("invertI", label = "Reverse order of grades", value = FALSE),
              actionButton("updateI", "Update")
           )), card_body(plotOutput("graphI"), height = 1000), full_screen = TRUE)
             )))),
@@ -1198,12 +1200,14 @@ formatter <- reactive({
       if (input$ordinal_date == TRUE){
         n_pat <- ordinal_data %>%
         filter(toxicity == toxic()) %>%
+        filter(as.Date(timepoint) <= final_t()) %>%
         group_by(dose, timepoint) %>%
         summarise(n.pat = n())
       }
       else {
         n_pat <- ordinal_data %>%
         filter(toxicity == toxic()) %>%
+        filter(timepoint <= final_t()) %>%
         group_by(dose, timepoint) %>%
         summarise(n.pat = n())
       }
@@ -1213,10 +1217,10 @@ formatter <- reactive({
         groupsizes <- append(groupsizes, paste(unlist(pat_numbs$n.pat), collapse ="; "))
       }
       function(no_dose = no_doseb(), no_pat = groupsizes) {paste0("Dose ", no_dose, " (N=", no_pat, ")")}
-      } else{function(no_dose = no_doseb()) {paste0("Dose ", no_dose)}}
+      } else{function(no.dose = no_doseb(), no.pat = no_patient()) {paste0("Dose ", no.dose, " (N=", no.pat, ")")}}
   } 
   else {
-    function(no_dose = no_doseb()) {paste0("Dose ", no_dose)}
+    function(no.dose = no_doseb(), no.pat = no_patient()) {paste0("Dose ", no.dose, " (N=", no.pat, ")")}
 }
 })
 

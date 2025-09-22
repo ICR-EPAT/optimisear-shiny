@@ -149,7 +149,7 @@ formatter <- if (isFALSE(showExtra)){
         groupsizes <- append(groupsizes, paste(unlist(pat_numbs$n.pat), collapse ="; "))
     }
     function(no_dose = no_doseb, no_pat = groupsizes) {paste0("Dose ", no_dose, " (N=", no_pat, ")")}
-    } else {function(no_dose = no_doseb) {paste0("Dose ", no_dose)}} 
+    } else {function(no.dose = no_doseb, no.pat = no_patient) {paste0("Dose ", no.dose, " (N=", no.pat, ")")}} 
 
 
 #Graph output
