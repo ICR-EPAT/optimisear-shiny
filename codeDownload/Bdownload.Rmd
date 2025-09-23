@@ -105,7 +105,10 @@ prop$toxicity <- as.factor(prop$toxicity)
 prop$grade <- as.factor(prop$grade)
 prop$dose <- as.factor(prop$dose)
 prop$dose <- factor(prop$dose, levels = no_doseb)
-prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))
+ 
+if(params$invert == TRUE){
+    prop$grade <- factor(prop$grade, levels = rev(c("Discontinued", "Unreported", 5:1)))
+} else {prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))}
 
 if (ordinal_date == TRUE){
     prop <- prop %>% filter(as.Date(timepoint) <= as.Date(final_t))
