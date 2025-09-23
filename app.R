@@ -732,7 +732,8 @@ editB <- eventReactive(input$updateB,{
   titlesize = input$titlesizeB,
   x_lab = input$xlab_B,
   axissize = input$axisSizeB,
-  showExtra = input$showExtraB)
+  showExtra = input$showExtraB,
+  invert = input$invertB)
 })
 editC <- eventReactive(input$updateC,{
   list(title = input$titleC,
@@ -787,7 +788,8 @@ editI <- eventReactive(input$updateI,{
     list(title = input$titleI,
   titlesize = input$titlesizeI,
   subtitle = input$subtitleI,
-  showExtra = input$showExtraI)
+  showExtra = input$showExtraI,
+  invert = input$invertI)
 })
 #############################################################################################################Graph A
   #Import the data
@@ -1159,7 +1161,12 @@ if(nrow(missing_layer) != 0){
   prop$grade <- as.factor(prop$grade)
   prop$dose <- as.factor(prop$dose)
   prop$dose <- factor(prop$dose, levels = no_doseb())
-  prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))
+  if (isTruthy(input$updateB)){
+    if(editB()$invert == TRUE){
+      prop$grade <- factor(prop$grade, levels = rev(c("Discontinued", "Unreported", 5:1)))
+    } else {prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))}
+  } else {prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))}
+  
     if (input$ordinal_date == TRUE){
     prop <- prop %>% filter(as.Date(timepoint) <= as.Date(final_t()))
     prop$timepoint <- as.factor(as.Date(prop$timepoint))
@@ -2608,7 +2615,14 @@ propI <- reactive({
   levels(prop$base_adj) <- c(levels(prop$base_adj), "Unreported")
   prop$dose <- factor(prop$dose, levels = rev(levels(prop$dose)))
   prop <- prop %>% subset(base_adj != "ICE")
-  prop$base_adj <- factor(prop$base_adj, levels = c("Unreported", 5, 4, 3, 2, 1))
+  if (isTruthy(input$updateI)){
+    if (editI()$invert == TRUE){
+      prop$base_adj <- factor(prop$base_adj, levels = rev(c("Unreported", 5, 4, 3, 2, 1)))
+    } else{
+      prop$base_adj <- factor(prop$base_adj, levels = c("Unreported", 5, 4, 3, 2, 1))
+    }
+  } else{prop$base_adj <- factor(prop$base_adj, levels = c("Unreported", 5, 4, 3, 2, 1))}
+ 
   prop
 })
 
@@ -2710,7 +2724,8 @@ output$downloadBcode <- downloadHandler(
                    toxic = input$toxicB,
                    final_t = input$tpointB,
                    ordinal_date = input$ordinal_date,
-                   showExtra = input$showExtraB, 
+                   showExtra = input$showExtraB,
+                   invert = input$invertB, 
                    title = input$titleB,
                    titlesize = input$titlesizeB,
                    x_lab = input$xlab_B,
@@ -2920,7 +2935,8 @@ output$downloadIcode <- downloadHandler(
                    toxicI = input$toxicI,
                    times_I   = input$tpointI,
                    ordinal_date = input$ordinal_date,
-                   showExtra = input$showExtraI, 
+                   showExtra = input$showExtraI,
+                   invert = input$invertI, 
                    title = input$titleI,
                    titlesize = input$titlesizeI,
                    subtitle = input$subtitleI)

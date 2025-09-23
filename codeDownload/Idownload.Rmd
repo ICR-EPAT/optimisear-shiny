@@ -8,6 +8,7 @@ params:
     times_I: NA
     ordinal_date: NA
     showExtra: NA
+    invert: NA
     title: NA
     titlesize: NA
     subtitle: "Symptomatic Adverse Event"
@@ -78,7 +79,11 @@ prop$dose <- as.factor(prop$dose)
 levels(prop$base_adj) <- c(levels(prop$base_adj), "Unreported")
 prop$dose <- factor(prop$dose, levels = rev(levels(prop$dose)))
 prop <- prop %>% subset(base_adj != "ICE")
-prop$base_adj <- factor(prop$base_adj, levels = c("Unreported", 5, 4, 3, 2, 1))
+if (params$invert == TRUE){
+      prop$base_adj <- factor(prop$base_adj, levels = rev(c("Unreported", 5, 4, 3, 2, 1)))
+} else{
+      prop$base_adj <- factor(prop$base_adj, levels = c("Unreported", 5, 4, 3, 2, 1))
+}
 
 ice_n_patI <- prop %>% distinct(dose, n.pat)
 

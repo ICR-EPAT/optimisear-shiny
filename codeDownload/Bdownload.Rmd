@@ -8,6 +8,7 @@ params:
     final_t: NA
     ordinal_date: NA
     showExtra: NA
+    invert: NA
     title: NA
     titlesize: NA
     axissize: 30
