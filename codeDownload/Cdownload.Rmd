@@ -19,6 +19,11 @@ params:
 ---
 
 ```{r}
+print(params[-1])
+
+## To install the required packages, uncomment the following lines and run the code
+# install.packages(c("ggplot2", "DT", "magrittr", "dplyr", "ggsurvfit", "ggh4x", "tidyr", "gt", "gridExtra", "survminer"))
+
 library(ggplot2)
 library(DT)
 library(magrittr)
@@ -30,30 +35,39 @@ library(gt)
 library(gridExtra)
 library(survminer)
 
-print(params[-1])
-
+# Set the parameters
 continuous_data <- params$continuous_data
 no_doseC <- params$no_doseC
 func_C <- params$func_C
 final_tC <- params$final_tC
 continuous_date <- params$continuous_date
 
-continuous_data_filtered <- continuous_data %>% filter(functioning == func_C) %>% dplyr::select(-functioning)
-if (params$continuous_date == TRUE){
+# Filter to leave only the relevant PRO domain and then remove the column
+continuous_data_filtered <- continuous_data %>%
+    filter(functioning == func_C) %>%
+    dplyr::select(-functioning)
+if (params$continuous_date == TRUE) {
     continuous_data_filtered$timepoint == as.Date(continuous_data_filtered$timepoint)
 }
-  
+
+# Find the baseline then calculate the change from baseline
 diffC <- continuous_data_filtered %>%
     group_by(id) %>%
     mutate(baseline = score[timepoint == min(timepoint)], adjusted_value = score - baseline) %>%
     ungroup()
 
+# Find the mean and 95% CI for each dose at each timepoint then filter to relevant timepoints and doses
 summaryC <- diffC %>%
     group_by(dose, timepoint) %>%
     summarise(mean = mean(adjusted_value, na.rm = TRUE), sd = sd(adjusted_value, na.rm = TRUE) / sqrt(n()), .groups = "keep")
-summaryC <- summaryC %>% mutate(l.ci = mean - (1.96 * sd)) %>% mutate(u.ci = mean + (1.96 * sd))
-summaryC <- summaryC %>% filter(timepoint <= final_tC) %>% filter(dose %in% no_doseC)
+summaryC <- summaryC %>%
+    mutate(l.ci = mean - (1.96 * sd)) %>%
+    mutate(u.ci = mean + (1.96 * sd))
+summaryC <- summaryC %>%
+    filter(timepoint <= final_tC) %>%
+    filter(dose %in% no_doseC)
 
+# Set up plot parameters
 pd <- position_dodge(width = 0.2)
 
 impbound <- params$improveC
@@ -61,41 +75,60 @@ worbound <- params$worseC
 upper <- max(impbound[2], worbound[2], max(diffC$adjusted_value))
 lower <- min(impbound[1], worbound[1], min(diffC$adjusted_value))
 
-worse_text <- if (worbound[1] < impbound[1]){
-        min(max(params$worTextC, worbound[1]), worbound[2])
-    } else {
-         max(min(params$worTextC, worbound[2]), worbound[1])
-    }
+worse_text <- if (worbound[1] < impbound[1]) {
+    min(max(params$worTextC, worbound[1]), worbound[2])
+} else {
+    max(min(params$worTextC, worbound[2]), worbound[1])
+}
 
-improve_text <- if (worbound[1] < impbound[1]){
-        max(min(params$impTextC, impbound[2]), impbound[1])
-    } else {
-        min(max(params$impTextC, impbound[1]), impbound[2])
-    }
+improve_text <- if (worbound[1] < impbound[1]) {
+    max(min(params$impTextC, impbound[2]), impbound[1])
+} else {
+    min(max(params$impTextC, impbound[1]), impbound[2])
+}
 
+# Generate the plot
 summaryC %>% ggplot(
-           aes(x = as.factor(timepoint),
-               y = mean, group = as.factor(dose), shape = as.factor(dose), colour = as.factor(dose))) +
+    aes(
+        x = as.factor(timepoint),
+        y = mean, group = as.factor(dose), shape = as.factor(dose), colour = as.factor(dose)
+    )
+) +
     geom_ribbon(aes(ymin = impbound[1], ymax = impbound[2], fill = "palegreen1"), alpha = 0.3, colour = NA) +
     geom_ribbon(aes(ymin = worbound[1], ymax = worbound[2], fill = "red"), alpha = 0.1, colour = NA) +
-    geom_point(position = pd, size=3) + geom_line(size = 1.5) +
+    geom_point(position = pd, size = 3) +
+    geom_line(size = 1.5) +
     geom_errorbar(position = pd, aes(ymin = l.ci, ymax = u.ci), width = 0.2, size = 1.2) +
     theme_minimal(base_size = 14) +
-    guides(shape = guide_legend(title = "Dose"),
-           colour = guide_legend(title = "Dose")) +
+    guides(
+        shape = guide_legend(title = "Dose"),
+        colour = guide_legend(title = "Dose")
+    ) +
     theme_minimal(base_size = 14) +
     xlab(params$x_lab) +
     ylab(paste0(params$y_lab)) +
     scale_fill_manual(name = "Threshold", values = c("palegreen1", "red"), label = c("Improvement", "Worsening")) +
     geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = max(impbound[2], worbound[2])),
-                 colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
-                                                                length = unit(0.1, "inches"))) +
+        colour = "darkgrey", size = 0.8, arrow = arrow(
+            type = "closed",
+            length = unit(0.1, "inches")
+        )
+    ) +
     geom_segment(aes(x = 0.8, xend = 0.8, y = 0, yend = min(impbound[1], worbound[1])),
-                 colour = "darkgrey", size = 0.8, arrow = arrow(type = "closed",
-                                                                length = unit(0.1, "inches"))) +
-    geom_text(data = data.frame(x = 1.6, y = params$impTextC, label = "Improvement"), aes(x = x, y = y, label = label),
-              inherit.aes = FALSE) +
-    geom_text(data = data.frame(x = 1.6, y = params$worTextC, label = "Worsening"), aes(x = x, y = y, label = label),
-              inherit.aes = FALSE) +
-              ggtitle(params$title) + theme(plot.title = element_text(size = params$titlesize, face = "bold"), axis.title = element_text(size = params$axissize)) + ylim(lower, upper)                        
+        colour = "darkgrey", size = 0.8, arrow = arrow(
+            type = "closed",
+            length = unit(0.1, "inches")
+        )
+    ) +
+    geom_text(
+        data = data.frame(x = 1.6, y = params$impTextC, label = "Improvement"), aes(x = x, y = y, label = label),
+        inherit.aes = FALSE
+    ) +
+    geom_text(
+        data = data.frame(x = 1.6, y = params$worTextC, label = "Worsening"), aes(x = x, y = y, label = label),
+        inherit.aes = FALSE
+    ) +
+    ggtitle(params$title) +
+    theme(plot.title = element_text(size = params$titlesize, face = "bold"), axis.title = element_text(size = params$axissize)) +
+    ylim(lower, upper)
 ```
