@@ -16,6 +16,11 @@ params:
 ---
 
 ```{r}
+print(params[-1])
+
+## To install the required packages, uncomment the following lines and run the code
+# install.packages(c("ggplot2", "DT", "magrittr", "dplyr", "ggsurvfit", "ggh4x", "tidyr", "gt", "gridExtra", "survminer"))
+
 library(ggplot2)
 library(DT)
 library(magrittr)
@@ -27,8 +32,8 @@ library(gt)
 library(gridExtra)
 library(survminer)
 
-print(params[-1])
 
+# Set the parameters
 ordinal_data <- params$ordinal_data
 no_doseb <- params$no_doseb
 toxic <- params$toxic
@@ -36,41 +41,48 @@ final_t <- params$final_t
 ordinal_date <- params$ordinal_date
 showExtra <- params$showExtra
 
+# Relabel missing grades as "Unreported"
 ordinal_data$grade[is.na(ordinal_data$grade)] <- "Unreported"
-ordinal_data <- ordinal_data %>% filter(dose %in% no_doseb) %>% filter(toxicity %in% toxic)
 
-if (ordinal_date == TRUE){
+# Filter the data for the specified dose and toxicity
+ordinal_data <- ordinal_data %>%
+    filter(dose %in% no_doseb) %>%
+    filter(toxicity %in% toxic)
+
+# Calculate the number of patients for each dose at the start of the study (baseline)
+if (ordinal_date == TRUE) {
     n_pat <- ordinal_data %>%
         filter(timepoint == min(as.Date(timepoint)), toxicity == toxic) %>%
         group_by(dose) %>%
         summarise(n.pat = n())
-}else {
+} else {
     n_pat <- ordinal_data %>%
         filter(timepoint == min(timepoint), toxicity == toxic) %>%
         group_by(dose) %>%
         summarise(n.pat = n())
 }
 
+# Calculate the proportion of patients with each grade for each dose and timepoint
 prop <- ordinal_data %>%
     group_by(toxicity, timepoint, dose) %>%
     count(grade) %>%
     left_join(n_pat, by = "dose") %>%
     mutate(proportion = n / n.pat) %>%
     dplyr::select(-n)
-  
 
-if (showExtra == FALSE){
+# Logic to handle whether to show unreported participants within the barplot (default is to show unreported participants)
+if (showExtra == FALSE) {
     ordinal_data <- ordinal_data %>% filter(grade != "Unreported")
-    if (ordinal_date == TRUE){
+    if (ordinal_date == TRUE) {
         n_pat <- ordinal_data %>%
-        filter(toxicity == toxic) %>%
-        group_by(dose, timepoint) %>%
-        summarise(n.pat = n())
+            filter(toxicity == toxic) %>%
+            group_by(dose, timepoint) %>%
+            summarise(n.pat = n())
     } else {
         n_pat <- ordinal_data %>%
-        filter(toxicity == toxic) %>%
-        group_by(dose, timepoint) %>%
-        summarise(n.pat = n())
+            filter(toxicity == toxic) %>%
+            group_by(dose, timepoint) %>%
+            summarise(n.pat = n())
     }
 
     prop <- ordinal_data %>%
@@ -81,100 +93,134 @@ if (showExtra == FALSE){
         dplyr::select(-n)
 }
 
+# Rename columns for clarity
 colnames(prop) <- c("toxicity", "timepoint", "dose", "grade", "n.pat", "proportion")
 
 prop <- prop %>% dplyr::select(-n.pat)
 
+# Calculate the proportion of patients who have discontinued treatment
 missing_layer <- prop %>%
     group_by(toxicity, timepoint, dose) %>%
     summarise(proportion = 1 - sum(proportion), .groups = "drop") %>%
     filter(proportion > 0)
 
-if(nrow(missing_layer) != 0){
+if (nrow(missing_layer) != 0) {
     missing_layer <- cbind(missing_layer, "Discontinued")
     colnames(missing_layer) <- c("toxicity", "timepoint", "dose", "proportion", "grade")
 
     missing_layer <- missing_layer %>%
-      dplyr::select(names(prop))
+        dplyr::select(names(prop))
 
     prop$grade <- as.character(prop$grade)
     prop <- bind_rows(prop, missing_layer)
 }
 
+# Convert the grade, dose, and toxicity columns to factors for plotting
 prop$toxicity <- as.factor(prop$toxicity)
 prop$grade <- as.factor(prop$grade)
 prop$dose <- as.factor(prop$dose)
 prop$dose <- factor(prop$dose, levels = no_doseb)
- 
-if(params$invert == TRUE){
-    prop$grade <- factor(prop$grade, levels = rev(c("Discontinued", "Unreported", 5:1)))
-} else {prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))}
 
-if (ordinal_date == TRUE){
+# Logic to handle ordering of grades
+if (params$invert == TRUE) {
+    prop$grade <- factor(prop$grade, levels = rev(c("Discontinued", "Unreported", 5:1)))
+} else {
+    prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))
+}
+
+# Logic to handle whether timepoint is a date or a numeric value
+if (ordinal_date == TRUE) {
     prop <- prop %>% filter(as.Date(timepoint) <= as.Date(final_t))
     prop$timepoint <- as.factor(as.Date(prop$timepoint))
 } else {
     prop <- prop %>% filter(timepoint <= final_t)
     prop$timepoint <- as.factor(prop$timepoint)
 }
- 
-if (ordinal_date == TRUE){
+
+if (ordinal_date == TRUE) {
     no_pat <- ordinal_data %>%
         filter(timepoint == min(as.Date(timepoint)), toxicity == toxic) %>%
         group_by(dose) %>%
         filter(dose %in% no_doseb) %>%
-        summarise(n.pat = n(),.groups = "keep")
+        summarise(n.pat = n(), .groups = "keep")
 } else {
     no_pat <- ordinal_data %>%
         filter(timepoint == min(timepoint), toxicity == toxic) %>%
         group_by(dose) %>%
         filter(dose %in% no_doseb) %>%
-        summarise(n.pat = n(),.groups = "keep")
+        summarise(n.pat = n(), .groups = "keep")
 }
 
 no_patient <- no_pat$n.pat
 
-formatter <- if (isFALSE(showExtra)){
-    ordinal_data <- ordinal_data %>% filter(dose %in% no_doseb) %>% filter(toxicity %in% toxic) %>% filter(grade != "Unreported")
-    if (ordinal_date == TRUE){
+# Formatter to assist in subgraph labels to include dose level and number of patients
+formatter <- if (isFALSE(showExtra)) {
+    ordinal_data <- ordinal_data %>%
+        filter(dose %in% no_doseb) %>%
+        filter(toxicity %in% toxic) %>%
+        filter(grade != "Unreported")
+    if (ordinal_date == TRUE) {
         n_pat <- ordinal_data %>%
-        filter(toxicity == toxic) %>%
-        group_by(dose, timepoint) %>%
-        summarise(n.pat = n())
+            filter(toxicity == toxic) %>%
+            group_by(dose, timepoint) %>%
+            summarise(n.pat = n())
     } else {
         n_pat <- ordinal_data %>%
-        filter(toxicity == toxic) %>%
-        group_by(dose, timepoint) %>%
-        summarise(n.pat = n())
+            filter(toxicity == toxic) %>%
+            group_by(dose, timepoint) %>%
+            summarise(n.pat = n())
     }
     groupsizes <- c()
-    for (i in no_doseb){
-        pat_numbs <- n_pat %>% filter(dose == !!i)  %>% distinct(timepoint, n.pat) %>% group_by(dose, timepoint)
-        groupsizes <- append(groupsizes, paste(unlist(pat_numbs$n.pat), collapse ="; "))
+    for (i in no_doseb) {
+        pat_numbs <- n_pat %>%
+            filter(dose == !!i) %>%
+            distinct(timepoint, n.pat) %>%
+            group_by(dose, timepoint)
+        groupsizes <- append(groupsizes, paste(unlist(pat_numbs$n.pat), collapse = "; "))
     }
-    function(no_dose = no_doseb, no_pat = groupsizes) {paste0("Dose ", no_dose, " (N=", no_pat, ")")}
-    } else {function(no.dose = no_doseb, no.pat = no_patient) {paste0("Dose ", no.dose, " (N=", no.pat, ")")}} 
+    function(no_dose = no_doseb, no_pat = groupsizes) {
+        paste0("Dose ", no_dose, " (N=", no_pat, ")")
+    }
+} else {
+    function(no.dose = no_doseb, no.pat = no_patient) {
+        paste0("Dose ", no.dose, " (N=", no.pat, ")")
+    }
+}
 
 
-#Graph output
-prop %>% filter(toxicity == toxic) %>% ggplot(aes(x = as.factor(timepoint))) +
-    geom_bar(aes(x = as.factor(timepoint),
-                 y = proportion,
-                 fill = as.factor(grade)),
-             stat = "identity",
-             position = "stack") +
-    scale_fill_manual(breaks = rev(c(1:5, "Unreported", "Discontinued")),
-                      values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "grey", "grey30")),
-                      labels = rev(
-                        c("None", "Mild", "Moderate", "Severe", "Very Severe", "Unreported", "Discontinued")),
-                      guide = guide_legend(reverse = TRUE)) +
+# Plot the barplot
+prop %>%
+    filter(toxicity == toxic) %>%
+    ggplot(aes(x = as.factor(timepoint))) +
+    geom_bar(
+        aes(
+            x = as.factor(timepoint),
+            y = proportion,
+            fill = as.factor(grade)
+        ),
+        stat = "identity",
+        position = "stack"
+    ) +
+    scale_fill_manual(
+        breaks = rev(c(1:5, "Unreported", "Discontinued")),
+        values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "grey", "grey30")),
+        labels = rev(
+            c("None", "Mild", "Moderate", "Severe", "Very Severe", "Unreported", "Discontinued")
+        ),
+        guide = guide_legend(reverse = TRUE)
+    ) +
     theme_bw(base_size = 14) +
-    facet_wrap2(~as.factor(dose),
-                nrow = 3,
-                strip.position = "left",
-                axes = "all",
-                labeller = as_labeller(formatter))+
-    labs(x = params$x_lab,
-         y = "Proportion",
-         fill = "Severity Score")+ ggtitle(params$title) + theme(plot.title = element_text(size = params$titlesize, face = "bold"), axis.title = element_text(size = params$axissize))                             
+    facet_wrap2(~ as.factor(dose),
+        nrow = 3,
+        strip.position = "left",
+        axes = "all",
+        labeller = as_labeller(formatter)
+    ) +
+    labs(
+        x = params$x_lab,
+        y = "Proportion",
+        fill = "Severity Score"
+    ) +
+    ggtitle(params$title) +
+    theme(plot.title = element_text(size = params$titlesize, face = "bold"), axis.title = element_text(size = params$axissize))
 ```
