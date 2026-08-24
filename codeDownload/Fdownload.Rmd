@@ -12,6 +12,10 @@ params:
 ---
 
 ```{r}
+print(params[-1])
+
+## To install the required packages, uncomment the following lines and run the code
+# install.packages(c("ggplot2", "DT", "magrittr", "dplyr", "ggsurvfit", "ggh4x", "tidyr", "gt", "gridExtra", "survminer"))
 library(ggplot2)
 library(DT)
 library(magrittr)
@@ -23,25 +27,28 @@ library(gt)
 library(gridExtra)
 library(survminer)
 
-print(params[-1])
-
+# Define the parameters
 continuous_data <- params$continuous_data
 no_doseF <- params$no_doseF
 func_F <- params$func_F
 final_tF <- params$final_tF
 continuous_date <- params$continuous_date
 
+# Logic handling PRO domain format for the data
 continuous_data$functioning <- as.character(continuous_data$functioning)
 
-if (continuous_date == TRUE){
+# Logic handling date format for the data
+if (continuous_date == TRUE) {
     continuous_data$timepoint <- as.Date(continuous_data$timepoint)
 }
-  
+
+# Filter to specific PRO domain, dose, and timepoints
 continuous_data <- continuous_data %>%
     filter(dose %in% no_doseF) %>%
     filter(functioning %in% func_F) %>%
     filter(timepoint <= final_tF)
 
+# Create a data frame with the number of patients at each timepoint and the number of patients missing at each timepoint
 ice_n_patF <- continuous_data %>%
     group_by(dose, id) %>%
     summarise(n_timepoints = n_distinct(timepoint), .groups = "drop") %>%
@@ -50,50 +57,59 @@ ice_n_patF <- continuous_data %>%
     filter(n_timepoints < max_timepoints) %>%
     summarise(n_patients_missing = n_distinct(id))
 
-
+# Find first and last timepoints
 final_list <- unique(continuous_data %>% filter(timepoint <= final_tF) %>% select(timepoint))
 final_in_list <- max(final_list$timepoint)
 first_in_list <- min(unique(continuous_data$timepoint))
 finalT <- as.symbol(paste0("tp_", final_in_list))
 firstT <- as.symbol(paste0("tp_", first_in_list))
 
+# Create data frame with change from baseline for each PRO domain
 dfF <- continuous_data %>%
     group_by(functioning) %>%
     pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_") %>%
     mutate(score = !!finalT - !!firstT) %>%
     dplyr::select(id, score, dose, functioning)
 
+# Add columns containing the number of unreported and reported patients
 dfF <- dfF %>%
     group_by(dose, functioning) %>%
     mutate(non_na_count = sum(!is.na(score))) %>%
     mutate(na_count = sum(is.na(score))) %>%
     ungroup()
 
+# Create a summary data frame with the mean, standard error, and 95% confidence intervals for each PRO domain and dose
 sum.dfF <- dfF %>%
     group_by(dose, functioning) %>%
-    summarise(mean = mean(score, na.rm = TRUE),
-              non_na_count = unique(non_na_count),
-              se = sd(score, na.rm = TRUE) / sqrt(non_na_count), .groups = "keep")
+    summarise(
+        mean = mean(score, na.rm = TRUE),
+        non_na_count = unique(non_na_count),
+        se = sd(score, na.rm = TRUE) / sqrt(non_na_count), .groups = "keep"
+    )
 
 sum.dfF <- sum.dfF %>% mutate(l.ci = mean - (1.96 * se))
 sum.dfF <- sum.dfF %>% mutate(u.ci = mean + (1.96 * se))
 sum.dfF <- sum.dfF %>% ungroup(dose)
 
-sum.df.widerF <- sum.dfF %>% pivot_wider(id_cols = functioning, names_from = dose, values_from = c(mean,se,non_na_count))
+# Reshape data frame for use in generating the table
+sum.df.widerF <- sum.dfF %>% pivot_wider(id_cols = functioning, names_from = dose, values_from = c(mean, se, non_na_count))
 
-
-sum.df.wider.gt <- sum.df.widerF %>% 
+# Generate the table
+sum.df.wider.gt <- sum.df.widerF %>%
     gt() %>%
     tab_stubhead(label = "Functioning")
 
-for (i in unique(sum.dfF$dose)){
+for (i in unique(sum.dfF$dose)) {
     sum.df.wider.gt <- sum.df.wider.gt %>% tab_spanner(label = paste0("Dose ", i), columns = ends_with(as.character(!!i)))
-    sum.df.wider.gt <- sum.df.wider.gt %>% cols_label(starts_with("mean") ~ "Mean",
-                                                      starts_with("se") ~ "Standard Error",
-                                                      starts_with("non_na_count") ~ "Number Reported")
+    sum.df.wider.gt <- sum.df.wider.gt %>% cols_label(
+        starts_with("mean") ~ "Mean",
+        starts_with("se") ~ "Standard Error",
+        starts_with("non_na_count") ~ "Number Reported"
+    )
 }
 
-sum.df.wider.gt %>% opt_stylize(style = 5, color = "blue") %>%
+sum.df.wider.gt %>%
+    opt_stylize(style = 5, color = "blue") %>%
     tab_header(title = params$title) %>%
     tab_options(table.width = px(params$width))
 ```
