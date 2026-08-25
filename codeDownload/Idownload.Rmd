@@ -15,6 +15,10 @@ params:
 ---
 
 ```{r}
+print(params[-1])
+
+## To install the required packages, uncomment the following lines and run them once
+# install.packages("ggplot2", "DT", "magrittr", "dplyr", "ggsurvfit", "ggh4x", "tidyr", "gt", "gridExtra", "survminer")
 library(ggplot2)
 library(DT)
 library(magrittr)
@@ -26,91 +30,118 @@ library(gt)
 library(gridExtra)
 library(survminer)
 
-print(params[-1])
-
+# Define parameters
 ordinal_data <- params$ordinal_data
 no_doseI <- params$no_doseI
 toxicI <- params$toxicI
 times_I <- params$times_I
 ordinal_date <- params$ordinal_date
 
-
+# Create list of timepoints within the range
 end_list <- unique(ordinal_data %>% filter(timepoint <= times_I) %>% select(timepoint))
 
+# Create variables for the earliest and latest timepoints within the range
 end <- max(end_list$timepoint)
 tp_end <- as.symbol(paste0("tp_", end))
 
 start <- min(unique(ordinal_data$timepoint))
 tp_start <- as.symbol(paste0("tp_", start))
 
+# Filter data to relevant PRO domains and doses, then calculate the change between the earliest and latest timepoints and long baseline adjusted score
 ordinal_data <- ordinal_data %>%
-    filter(toxicity %in% toxicI) %>%
-    filter(dose %in% no_doseI) %>%
-    group_by(id) %>%
-    mutate(has_tp = any(timepoint == end)) %>%
-    filter(timepoint <= end) %>%
-    pivot_wider(names_from = timepoint, values_from = grade, names_prefix = "tp_") %>%
-    mutate(grade_change = !!tp_end - !!tp_start) %>%
-    mutate(base_adj = case_when(
-                                has_tp == FALSE ~ "ICE",
-                                TRUE ~  ifelse(grade_change > 0, as.character(!!tp_end), as.character(1))))
+  filter(toxicity %in% toxicI) %>%
+  filter(dose %in% no_doseI) %>%
+  group_by(id) %>%
+  mutate(has_tp = any(timepoint == end)) %>%
+  filter(timepoint <= end) %>%
+  pivot_wider(names_from = timepoint, values_from = grade, names_prefix = "tp_") %>%
+  mutate(grade_change = !!tp_end - !!tp_start) %>%
+  mutate(base_adj = case_when(
+    has_tp == FALSE ~ "ICE",
+    TRUE ~ ifelse(grade_change > 0, as.character(!!tp_end), as.character(1))
+  ))
 
+# Replace missing values with "Unreproted" and filter out "Unreported" if showExtra is FALSE
 ordinal_data$base_adj[is.na(ordinal_data$base_adj) == TRUE] <- "Unreported"
 
-if (params$showExtra == FALSE){
-    ordinal_data <- ordinal_data %>% filter(base_adj != "Unreported")
+if (params$showExtra == FALSE) {
+  ordinal_data <- ordinal_data %>% filter(base_adj != "Unreported")
 }
 
+# Calculate the proportion of patients in each baseline adjusted category for each toxicity and dose
 prop <- ordinal_data %>%
-          group_by(toxicity, dose) %>%
-          count(base_adj) %>%
-          ungroup() %>%
-          mutate(original = TRUE) %>%
-          complete(toxicity, dose, base_adj, fill = list(n = 0)) %>%
-          group_by(toxicity, dose) %>%
-          mutate(n.pat = sum(n[base_adj != "ICE"], na.rm = TRUE)) %>%
-          ungroup() %>%
-          mutate(proportion = n / n.pat) %>%
-          dplyr::select(-n)
+  group_by(toxicity, dose) %>%
+  count(base_adj) %>%
+  ungroup() %>%
+  mutate(original = TRUE) %>%
+  complete(toxicity, dose, base_adj, fill = list(n = 0)) %>%
+  group_by(toxicity, dose) %>%
+  mutate(n.pat = sum(n[base_adj != "ICE"], na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(proportion = n / n.pat) %>%
+  dplyr::select(-n)
 
+# Convert variables to factors and set levels for plotting
 prop$toxicity <- as.factor(prop$toxicity)
 prop$base_adj <- as.factor(prop$base_adj)
 prop$dose <- as.factor(prop$dose)
 levels(prop$base_adj) <- c(levels(prop$base_adj), "Unreported")
 prop$dose <- factor(prop$dose, levels = rev(levels(prop$dose)))
 prop <- prop %>% subset(base_adj != "ICE")
-if (params$invert == TRUE){
-      prop$base_adj <- factor(prop$base_adj, levels = rev(c("Unreported", 5, 4, 3, 2, 1)))
-} else{
-      prop$base_adj <- factor(prop$base_adj, levels = c("Unreported", 5, 4, 3, 2, 1))
+
+# Logic to invert the order of bars if invert is TRUE
+if (params$invert == TRUE) {
+  prop$base_adj <- factor(prop$base_adj, levels = rev(c("Unreported", 5, 4, 3, 2, 1)))
+} else {
+  prop$base_adj <- factor(prop$base_adj, levels = c("Unreported", 5, 4, 3, 2, 1))
 }
 
+# Create a data frame with the doses and number of patients to assist in plot labeling
 ice_n_patI <- prop %>% distinct(dose, n.pat)
 
-formatterI <- function(SAE = toxicI, subtitle = params$subtitle) {paste(subtitle, SAE, sep = " ")}
-if (params$showExtra == FALSE){
-    groupsizes <- c()
-    for (i in toxicI){
-      pat_numbs <- prop %>% filter(toxicity == !!i) %>% distinct(dose, n.pat) %>% select(n.pat)
-      groupsizes <- append(groupsizes, paste(unlist(pat_numbs), collapse ="; "))
-    }
-    formatterI <- function(SAE = toxicI) {paste(params$subtitle, SAE, paste0("(N=", groupsizes, ")"), sep = " ")}
-  } else{
-    formatterI <- function(SAE = toxicI) {paste(params$subtitle, SAE, sep = " ")}
+# Formatter function to create facet labels
+formatterI <- function(SAE = toxicI, subtitle = params$subtitle) {
+  paste(subtitle, SAE, sep = " ")
+}
+if (params$showExtra == FALSE) {
+  groupsizes <- c()
+  for (i in toxicI) {
+    pat_numbs <- prop %>%
+      filter(toxicity == !!i) %>%
+      distinct(dose, n.pat) %>%
+      select(n.pat)
+    groupsizes <- append(groupsizes, paste(unlist(pat_numbs), collapse = "; "))
+  }
+  formatterI <- function(SAE = toxicI) {
+    paste(params$subtitle, SAE, paste0("(N=", groupsizes, ")"), sep = " ")
+  }
+} else {
+  formatterI <- function(SAE = toxicI) {
+    paste(params$subtitle, SAE, sep = " ")
+  }
 }
 
+# Generate the baseline adjusted barplot
 prop %>% ggplot(aes(fill = base_adj, x = dose, y = proportion * 100)) +
   geom_bar(position = "stack", stat = "identity") +
   coord_flip() +
   facet_grid(toxicity ~ ., scales = "free_y", labeller = as_labeller(formatterI)) +
-  scale_fill_manual(breaks = rev(c(1:5, "Unreported")),
-                    values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "darkgrey")),
-                    labels = rev(c("None", "Mild", "Moderate", "Severe", "Very Severe", "Unreported")),
-                    guide = guide_legend(reverse = TRUE)) +
-  labs(x = if (params$showExtra == FALSE){paste0("Dose")} else{paste0("Dose (N=", paste(ice_n_patI$n.pat, collapse = "; "), ")")},
-       y = "Percentage (%)",
-       fill = "Severity Score") +
+  scale_fill_manual(
+    breaks = rev(c(1:5, "Unreported")),
+    values = rev(c("darkgreen", "lightgreen", "yellow", "orange", "red", "darkgrey")),
+    labels = rev(c("None", "Mild", "Moderate", "Severe", "Very Severe", "Unreported")),
+    guide = guide_legend(reverse = TRUE)
+  ) +
+  labs(
+    x = if (params$showExtra == FALSE) {
+      paste0("Dose")
+    } else {
+      paste0("Dose (N=", paste(ice_n_patI$n.pat, collapse = "; "), ")")
+    },
+    y = "Percentage (%)",
+    fill = "Severity Score"
+  ) +
   theme(strip.text.y = element_text(angle = 0)) +
   ggtitle(params$title) +
-  theme(plot.title = element_text(size = params$titlesize, face = "bold"))                             
+  theme(plot.title = element_text(size = params$titlesize, face = "bold"))
 ```
