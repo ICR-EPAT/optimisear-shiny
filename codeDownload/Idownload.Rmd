@@ -54,7 +54,7 @@ ordinal_data <- ordinal_data %>%
   group_by(id) %>%
   mutate(has_tp = any(timepoint == end)) %>%
   filter(timepoint <= end) %>%
-  pivot_wider(names_from = timepoint, values_from = grade, names_prefix = "tp_") %>%
+  pivot_wider(names_from = timepoint, values_from = grade, names_prefix = "tp_") %>% # The app uses an older version of tidyr. Newer versions may require an additional argument id_cols = c(id, has_tp) to avoid an error
   mutate(grade_change = !!tp_end - !!tp_start) %>%
   mutate(base_adj = case_when(
     has_tp == FALSE ~ "ICE",
