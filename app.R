@@ -13,9 +13,15 @@ library(bslib)
 library(bsicons)
 library(gridExtra)
 library(survminer)
-library(pandoc)
-pandoc_install("2.11.4")
-pandoc_activate("2.11.4")
+# rmarkdown needs a pandoc binary to render the "download code" .Rmd reports.
+# In the Docker image (and any conda env built from local.yml/environment.yml) pandoc is
+# already on the PATH, so only fall back to the `pandoc` R package (which downloads a
+# binary from GitHub at start-up) when none is available.
+if (!rmarkdown::pandoc_available()) {
+  library(pandoc)
+  pandoc_install("2.11.4")
+  pandoc_activate("2.11.4")
+}
 
 
 ui <- div(page_navbar(

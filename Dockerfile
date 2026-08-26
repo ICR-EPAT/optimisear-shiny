@@ -15,13 +15,12 @@ FROM continuumio/miniconda3
 WORKDIR /app
 
 # 3. Add and create the conda environment
+#    (local.yml also provides r-rmarkdown + the pandoc binary, needed by the
+#    "download code" feature which renders codeDownload/*.Rmd to HTML)
 ADD local.yml .
 RUN conda env create -f local.yml
 
-# 5. Copy relevant app files
-COPY app.R .
-
-# 6. Use the correct environment name (match your .yml file!)
+# 4. Use the correct environment name (match your .yml file!)
 # Assuming your environment name is "env-opt"
 SHELL ["conda", "run", "--no-capture-output", "-n", "env-opt", "/bin/bash", "-c"]
 
@@ -39,19 +38,15 @@ RUN apt-get clean && apt-get update --allow-insecure-repositories --allow-unauth
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
-# 7. If needed, install additional R packages from CRAN and GitHub
+# 5. If needed, install additional R packages from CRAN and GitHub
 # RUN Rscript -e "install.packages('RPostgreSQL', repos='https://cloud.r-project.org')"
 # RUN Rscript -e "remotes::install_github('nvelden/NGLVieweR')"
 
-# 8. Copy necessary data
-RUN mkdir www
+# 6. Copy the app, the .Rmd templates used by the "download code" buttons, and data/images
+COPY app.R .
+COPY codeDownload ./codeDownload
 COPY www ./www
 
-
-# 9. Expose and run the application
+# 7. Expose and run the application
 EXPOSE 3838
 CMD ["conda", "run", "--no-capture-output", "-n", "env-opt", "Rscript", "-e", "shiny::runApp('/app', port = 3838, host = '0.0.0.0')"]
-
-
-RUN apt-get clean && apt-get update --allow-insecure-repositories --allow-unauthenticated \
-    && apt-get install -y --no-install-recommends 
