@@ -21,7 +21,9 @@ conda create -n optimisear-shiny -c conda-forge \
   r-svglite \
   r-bsicons \
   r-gridExtra \
-  r-survminer
+  r-survminer \
+  r-rmarkdown \
+  pandoc
 ```  
 
 **Activate the environment**  
