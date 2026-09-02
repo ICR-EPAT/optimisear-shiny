@@ -57,5 +57,5 @@ Type `http://127.0.0.1:XXXX` (where XXXX is the port number provided when you st
 This app is based on a template created by the ICR RSE team.
 
 Contacts:
-*For issues with the app, please contact George Knight - george.knight2@icr.ac.uk
-*For issues with hosting, please contact Stacy Shcherbakova - stacy.shcherbakova@icr.ac.uk
+* For issues with the app, please contact George Knight - george.knight2@icr.ac.uk
+* For issues with hosting, please contact Stacy Shcherbakova - stacy.shcherbakova@icr.ac.uk
