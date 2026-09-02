@@ -1,7 +1,19 @@
-# Summer Project - OPTIMISE-AR Shiny App
-This is a template for the OPTIMISE-AR shiny app which you will be working on this summer. It demonstrates the bare bones of a shiny app with a docker build file and example shiny-proxy configuration.
+# OPTIMISE-AR Shiny App
+The OPTIMISE-AR  (incOrporating PaTIent-reported outcoMes In doSE-finding trials–Analysis Recommendations) shiny app is a companion software to the OPTIMISE-AR guidance [1]. It provides an easy to use platform to generate graphics to summarise Patient Reported Outcome (PRO) data for use in dose-finding oncology trial (DFOT) publications. This toolkit is designed to support trialists in line with three key PRO endpoint types:
 
-## Create the development environment
+**Time-to-event PRO endpoints -**
+For DFOTs, a PRO objective could look to assess tolerability across doses by identifying whether patients at higher doses experience earlier undesirable PRO events e.g., symptom worsening or dose-limiting events compared to those at lower doses. Such objectives are typically described using time-to-event endpoints.
+
+**PRO endpoints across timepoints -**
+For DFOTs, a PRO objective could look to assess tolerability across doses by analysing the longitudinal tolerability profile of a treatment. Such endpoints may assess whether patients at higher doses experience worse tolerability than patients at lower doses at any timepoint within the trial.
+
+**PRO endpoints between timepoints -**
+For DFOTs, a PRO objective could look to assess tolerability by analysing tolerability to treatment at two clinically meaningful timepoints across doses. For example, such endpoints may assess whether patients at higher doses experience worse tolerability at the final assessment timepoint than patients at lower doses when compared to baseline.
+
+
+[1] Alger, Emily, et al. "A practical toolkit with recommendations for analysing and visualising patient-reported outcomes in early phase dose-finding oncology trials (OPTIMISE-AR)." The Lancet Oncology 27.4 (2026): e218-e230.
+
+## To create the development environment (for contributors)
 To create an environment, we recommend using mamba. If you don't have mamba installed on your computer, you can also use conda.
 
 **Create the environment**  
@@ -39,38 +51,11 @@ Rscript -e "shiny::runApp('.')"
 **Access the app**  
 Type `http://127.0.0.1:XXXX` (where XXXX is the port number provided when you start the app) into your preferred browser to access the website locally.
 
-## Additional resources
-1) Alma Cook Book: https://almacookbook.github.io/   
-Alma Cook Book provides a comprehensive guide on how to set up environment, how to set up a container and more.
 
-2) RSE Team "Git for Beginners" course: https://github.com/ICR-RSE-Group/2025-ICR-GIT-beginners 
 
-3) Document on writing shiny apps: https://mastering-shiny.org/basic-app.html  
-
-4) Examples of shiny apps:
-- SYnthetic Lethal Vulnerabilities Exhibiting Reciprocation
-    - Website: https://software.icr.ac.uk/app/sylver
-    - Source code: https://github.com/instituteofcancerresearch/SYLVER
-
-- MCran
-    - Website: https://software.icr.ac.uk/app/mrcan  
-    - Source code: https://github.com/instituteofcancerresearch/MRCan 
-
-- 8q24 
-    - Website: https://software.icr.ac.uk/app/icr8q24 
-    - Source code: https://github.com/oncogenetics/8q24  
-
-- Reversions Database:
-    - Website: https://software.icr.ac.uk/app/reversions-web  
-    - Source code: https://github.com/instituteofcancerresearch/reversions-web?tab=readme-ov-file  
-
-- Locus Explorer:
-    - Website: https://software.icr.ac.uk/app/locus-explorer 
-    - Source code: https://github.com/oncogenetics/LocusExplorer?tab=readme-ov-file 
-
-## About the template
-The template was created by the ICR RSE team.
+## About the app
+This app is based on a template created by the ICR RSE team.
 
 Contacts:
-* Stacy Shcherbakova - stacy.shcherbakova@icr.ac.uk
-* Rachel Alcraft - rachel.alcraft@icr.ac.uk
+*For issues with the app, please contact George Knight - george.knight2@icr.ac.uk
+*For issues with hosting, please contact Stacy Shcherbakova - stacy.shcherbakova@icr.ac.uk
