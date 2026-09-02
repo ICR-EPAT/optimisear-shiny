@@ -1876,10 +1876,22 @@ server <- function(input, output, session) {
     {
       data <- continuous_data_filteredD()
       data$dose <- as.factor(data$dose)
-      g <- ggplot(data = data, aes(
-        x = as.factor(timepoint),
-        y = score, group = id, colour = labels_D(), linetype = dose
-      )) +
+      if (input$continuous_date == TRUE) {
+        g <- ggplot(data = data, aes(
+          x = as.Date(timepoint),
+          y = score, group = id, colour = labels_D(), linetype = dose
+        )) +
+          scale_x_date()
+        min_t <- min(as.Date(data$timepoint))
+      } else {
+        g <- ggplot(data = data, aes(
+          x = as.factor(timepoint),
+          y = score, group = id, colour = labels_D(), linetype = dose
+        )) +
+          scale_x_discrete(expand = expansion(add = c(2, 0)))
+        min_t <- min(as.numeric(data$timepoint))
+      }
+      g <- g +
         geom_line(size = 0.9) +
         labs(linetype = "Dose") +
         theme_minimal(base_size = 16)
@@ -1899,14 +1911,13 @@ server <- function(input, output, session) {
           ) +
           ggtitle(editD$title) + theme(plot.title = element_text(size = editD$titlesize, face = "bold"), axis.title = element_text(size = editD$axissize)) +
           geom_segment(
-            x = 0.2, xend = 0.2, y = lower, yend = upper,
+            x = min_t, xend = min_t, y = lower, yend = upper,
             colour = "darkgrey", size = 0.8, arrow = arrow(
               type = "closed",
               length = unit(0.1, "inches")
             ), inherit.aes = FALSE
           ) +
-          geom_text(x = -0.2, y = upper * 0.9, label = editD$arrow_lab, color = "black", inherit.aes = FALSE) +
-          scale_x_discrete(expand = expansion(add = c(2, 0)))
+          geom_text(x = min_t - 0.2, y = upper * 0.9, label = editD$arrow_lab, color = "black", inherit.aes = FALSE)
       } else {
         g + ylim(c(0, 100)) +
           geom_point() +
@@ -1916,14 +1927,13 @@ server <- function(input, output, session) {
             color = "Patient (Dose)"
           ) +
           geom_segment(
-            x = 0.2, xend = 0.2, y = 0, yend = 100,
+            x = min_t, xend = min_t, y = 0, yend = 100,
             colour = "darkgrey", size = 0.8, arrow = arrow(
               type = "closed",
               length = unit(0.1, "inches")
             ), inherit.aes = FALSE
           ) +
-          geom_text(x = -0.2, y = 90, label = "Better \n tolerability", color = "black", inherit.aes = FALSE) +
-          scale_x_discrete(expand = expansion(add = c(2, 0)))
+          geom_text(x = min_t - 0.5, y = 90, label = "Better \n tolerability", color = "black", inherit.aes = FALSE)
       }
     },
     height = function() input$heightD,
