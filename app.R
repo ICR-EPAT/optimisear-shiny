@@ -954,7 +954,7 @@ server <- function(input, output, session) {
         validate("Invalid upload: not .csv file", errorClass = "style")
       }
       data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")
-      if (all(c("id", "toxicity", "grade", "timepoint", "dose", "time_last_report") %in% colnames(data)) == FALSE) {
+      if (all(c("id", "toxicity", "grade", "timepoint", "dose") %in% colnames(data)) == FALSE) {
         validate(
           need("id" %in% colnames(data), "Missing id column"),
           need("toxicity" %in% colnames(data), "Missing toxicity column"),
@@ -964,7 +964,7 @@ server <- function(input, output, session) {
           errorClass = "style"
         )
       }
-      data <- data %>% select(id, toxicity, grade, timepoint, dose, time_last_report)
+      data <- data %>% select(id, toxicity, grade, timepoint, dose)
       data
     } else if (input$dummy_ordinal == TRUE & input$ordinal_date == FALSE) {
       read.csv("www/DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")[, -1]
