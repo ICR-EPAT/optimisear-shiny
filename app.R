@@ -35,14 +35,14 @@ ui <- div(page_navbar(
       card(
         card_header(h3("Background"), style = "background-color: #bfd9bf"),
         card_body(
-          p("OPTIMISE-AR (incOrporating PaTIent-reported outcoMes In doSE-finding trials–Analysis Recommendations) provides this shiny app to support the generation of patient-reported outcome (PRO) data visualisations for DFOT publications. Informed by critical PRO research objectives in DFOTs[1], this toolkit supports trialists wishing to present PRO data in line with three key PRO endpoint types:"),
+          p("OPTIMISE-AR (incOrporating PaTIent-reported outcoMes In doSE-finding trials–Analysis Recommendations) provides this shiny app to support the generation of patient-reported outcome (PRO) data visualisations for dose-finding oncology trials (DFOT) publications. Informed by critical PRO research objectives in DFOTs[1], this toolkit supports trialists wishing to present PRO data in line with three key PRO endpoint types:"),
           tags$b("Time-to-event PRO endpoints -"),
           p("For DFOTs, a PRO objective could look to assess tolerability across doses by identifying whether patients at higher doses experience earlier undesirable PRO events e.g., symptom worsening or dose-limiting events compared to those at lower doses.  Such objectives are typically described using time-to-event endpoints."),
           tags$b("PRO endpoints across timepoints -"),
           p("For DFOTs, a PRO objective could look to assess tolerability across doses by analysing the longitudinal tolerability profile of a treatment. Such endpoints may assess whether patients at higher doses experience worse tolerability than patients at lower doses at any timepoint within the trial."),
           tags$b("PRO endpoints between timepoints -"),
           p("For DFOTs, a PRO objective could look to assess tolerability by analysing tolerability to treatment at two clinically meaningful timepoints across doses. For example, such endpoints may assess whether patients at higher doses experience worse tolerability at the final assessment timepoint than patients at lower doses when compared to baseline."),
-          p("[1] Alger E, et al. International consensus recommendations for PRO research in early-phase dose-finding oncology trials: OPTIMISE-ROR. ESMO Open. 2025;10:105438.")
+          p("[1] Alger, Emily, et al. \"A practical toolkit with recommendations for analysing and visualising patient-reported outcomes in early phase dose-finding oncology trials (OPTIMISE-AR).\" The Lancet Oncology 27.4 (2026): e218-e230.")
         )
       ),
       card(
@@ -626,11 +626,11 @@ ui <- div(page_navbar(
     layout_columns(
       card(card_header("Code availability", style = "background-color: #bfd9bf"), card_body(
         p("This app accompanies the OPTIMISE-AR project."),
-        p("If you wish to utilise figures curated for OPTIMISE-AR for your own publications, R code is provided here: https://github.com/alemily100/optimise-ar"),
+        p("If you wish to utilise figures curated for OPTIMISE-AR for your own publications, the 'code download' feature may be used. The original R code accompanying the OPTIMISE-AR project is provided here: https://github.com/alemily100/optimise-ar"),
         p("We also provide code for the Shiny app itself, which can be accessed here: https://github.com/ICR-EPAT/optimisear-shiny.")
       )),
       card(card_header("OPTIMISE-AR", style = "background-color: #bfd9bf"), card_body(
-        p("This is an early public release of the app with a work in progress UI. There are a few known bugs, if you find any additional, please do get in touch so they can be patched."),
+        p("This is an early public release of the app. There are a few known bugs, if you find any additional, please do get in touch so they can be patched."),
         p("Authors: George Knight, Emily Alger, Karrar Shareiyat"),
         p("Maintainers: Rachel Alcraft, ICR Scientific Computing")
       ))
@@ -641,7 +641,10 @@ ui <- div(page_navbar(
     tabName = "history", icon = icon("history"),
     card(
       card_header("Versions", style = "background-color: #bfd9bf"),
-      card_body(p("v1.0 - Internal ICR release 06/08/2025"))
+      card_body(
+        p("v1.0 - Internal ICR release 06/08/2025"),
+        p("v1.1 - Internal ICR re-release 27/08/2026")
+      )
     )
   ), bg = "#8FBC8F",
   ######################################### Dealing with the long popovers
@@ -776,12 +779,12 @@ server <- function(input, output, session) {
     about_ordinal <- about_ordinal()
     if (about_ordinal == "graphA") {
       HTML("Kaplan-Meier figures present tolerability across doses by identifying whether patients at higher doses experience earlier undesirable PRO events (e.g., symptom worsening or dose-limiting events) compared to those at lower doses.
-    This Kaplan-Meier visulises the time to first baseline-adjusted Grade >= a selected score change. <br> In cases where a patient's post-baseline PRO score increases by at least one compared to baseline, the baseline-adjusted score is this post-baseline value. Otherwise, if the patient's baseline and post-baseline score are equal, their baseline-adjusted score is 0 (or 'None').
+    This Kaplan-Meier visualises the time to first baseline-adjusted Grade >= a selected score change. <br> In cases where a patient's post-baseline PRO score increases by at least one compared to baseline, the baseline-adjusted score is this post-baseline value. Otherwise, if the patient's baseline and post-baseline score are equal, their baseline-adjusted score is 0 (or 'None').
     <br><br> This app allows you to select: <br>- The doses you wish to display <br>- The minimum change from baseline score to define event (this is set to 3 by default) <br>- The PRO domain(s) defining event")
     } else if (about_ordinal == "graphB") {
       html("This figure presents the proportion of patients experiencing each ordinal score across timepoints as well as the proportion of patients with unreported PRO data or who experience an intercurrent event.<br> <br> This app allows you to select: <br>- The doses you wish to display, <br>- The final timepoint you wish to display, <br>- Which PRO domain you wish to display.")
     } else if (about_ordinal == "graphH") {
-      html("This figure presents differences between ordinal PRO scores as both a magnitude of worsening/improvement between two timepoints of interest across doses and PRO domains. This figure also indicates the proportion of patients with unreported PRO data at timepoints of interest.It <br> <br> This app allows you to select: <br>- The doses you wish to display, <br>- The two timepoints you wish to compare, <br>- Which PRO domains you wish to display.")
+      html("This figure presents differences between ordinal PRO scores as both a magnitude of worsening/improvement between two timepoints of interest across doses and PRO domains. This figure also indicates the proportion of patients with unreported PRO data at timepoints of interest. <br> <br> This app allows you to select: <br>- The doses you wish to display, <br>- The two timepoints you wish to compare, <br>- Which PRO domains you wish to display.")
     } else if (about_ordinal == "graphI") {
       html("This figure presents maximum baseline-adjusted PRO score between the baseline and a timepoint of interest across doses and PRO domains.
      In cases where a patient's post-baseline PRO score increases by at least one compared to baseline, the maximum baseline-adjusted score is this maximum post-baseline value. Otherwise, if the patient's baseline and post-baseline score are always equal, their maximum baseline-adjusted score is 0 (or 'None')  <br> <br>This app allows you to select: <br>- The doses you wish to display, <br>- The final time point for analysis <br>- Which PRO domains you wish to display.")
@@ -814,7 +817,7 @@ server <- function(input, output, session) {
     } else if (about_ordinal == "graphH") {
       HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size <br> - Subgraph label format  <br> - Position of unreported percentage <br> - Graph height and width")
     } else if (about_ordinal == "graphI") {
-      HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size <br> - Subgraph label format  <br> - Position of unreported percentage <br> - Graph height and width <br> - Toggle Unreported & Discontinued <br> - Invert the order of grades")
+      HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size <br> - Subgraph label format  <br> - Graph height and width <br> - Toggle Unreported & Discontinued <br> - Invert the order of grades")
     }
   })
   output$continuous_edit <- renderUI({
@@ -960,7 +963,7 @@ server <- function(input, output, session) {
         validate("Invalid upload: not .csv file", errorClass = "style")
       }
       data <- read.csv(input$upload$datapath, header = TRUE, sep = ",")
-      if (all(c("id", "toxicity", "grade", "timepoint", "dose", "time_last_report") %in% colnames(data)) == FALSE) {
+      if (all(c("id", "toxicity", "grade", "timepoint", "dose") %in% colnames(data)) == FALSE) {
         validate(
           need("id" %in% colnames(data), "Missing id column"),
           need("toxicity" %in% colnames(data), "Missing toxicity column"),
@@ -970,7 +973,7 @@ server <- function(input, output, session) {
           errorClass = "style"
         )
       }
-      data <- data %>% select(id, toxicity, grade, timepoint, dose, time_last_report)
+      data <- data %>% select(id, toxicity, grade, timepoint, dose)
       data
     } else if (input$dummy_ordinal == TRUE & input$ordinal_date == FALSE) {
       read.csv("www/DummyData/dummy_ordinal.csv", header = TRUE, sep = ",")[, -1]
@@ -1175,7 +1178,7 @@ server <- function(input, output, session) {
             ymin = editA$box_y, ymax = editA$box_y + 0.3 # y-position range for table
           )
       } else {
-        g + labs(y = paste0("Probability of first baseline-adjusted \n Grade ≥", baseA(), " PRO-CTCAE score")) +
+        g + labs(y = paste0("No. first baseline-adjusted \n Grade ≥", baseA(), " PRO-CTCAE score")) +
           annotation_custom(
             tbl_grob(),
             xmin = -0.5, xmax = 1.75, # x-position range for table
@@ -1853,13 +1856,18 @@ server <- function(input, output, session) {
       filter(functioning == func_D()) %>%
       filter(!is.na(score)) %>%
       dplyr::select(-functioning)
-    data <- data.frame(data)
+    data <- data.frame(data) %>%
+      arrange(dose) %>%
+      group_by(dose) %>%
+      arrange(id, .by_group = TRUE) %>%
+      ungroup()
     data
   })
 
   labels_D <- reactive({
     data <- continuous_data_filteredD()
-    paste0("ID ", data$id, " (Dose: ", data$dose, ")")
+    labels <- factor(paste0("ID ", data$id, " (Dose: ", data$dose, ")"), levels = unique(paste0("ID ", data$id, " (Dose: ", data$dose, ")")))
+    labels
   })
 
   #### Plot output
