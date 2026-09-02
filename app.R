@@ -1169,7 +1169,7 @@ server <- function(input, output, session) {
             ymin = editA$box_y, ymax = editA$box_y + 0.3 # y-position range for table
           )
       } else {
-        g + labs(y = paste0("Probability of first baseline-adjusted \n Grade ≥", baseA(), " PRO-CTCAE score")) +
+        g + labs(y = paste0("No. first baseline-adjusted \n Grade ≥", baseA(), " PRO-CTCAE score")) +
           annotation_custom(
             tbl_grob(),
             xmin = -0.5, xmax = 1.75, # x-position range for table
