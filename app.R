@@ -1847,13 +1847,18 @@ server <- function(input, output, session) {
       filter(functioning == func_D()) %>%
       filter(!is.na(score)) %>%
       dplyr::select(-functioning)
-    data <- data.frame(data)
+    data <- data.frame(data) %>%
+      arrange(dose) %>%
+      group_by(dose) %>%
+      arrange(id, .by_group = TRUE) %>%
+      ungroup()
     data
   })
 
   labels_D <- reactive({
     data <- continuous_data_filteredD()
-    paste0("ID ", data$id, " (Dose: ", data$dose, ")")
+    labels <- factor(paste0("ID ", data$id, " (Dose: ", data$dose, ")"), levels = unique(paste0("ID ", data$id, " (Dose: ", data$dose, ")")))
+    labels
   })
 
   #### Plot output
