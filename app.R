@@ -620,11 +620,11 @@ ui <- div(page_navbar(
     layout_columns(
       card(card_header("Code availability", style = "background-color: #bfd9bf"), card_body(
         p("This app accompanies the OPTIMISE-AR project."),
-        p("If you wish to utilise figures curated for OPTIMISE-AR for your own publications, R code is provided here: https://github.com/alemily100/optimise-ar"),
+        p("If you wish to utilise figures curated for OPTIMISE-AR for your own publications, the 'code download' feature may be used. The original R code accompanying the OPTIMISE-AR project is provided here: https://github.com/alemily100/optimise-ar"),
         p("We also provide code for the Shiny app itself, which can be accessed here: https://github.com/ICR-EPAT/optimisear-shiny.")
       )),
       card(card_header("OPTIMISE-AR", style = "background-color: #bfd9bf"), card_body(
-        p("This is an early public release of the app with a work in progress UI. There are a few known bugs, if you find any additional, please do get in touch so they can be patched."),
+        p("This is an early public release of the app. There are a few known bugs, if you find any additional, please do get in touch so they can be patched."),
         p("Authors: George Knight, Emily Alger, Karrar Shareiyat"),
         p("Maintainers: Rachel Alcraft, ICR Scientific Computing")
       ))
@@ -635,7 +635,10 @@ ui <- div(page_navbar(
     tabName = "history", icon = icon("history"),
     card(
       card_header("Versions", style = "background-color: #bfd9bf"),
-      card_body(p("v1.0 - Internal ICR release 06/08/2025"))
+      card_body(
+        p("v1.0 - Internal ICR release 06/08/2025"),
+        p("v1.1 - Internal ICR re-release 27/08/2026")
+      )
     )
   ), bg = "#8FBC8F",
   ######################################### Dealing with the long popovers
