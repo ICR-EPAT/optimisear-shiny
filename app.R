@@ -811,7 +811,7 @@ server <- function(input, output, session) {
     } else if (about_ordinal == "graphH") {
       HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size <br> - Subgraph label format  <br> - Position of unreported percentage <br> - Graph height and width")
     } else if (about_ordinal == "graphI") {
-      HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size <br> - Subgraph label format  <br> - Position of unreported percentage <br> - Graph height and width <br> - Toggle Unreported & Discontinued <br> - Invert the order of grades")
+      HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size <br> - Subgraph label format  <br> - Graph height and width <br> - Toggle Unreported & Discontinued <br> - Invert the order of grades")
     }
   })
   output$continuous_edit <- renderUI({
