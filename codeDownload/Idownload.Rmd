@@ -37,6 +37,15 @@ toxicI <- params$toxicI
 times_I <- params$times_I
 ordinal_date <- params$ordinal_date
 
+# Custom max function to help calculate baseline adjusted score
+custom.max <- function(x) {
+  if (all(is.na(x))) {
+    return(NA)
+  } else {
+    return(max(x, na.rm = TRUE))
+  }
+}
+
 # Create list of timepoints within the range
 end_list <- unique(ordinal_data %>% filter(timepoint <= times_I) %>% select(timepoint))
 
@@ -54,11 +63,20 @@ ordinal_data <- ordinal_data %>%
   group_by(id) %>%
   mutate(has_tp = any(timepoint == end)) %>%
   filter(timepoint <= end) %>%
-  pivot_wider(names_from = timepoint, values_from = grade, names_prefix = "tp_") %>% # The app uses an older version of tidyr. Newer versions may require an additional argument id_cols = c(id, has_tp) to avoid an error
-  mutate(grade_change = !!tp_end - !!tp_start) %>%
+  pivot_wider(names_from = timepoint, values_from = grade, names_prefix = "tp_") # The app uses an older version of tidyr. Newer versions may require an additional argument id_cols = c(id, has_tp) to avoid an error
+
+# Find the columns that contain timepoint information
+tp_cols <- which(grepl("tp_", colnames(ordinal_data)))
+
+# Create a new column containing the maximum grade across all timepoints for each patient
+ordinal_data$max_tp <- apply(ordinal_data[, tp_cols], custom.max, MARGIN = 1)
+
+# Calculate the baseline-adjusted score for each patient
+ordinal_data <- ordinal_data %>%
+  mutate(grade_change = max_tp - !!tp_start) %>%
   mutate(base_adj = case_when(
     has_tp == FALSE ~ "ICE",
-    TRUE ~ ifelse(grade_change > 0, as.character(!!tp_end), as.character(1))
+    TRUE ~ ifelse(grade_change > 0, as.character(max_tp), as.character(1))
   ))
 
 # Replace missing values with "Unreproted" and filter out "Unreported" if showExtra is FALSE
