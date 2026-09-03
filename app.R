@@ -2940,9 +2940,16 @@ server <- function(input, output, session) {
     input$toxicI
   })
 
+  # Custom max function to help calculate baseline adjusted score
+  custom.max <- function(x) {
+    if (all(is.na(x))) {
+      return(NA)
+    } else {
+      return(max(x, na.rm = TRUE))
+    }
+  }
 
   #### Filter and sort data
-
   ordinal_dataI <- reactive({
     ordinal_data <- ordinal_data()
     end_list <- unique(ordinal_data %>% filter(timepoint <= times_I()) %>% select(timepoint))
@@ -2956,11 +2963,14 @@ server <- function(input, output, session) {
       group_by(id) %>%
       mutate(has_tp = any(timepoint == end)) %>%
       filter(timepoint <= end) %>%
-      pivot_wider(names_from = timepoint, values_from = grade, names_prefix = "tp_") %>%
-      mutate(grade_change = !!tp_end - !!tp_start) %>%
+      pivot_wider(names_from = timepoint, values_from = grade, names_prefix = "tp_")
+    tp_cols <- which(grepl("tp_", colnames(ordinal_data)))
+    ordinal_data$max_tp <- apply(ordinal_data[, tp_cols], custom.max, MARGIN = 1)
+    ordinal_data <- ordinal_data %>%
+      mutate(grade_change = max_tp - !!tp_start) %>%
       mutate(base_adj = case_when(
         has_tp == FALSE ~ "ICE",
-        TRUE ~ ifelse(grade_change > 0, as.character(!!tp_end), as.character(1))
+        TRUE ~ ifelse(grade_change > 0, as.character(max_tp), as.character(1))
       ))
 
     ordinal_data$base_adj[is.na(ordinal_data$base_adj) == TRUE] <- "Unreported"
