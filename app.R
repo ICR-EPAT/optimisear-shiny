@@ -830,7 +830,7 @@ server <- function(input, output, session) {
     } else if (about_continuous == "graphE") {
       HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label  <br> - X axis label  <br> - Axis label font size <br> - Arrow label <br> - Y axis range <br> - Graph height and width")
     } else if (about_continuous == "graphF") {
-      HTML("This app supports the customising of the figure to your needs, including: <br> - Table title <br> - Table width")
+      HTML("This app supports the customising of the figure to your needs, including: <br> - Table title <br> - First column name <br> - Table width")
     } else if (about_continuous == "graphG") {
       HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label <br> - Axis label font size <br> - Subgraph label format <br> - Boundaries for improvement <br> - Boundaries for worsening <br> - Position of improvement text <br> - Position of worsening text <br> - Graph height and width")
     }
@@ -3276,6 +3276,7 @@ server <- function(input, output, session) {
         final_tF = input$tpointF,
         continuous_date = input$continuous_date,
         title = input$titleF,
+        column1 = input$column1F,
         width = input$widthF
       )
       rmarkdown::render(tempReport, output_file = file, params = params, envir = new.env(parent = globalenv()))
