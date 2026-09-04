@@ -2216,7 +2216,7 @@ server <- function(input, output, session) {
 
   sum.df.wider.gtF <- reactive({
     sum.df.wider.gt <- sum.df.widerF() %>%
-      gt() %>%
+      gt(row_group_as_column = TRUE) %>%
       tab_stubhead(label = "Functioning")
     for (i in unique(sum.dfF()$dose)) {
       sum.df.wider.gt <- sum.df.wider.gt %>%
