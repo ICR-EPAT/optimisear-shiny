@@ -765,7 +765,7 @@ server <- function(input, output, session) {
       } else if (about_continuous == "graphE") {
         list(src = "www/GraphExamples/graphE.svg", height = "800px")
       } else if (about_continuous == "graphF") {
-        list(src = "www/GraphExamples/graphF.svg", height = "800px")
+        list(src = "www/GraphExamples/graphF.png", height = "500px")
       } else if (about_continuous == "graphG") {
         list(src = "www/GraphExamples/graphG.svg", height = "800px")
       }
@@ -2229,11 +2229,9 @@ server <- function(input, output, session) {
     }
     sum.df.wider.gt <- sum.df.wider.gt %>% opt_stylize(style = 5, color = "blue")
     if (isTruthy(input$updateF)) {
-      sum.df.wider.gt %>% tab_header(title = paste0(titleF()))
-    } else {
-      sum.df.wider.gt
+      sum.df.wider.gt <- sum.df.wider.gt %>% tab_header(title = paste0(titleF()))
     }
-    sum.df.wider.gt %>% tab_options(table.width = px(input$widthF))
+    sum.df.wider.gt <- sum.df.wider.gt %>% tab_options(table.width = px(input$widthF))
   })
 
 

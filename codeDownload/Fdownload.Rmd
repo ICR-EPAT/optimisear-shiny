@@ -96,7 +96,7 @@ sum.df.widerF <- sum.dfF %>% pivot_wider(id_cols = functioning, names_from = dos
 
 # Generate the table
 sum.df.wider.gt <- sum.df.widerF %>%
-    gt() %>%
+    gt(row_group_as_column = TRUE) %>%
     tab_stubhead(label = "Functioning")
 
 for (i in unique(sum.dfF$dose)) {
