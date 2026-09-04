@@ -567,6 +567,7 @@ ui <- div(page_navbar(
             id = "popB",
             placement = "right",
             textInput("titleF", label = NULL, placeholder = "Enter table title"),
+            textInput("column1F", label = NULL, placeholder = "Enter first column name"),
             actionButton("updateF", "Update")
           )
         ), card_body(gt_output("graphF"), height = 1000), full_screen = TRUE)
@@ -2217,7 +2218,7 @@ server <- function(input, output, session) {
   sum.df.wider.gtF <- reactive({
     sum.df.wider.gt <- sum.df.widerF() %>%
       gt(row_group_as_column = TRUE) %>%
-      tab_stubhead(label = "Functioning")
+      tab_stubhead(label = if(isTruthy(input$updateF)){input$column1F}else{"Functioning"})
     for (i in unique(sum.dfF()$dose)) {
       sum.df.wider.gt <- sum.df.wider.gt %>%
         tab_spanner(label = paste0("Dose ", i), columns = ends_with(as.character(!!i)))
