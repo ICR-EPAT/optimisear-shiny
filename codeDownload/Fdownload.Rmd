@@ -8,6 +8,7 @@ params:
     final_tF: NA
     continuous_date: NA
     title: NA
+    column1: NA
     width: NA
 ---
 
@@ -33,6 +34,7 @@ no_doseF <- params$no_doseF
 func_F <- params$func_F
 final_tF <- params$final_tF
 continuous_date <- params$continuous_date
+column1 <- params$column1
 
 # Logic handling PRO domain format for the data
 continuous_data$functioning <- as.character(continuous_data$functioning)
@@ -96,8 +98,8 @@ sum.df.widerF <- sum.dfF %>% pivot_wider(id_cols = functioning, names_from = dos
 
 # Generate the table
 sum.df.wider.gt <- sum.df.widerF %>%
-    gt() %>%
-    tab_stubhead(label = "Functioning")
+    gt(row_group_as_column = TRUE) %>%
+    tab_stubhead(label = if(isTruthy(column1)){column1}else{"Functioning"})
 
 for (i in unique(sum.dfF$dose)) {
     sum.df.wider.gt <- sum.df.wider.gt %>% tab_spanner(label = paste0("Dose ", i), columns = ends_with(as.character(!!i)))

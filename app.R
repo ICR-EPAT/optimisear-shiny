@@ -567,6 +567,7 @@ ui <- div(page_navbar(
             id = "popB",
             placement = "right",
             textInput("titleF", label = NULL, placeholder = "Enter table title"),
+            textInput("column1F", label = NULL, placeholder = "Enter first column name"),
             actionButton("updateF", "Update")
           )
         ), card_body(gt_output("graphF"), height = 1000), full_screen = TRUE)
@@ -765,7 +766,7 @@ server <- function(input, output, session) {
       } else if (about_continuous == "graphE") {
         list(src = "www/GraphExamples/graphE.svg", height = "800px")
       } else if (about_continuous == "graphF") {
-        list(src = "www/GraphExamples/graphF.svg", height = "800px")
+        list(src = "www/GraphExamples/graphF.png", height = "500px")
       } else if (about_continuous == "graphG") {
         list(src = "www/GraphExamples/graphG.svg", height = "800px")
       }
@@ -829,7 +830,7 @@ server <- function(input, output, session) {
     } else if (about_continuous == "graphE") {
       HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label  <br> - X axis label  <br> - Axis label font size <br> - Arrow label <br> - Y axis range <br> - Graph height and width")
     } else if (about_continuous == "graphF") {
-      HTML("This app supports the customising of the figure to your needs, including: <br> - Table title <br> - Table width")
+      HTML("This app supports the customising of the figure to your needs, including: <br> - Table title <br> - First column name <br> - Table width")
     } else if (about_continuous == "graphG") {
       HTML("This app supports the customising of the figure to your needs, including: <br> - Graph title  <br> - Graph title font size  <br> - Y axis label <br> - Axis label font size <br> - Subgraph label format <br> - Boundaries for improvement <br> - Boundaries for worsening <br> - Position of improvement text <br> - Position of worsening text <br> - Graph height and width")
     }
@@ -2216,8 +2217,8 @@ server <- function(input, output, session) {
 
   sum.df.wider.gtF <- reactive({
     sum.df.wider.gt <- sum.df.widerF() %>%
-      gt() %>%
-      tab_stubhead(label = "Functioning")
+      gt(row_group_as_column = TRUE) %>%
+      tab_stubhead(label = if(isTruthy(input$updateF)){input$column1F}else{"Functioning"})
     for (i in unique(sum.dfF()$dose)) {
       sum.df.wider.gt <- sum.df.wider.gt %>%
         tab_spanner(label = paste0("Dose ", i), columns = ends_with(as.character(!!i)))
@@ -2229,11 +2230,9 @@ server <- function(input, output, session) {
     }
     sum.df.wider.gt <- sum.df.wider.gt %>% opt_stylize(style = 5, color = "blue")
     if (isTruthy(input$updateF)) {
-      sum.df.wider.gt %>% tab_header(title = paste0(titleF()))
-    } else {
-      sum.df.wider.gt
+      sum.df.wider.gt <- sum.df.wider.gt %>% tab_header(title = paste0(titleF()))
     }
-    sum.df.wider.gt %>% tab_options(table.width = px(input$widthF))
+    sum.df.wider.gt <- sum.df.wider.gt %>% tab_options(table.width = px(input$widthF))
   })
 
 
@@ -3277,6 +3276,7 @@ server <- function(input, output, session) {
         final_tF = input$tpointF,
         continuous_date = input$continuous_date,
         title = input$titleF,
+        column1 = input$column1F,
         width = input$widthF
       )
       rmarkdown::render(tempReport, output_file = file, params = params, envir = new.env(parent = globalenv()))
