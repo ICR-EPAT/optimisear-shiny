@@ -43,12 +43,14 @@ final_tC <- params$final_tC
 continuous_date <- params$continuous_date
 
 # Filter to leave only the relevant PRO domain and then remove the column
+if (params$continuous_date == TRUE) {
+    # continuous_data_filtered$timepoint == as.Date(continuous_data_filtered$timepoint)
+    continuous_data_filtered <- date_to_timepoint_continuous(continuous_data)
+}
 continuous_data_filtered <- continuous_data %>%
     filter(functioning == func_C) %>%
     dplyr::select(-functioning)
-if (params$continuous_date == TRUE) {
-    continuous_data_filtered$timepoint == as.Date(continuous_data_filtered$timepoint)
-}
+
 
 # Find the baseline then calculate the change from baseline
 diffC <- continuous_data_filtered %>%

@@ -1562,7 +1562,8 @@ server <- function(input, output, session) {
     data <- continuous_data()
     tpoint <- unique(data$timepoint)
     if (input$continuous_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      # tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_continuous(data)
     }
     updateSliderInput(session, "tpointC", label = "Final timepoint of interest", min = sort(tpoint)[2], max = max(tpoint))
   })
@@ -1586,7 +1587,8 @@ server <- function(input, output, session) {
     data <- continuous_data()
     tpointC <- unique(data$timepoint)
     if (input$continuous_date == TRUE) {
-      tpointC <- as.Date(tpointC)
+      # tpointC <- as.Date(tpointC)
+      tpointC <- 0:max_no_dates_continuous(data)
     }
     updateSliderInput(session, "tpointC", label = "Final timepoint of interest", min = tpointC[2], max = max(tpointC))
   })
@@ -1630,12 +1632,13 @@ server <- function(input, output, session) {
     req(input$functioningC)
     req(input$tpointC)
     continuous_data <- continuous_data()
+    if (input$continuous_date == TRUE) {
+      # continuous_data$timepoint == as.Date(continuous_data$timepoint)
+      continuous_data <- date_to_timepoint_continuous(continuous_data)
+    }
     continuous_data <- continuous_data %>%
       filter(functioning == func_C()) %>%
       dplyr::select(-functioning) # %>% filter(!is.na(score))
-    if (input$continuous_date == TRUE) {
-      continuous_data$timepoint == as.Date(continuous_data$timepoint)
-    }
     continuous_data
   })
 
