@@ -2119,7 +2119,8 @@ server <- function(input, output, session) {
     data <- continuous_data()
     tpoint <- unique(data$timepoint)
     if (input$continuous_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      # tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_continuous(data)
     }
     updateSliderInput(session, "tpointF", label = "Final timepoint of interest", min = sort(tpoint)[2], max = max(tpoint))
   })
@@ -2144,7 +2145,8 @@ server <- function(input, output, session) {
     data <- continuous_data()
     tpoint <- unique(data$timepoint)
     if (input$continuous_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      # tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_continuous(data)
     }
     updateSliderInput(session, "tpointF", label = "Final timepoint of interest", min = tpoint[2], max = max(tpoint))
   })
@@ -2190,7 +2192,8 @@ server <- function(input, output, session) {
     filtered <- continuous_data()
     filtered$functioning <- as.character(filtered$functioning)
     if (input$continuous_date == TRUE) {
-      filtered$timepoint <- as.Date(filtered$timepoint)
+      # filtered$timepoint <- as.Date(filtered$timepoint)
+      filtered <- date_to_timepoint_continuous(filtered) %>% select(-date)
     }
     filtered <- filtered %>%
       filter(dose %in% no_doseF()) %>%
@@ -2220,7 +2223,7 @@ server <- function(input, output, session) {
     firstT <- as.symbol(paste0("tp_", first_in_list))
     df <- data %>%
       group_by(functioning) %>%
-      pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_") %>%
+      pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_", id_cols = c(id, dose, functioning)) %>%
       mutate(score = !!finalT - !!firstT) %>%
       dplyr::select(id, score, dose, functioning)
 

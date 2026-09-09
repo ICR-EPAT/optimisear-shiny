@@ -36,12 +36,22 @@ final_tF <- params$final_tF
 continuous_date <- params$continuous_date
 column1 <- params$column1
 
+# Function to handle date data
+date_to_timepoint_continuous <- function(data) {
+    data %>%
+        group_by(id, functioning) %>%
+        arrange(timepoint) %>%
+        mutate(date = timepoint, timepoint = row_number() - 1) %>%
+        ungroup()
+}
+
 # Logic handling PRO domain format for the data
 continuous_data$functioning <- as.character(continuous_data$functioning)
 
 # Logic handling date format for the data
 if (continuous_date == TRUE) {
-    continuous_data$timepoint <- as.Date(continuous_data$timepoint)
+    # continuous_data$timepoint <- as.Date(continuous_data$timepoint)
+    continuous_data <- date_to_timepoint_continuous(continuous_data) %>% select(-date)
 }
 
 # Filter to specific PRO domain, dose, and timepoints
@@ -69,7 +79,7 @@ firstT <- as.symbol(paste0("tp_", first_in_list))
 # Create data frame with change from baseline for each PRO domain
 dfF <- continuous_data %>%
     group_by(functioning) %>%
-    pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_") %>%
+    pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_", id_cols = c(id, dose, functioning)) %>%
     mutate(score = !!finalT - !!firstT) %>%
     dplyr::select(id, score, dose, functioning)
 
@@ -99,7 +109,11 @@ sum.df.widerF <- sum.dfF %>% pivot_wider(id_cols = functioning, names_from = dos
 # Generate the table
 sum.df.wider.gt <- sum.df.widerF %>%
     gt(row_group_as_column = TRUE) %>%
-    tab_stubhead(label = if(isTruthy(column1)){column1}else{"Functioning"})
+    tab_stubhead(label = if (isTruthy(column1)) {
+        column1
+    } else {
+        "Functioning"
+    })
 
 for (i in unique(sum.dfF$dose)) {
     sum.df.wider.gt <- sum.df.wider.gt %>% tab_spanner(label = paste0("Dose ", i), columns = ends_with(as.character(!!i)))
