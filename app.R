@@ -1179,7 +1179,7 @@ server <- function(input, output, session) {
             ymin = editA$box_y, ymax = editA$box_y + 0.3 # y-position range for table
           )
       } else {
-        g + labs(y = paste0("No. first baseline-adjusted \n Grade ≥", baseA(), " PRO-CTCAE score")) +
+        g + labs(y = paste0("No first baseline-adjusted \n Grade ≥", baseA(), " PRO-CTCAE score")) +
           annotation_custom(
             tbl_grob(),
             xmin = -0.5, xmax = 1.75, # x-position range for table
@@ -2218,7 +2218,11 @@ server <- function(input, output, session) {
   sum.df.wider.gtF <- reactive({
     sum.df.wider.gt <- sum.df.widerF() %>%
       gt(row_group_as_column = TRUE) %>%
-      tab_stubhead(label = if(isTruthy(input$updateF)){input$column1F}else{"Functioning"})
+      tab_stubhead(label = if (isTruthy(input$updateF)) {
+        input$column1F
+      } else {
+        "Functioning"
+      })
     for (i in unique(sum.dfF()$dose)) {
       sum.df.wider.gt <- sum.df.wider.gt %>%
         tab_spanner(label = paste0("Dose ", i), columns = ends_with(as.character(!!i)))
