@@ -40,10 +40,19 @@ func_E <- params$func_E
 final_tE <- params$final_tE
 continuous_date <- params$continuous_date
 
+# Function to handle date data
+date_to_timepoint_continuous <- function(data) {
+    data %>%
+        group_by(id, functioning) %>%
+        arrange(timepoint) %>%
+        mutate(date = timepoint, timepoint = row_number() - 1) %>%
+        ungroup()
+}
 
 # Logic handling date format for the data
 if (continuous_date == TRUE) {
-    continuous_data$timepoint <- as.Date(continuous_data$timepoint)
+    # continuous_data$timepoint <- as.Date(continuous_data$timepoint)
+    continuous_data <- date_to_timepoint_continuous(continuous_data)
 }
 
 # Filter to specific PRO domain, dose, and final timepoint

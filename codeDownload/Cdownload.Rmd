@@ -42,6 +42,15 @@ func_C <- params$func_C
 final_tC <- params$final_tC
 continuous_date <- params$continuous_date
 
+# Function to handle date data
+date_to_timepoint_continuous <- function(data) {
+    data %>%
+        group_by(id, functioning) %>%
+        arrange(timepoint) %>%
+        mutate(date = timepoint, timepoint = row_number() - 1) %>%
+        ungroup()
+}
+
 # Filter to leave only the relevant PRO domain and then remove the column
 if (params$continuous_date == TRUE) {
     # continuous_data_filtered$timepoint == as.Date(continuous_data_filtered$timepoint)

@@ -1984,9 +1984,11 @@ server <- function(input, output, session) {
   observe({
     req(input$upload_cts)
     data <- continuous_data()
-    tpoint <- unique(data$timepoint)
     if (input$continuous_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      # tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_continuous(data)
+    } else {
+      tpoint <- unique(data$timepoint)
     }
     updateSliderInput(session, "tpointE", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
   })
@@ -2009,9 +2011,11 @@ server <- function(input, output, session) {
   observe({
     req(input$dummy_continuous)
     data <- continuous_data()
-    tpointE <- unique(data$timepoint)
     if (input$continuous_date == TRUE) {
-      tpointE <- as.Date(tpointE)
+      # tpointE <- as.Date(tpointE)
+      tpointE <- 0:max_no_dates_continuous(data)
+    } else {
+      tpointE <- unique(data$timepoint)
     }
     updateSliderInput(session, "tpointE", label = "Final timepoint of interest", min = min(tpointE), max = max(tpointE))
   })
@@ -2047,7 +2051,8 @@ server <- function(input, output, session) {
     req(input$tpointE)
     continuous_data <- continuous_data()
     if (input$continuous_date == TRUE) {
-      continuous_data$timepoint <- as.Date(continuous_data$timepoint)
+      # continuous_data$timepoint <- as.Date(continuous_data$timepoint)
+      continuous_data <- date_to_timepoint_continuous(continuous_data)
     }
     continuous_data <- continuous_data %>%
       filter(functioning == func_E()) %>%
