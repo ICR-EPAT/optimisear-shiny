@@ -41,6 +41,16 @@ final_t <- params$final_t
 ordinal_date <- params$ordinal_date
 showExtra <- params$showExtra
 
+# Function to handle date data
+date_to_timepoint_ordinal <- function(data) {
+    data %>%
+        group_by(id, toxicity) %>%
+        arrange(timepoint) %>%
+        mutate(date = timepoint, timepoint = row_number() - 1) %>%
+        ungroup()
+}
+
+
 # Relabel missing grades as "Unreported"
 ordinal_data$grade[is.na(ordinal_data$grade)] <- "Unreported"
 
@@ -51,8 +61,9 @@ ordinal_data <- ordinal_data %>%
 
 # Calculate the number of patients for each dose at the start of the study (baseline)
 if (ordinal_date == TRUE) {
+    ordinal_data <- date_to_timepoint_ordinal(ordinal_data)
     n_pat <- ordinal_data %>%
-        filter(timepoint == min(as.Date(timepoint)), toxicity == toxic) %>%
+        filter(timepoint == min(timepoint), toxicity == toxic) %>% # filter(timepoint == min(as.Date(timepoint)), toxicity == toxic) %>%
         group_by(dose) %>%
         summarise(n.pat = n())
 } else {
@@ -130,8 +141,10 @@ if (params$invert == TRUE) {
 
 # Logic to handle whether timepoint is a date or a numeric value
 if (ordinal_date == TRUE) {
-    prop <- prop %>% filter(as.Date(timepoint) <= as.Date(final_t))
-    prop$timepoint <- as.factor(as.Date(prop$timepoint))
+    # prop <- prop %>% filter(as.Date(timepoint) <= as.Date(final_t))
+    # prop$timepoint <- as.factor(as.Date(prop$timepoint))
+    prop <- prop %>% filter(timepoint <= final_t)
+    prop$timepoint <- as.factor(prop$timepoint)
 } else {
     prop <- prop %>% filter(timepoint <= final_t)
     prop$timepoint <- as.factor(prop$timepoint)
@@ -139,7 +152,7 @@ if (ordinal_date == TRUE) {
 
 if (ordinal_date == TRUE) {
     no_pat <- ordinal_data %>%
-        filter(timepoint == min(as.Date(timepoint)), toxicity == toxic) %>%
+        filter(timepoint == min(timepoint), toxicity == toxic) %>% # filter(timepoint == min(as.Date(timepoint)), toxicity == toxic) %>%
         group_by(dose) %>%
         filter(dose %in% no_doseb) %>%
         summarise(n.pat = n(), .groups = "keep")

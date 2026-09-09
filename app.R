@@ -664,7 +664,30 @@ ui <- div(page_navbar(
       .bslib-value-box
       .value-box-title {font-size:14px;}")))
 ))
+#######################################################################################################################  Useful functions
+date_to_timepoint_ordinal <- function(data) {
+  data %>%
+    group_by(id, toxicity) %>%
+    arrange(timepoint) %>%
+    mutate(date = timepoint, timepoint = row_number() - 1) %>%
+    ungroup()
+}
 
+max_no_dates_ordinal <- function(data) {
+  max(data %>% group_by(id, toxicity) %>% summarise(no.times = n_distinct(timepoint)) %>% pull(no.times))
+}
+
+date_to_timepoint_continuous <- function(data) {
+  data %>%
+    group_by(id, functioning) %>%
+    arrange(timepoint) %>%
+    mutate(date = timepoint, timepoint = row_number() - 1) %>%
+    ungroup()
+}
+
+max_no_dates_continuous <- function(data) {
+  max(data %>% group_by(id, functioning) %>% summarise(no.times = n_distinct(timepoint)) %>% pull(no.times))
+}
 #######################################################################################################################   SERVER SIDE
 
 server <- function(input, output, session) {
@@ -1207,7 +1230,8 @@ server <- function(input, output, session) {
     data <- ordinal_data()
     tpoint <- unique(data$timepoint)
     if (input$ordinal_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      # tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_ordinal(data)
     }
     updateSliderInput(session, "tpointB", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
   })
@@ -1231,7 +1255,8 @@ server <- function(input, output, session) {
     data <- ordinal_data()
     tpoint <- unique(data$timepoint)
     if (input$ordinal_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      # tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_ordinal(data)
     }
     updateSliderInput(session, "tpointB", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
   })
@@ -1272,8 +1297,9 @@ server <- function(input, output, session) {
       filter(toxicity %in% toxic())
 
     if (input$ordinal_date == TRUE) {
+      ordinal_data <- date_to_timepoint_ordinal(ordinal_data)
       n_pat <- ordinal_data %>%
-        filter(timepoint == min(as.Date(timepoint)), toxicity == toxic()) %>%
+        filter(timepoint == min(timepoint), toxicity == toxic()) %>% # filter(timepoint == min(as.Date(timepoint)), toxicity == toxic()) %>%
         group_by(dose) %>%
         summarise(n.pat = n())
     } else {
@@ -1348,8 +1374,10 @@ server <- function(input, output, session) {
     }
 
     if (input$ordinal_date == TRUE) {
-      prop <- prop %>% filter(as.Date(timepoint) <= as.Date(final_t()))
-      prop$timepoint <- as.factor(as.Date(prop$timepoint))
+      # prop <- prop %>% filter(as.Date(timepoint) <= as.Date(final_t()))
+      # prop$timepoint <- as.factor(as.Date(prop$timepoint))
+      prop <- prop %>% filter(timepoint <= final_t())
+      prop$timepoint <- as.factor(prop$timepoint)
     } else {
       prop <- prop %>% filter(timepoint <= final_t())
       prop$timepoint <- as.factor(prop$timepoint)
@@ -1366,7 +1394,7 @@ server <- function(input, output, session) {
     ordinal_data <- ordinal_data()
     if (input$ordinal_date == TRUE) {
       no_pat <- ordinal_data %>%
-        filter(timepoint == min(as.Date(timepoint)), toxicity == toxic()) %>%
+        filter(timepoint == min(timepoint), toxicity == toxic()) %>% # filter(timepoint == min(as.Date(timepoint)), toxicity == toxic()) %>%
         group_by(dose) %>%
         filter(dose %in% no_doseb()) %>%
         summarise(n.pat = n(), .groups = "keep")
@@ -1389,7 +1417,7 @@ server <- function(input, output, session) {
         if (input$ordinal_date == TRUE) {
           n_pat <- ordinal_data %>%
             filter(toxicity == toxic()) %>%
-            filter(as.Date(timepoint) <= final_t()) %>%
+            filter(timepoint <= final_t()) %>% # filter(as.Date(timepoint) <= final_t()) %>%
             group_by(dose, timepoint) %>%
             summarise(n.pat = n())
         } else {
