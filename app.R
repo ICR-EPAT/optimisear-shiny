@@ -2299,7 +2299,8 @@ server <- function(input, output, session) {
     data <- continuous_data()
     tpoint <- unique(data$timepoint)
     if (input$continuous_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      # tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_continuous(data)
     }
     updateSliderInput(session, "tpointG", label = "Final timepoint of interest", min = sort(tpoint)[2], max = max(tpoint))
   })
@@ -2335,7 +2336,8 @@ server <- function(input, output, session) {
     data <- continuous_data()
     tpoint <- unique(data$timepoint)
     if (input$continuous_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      # tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_continuous(data)
     }
     updateSliderInput(session, "tpointG", label = "Final timepoint of interest", min = tpoint[2], max = max(tpoint))
   })
@@ -2377,7 +2379,8 @@ server <- function(input, output, session) {
   continuous_data_filteredG <- reactive({
     continuous_data <- continuous_data()
     if (input$continuous_date == TRUE) {
-      continuous_data$timepoint <- as.Date(continuous_data$timepoint)
+      # continuous_data$timepoint <- as.Date(continuous_data$timepoint)
+      continuous_data <- date_to_timepoint_continuous(continuous_data) %>% select(-date)
     }
     continuous_data$functioning <- as.character(continuous_data$functioning)
     continuous_data_filtered <- continuous_data %>%
@@ -2399,14 +2402,14 @@ server <- function(input, output, session) {
   })
 
   dfG <- reactive({
-    endT_list <- unique(continuous_data() %>% filter(timepoint <= final_tG()) %>% select(timepoint))
+    endT_list <- unique(continuous_data_filteredG() %>% filter(timepoint <= final_tG()) %>% select(timepoint))
     endT <- max(endT_list$timepoint)
     startT <- min(unique(continuous_data_filteredG()$timepoint))
     tp_end <- sym(paste0("tp_", endT))
     tp_start <- sym(paste0("tp_", startT))
     df <- continuous_data_filteredG() %>%
       filter(timepoint <= endT) %>%
-      pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_") %>%
+      pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_", id_cols = c(id, dose, functioning)) %>%
       mutate(score = !!tp_end - !!tp_start) %>%
       dplyr::select(id, score, dose, functioning)
 
@@ -2518,11 +2521,11 @@ server <- function(input, output, session) {
             )
           ) +
           geom_text(
-            data = arrowdf, aes(x = 2, y = improve_text, label = "Improvement"),
+            data = arrowdf, aes(x = 1, y = improve_text, label = "Improvement"),
             inherit.aes = FALSE
           ) +
           geom_text(
-            data = arrowdf, aes(x = 2, y = worse_text, label = "Worsening"),
+            data = arrowdf, aes(x = 1, y = worse_text, label = "Worsening"),
             inherit.aes = FALSE
           ) +
           ggtitle(editG$title) + theme(plot.title = element_text(size = editG$titlesize, face = "bold"), axis.title = element_text(size = editG$axissize))
@@ -2568,11 +2571,11 @@ server <- function(input, output, session) {
             )
           ) +
           geom_text(
-            data = arrowdf, aes(x = 2, y = 22, label = "Improvement"),
+            data = arrowdf, aes(x = 1, y = 22, label = "Improvement"),
             inherit.aes = FALSE
           ) +
           geom_text(
-            data = arrowdf, aes(x = 2, y = -22, label = "Worsening"),
+            data = arrowdf, aes(x = 1, y = -22, label = "Worsening"),
             inherit.aes = FALSE
           )
       }

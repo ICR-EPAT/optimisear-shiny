@@ -41,6 +41,15 @@ func_G <- params$func_G
 final_tG <- params$final_tG
 continuous_date <- params$continuous_date
 
+# Function to handle date data
+date_to_timepoint_continuous <- function(data) {
+    data %>%
+        group_by(id, functioning) %>%
+        arrange(timepoint) %>%
+        mutate(date = timepoint, timepoint = row_number() - 1) %>%
+        ungroup()
+}
+
 # Filter data to get relevant doses and timepoint
 no_patientG <- continuous_data %>%
     filter(dose %in% no_doseG) %>%
@@ -52,7 +61,8 @@ continuous_data_filteredG <- continuous_data
 
 # Logic to handle date format
 if (continuous_date == TRUE) {
-    continuous_data_filteredG$timepoint <- as.Date(continuous_data_filteredG$timepoint)
+    # continuous_data_filteredG$timepoint <- as.Date(continuous_data_filteredG$timepoint)
+    continuous_data_filteredG <- date_to_timepoint_continuous(continuous_data_filteredG) %>% select(-date)
 }
 
 # Logic to handle PRO domain format
@@ -73,7 +83,7 @@ ice_n_pat <- continuous_data_filteredG %>%
     summarise(n_patients_missing = n_distinct(id))
 
 # Find first and last timepoints
-endT_list <- unique(continuous_data %>% filter(timepoint <= final_tG) %>% select(timepoint))
+endT_list <- unique(continuous_data_filteredG %>% filter(timepoint <= final_tG) %>% select(timepoint))
 endT <- max(endT_list$timepoint)
 startT <- min(unique(continuous_data_filteredG$timepoint))
 tp_end <- sym(paste0("tp_", endT))
@@ -82,7 +92,7 @@ tp_start <- sym(paste0("tp_", startT))
 # Create a data frame with the change from baseline to the final timepoint
 dfG <- continuous_data_filteredG %>%
     filter(timepoint <= endT) %>%
-    pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_") %>%
+    pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_", id_cols = c(id, dose, functioning)) %>%
     mutate(score = !!tp_end - !!tp_start) %>%
     dplyr::select(id, score, dose, functioning)
 
@@ -195,11 +205,11 @@ data.frame(sum.dfG) %>% ggplot(aes(x = custom_x, y = mean, colour = as.factor(do
         )
     ) +
     geom_text(
-        data = arrowdf, aes(x = 2, y = improve_text, label = "Improvement"),
+        data = arrowdf, aes(x = 1, y = improve_text, label = "Improvement"),
         inherit.aes = FALSE
     ) +
     geom_text(
-        data = arrowdf, aes(x = 2, y = worse_text, label = "Worsening"),
+        data = arrowdf, aes(x = 1, y = worse_text, label = "Worsening"),
         inherit.aes = FALSE
     ) +
     ggtitle(params$title) +
