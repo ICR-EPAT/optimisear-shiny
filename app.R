@@ -2938,7 +2938,8 @@ server <- function(input, output, session) {
     data <- ordinal_data()
     tpoint <- unique(data$timepoint)
     if (input$ordinal_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      # tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_ordinal(data)
     }
     updateSliderInput(session, "tpointI", label = "Final timepoint of interest", min = sort(tpoint)[2], max = max(tpoint))
   })
@@ -2962,7 +2963,8 @@ server <- function(input, output, session) {
     data <- ordinal_data()
     tpoint <- unique(data$timepoint)
     if (input$ordinal_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      # tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_ordinal(data)
     }
     updateSliderInput(session, "tpointI", label = "Final timepoint of interest", min = tpoint[2], max = max(tpoint))
   })
@@ -3002,6 +3004,9 @@ server <- function(input, output, session) {
   #### Filter and sort data
   ordinal_dataI <- reactive({
     ordinal_data <- ordinal_data()
+    if (input$ordinal_date == TRUE) {
+      ordinal_data <- date_to_timepoint_ordinal(ordinal_data) %>% select(-date)
+    }
     end_list <- unique(ordinal_data %>% filter(timepoint <= times_I()) %>% select(timepoint))
     end <- max(end_list$timepoint)
     tp_end <- as.symbol(paste0("tp_", end))
