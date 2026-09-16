@@ -63,7 +63,7 @@ ordinal_data <- ordinal_data %>%
 if (ordinal_date == TRUE) {
     ordinal_data <- date_to_timepoint_ordinal(ordinal_data)
     n_pat <- ordinal_data %>%
-        filter(timepoint == min(timepoint), toxicity == toxic) %>% # filter(timepoint == min(as.Date(timepoint)), toxicity == toxic) %>%
+        filter(timepoint == min(timepoint), toxicity == toxic) %>%
         group_by(dose) %>%
         summarise(n.pat = n())
 } else {
@@ -84,17 +84,10 @@ prop <- ordinal_data %>%
 # Logic to handle whether to show unreported participants within the barplot (default is to show unreported participants)
 if (showExtra == FALSE) {
     ordinal_data <- ordinal_data %>% filter(grade != "Unreported")
-    if (ordinal_date == TRUE) {
         n_pat <- ordinal_data %>%
             filter(toxicity == toxic) %>%
             group_by(dose, timepoint) %>%
             summarise(n.pat = n())
-    } else {
-        n_pat <- ordinal_data %>%
-            filter(toxicity == toxic) %>%
-            group_by(dose, timepoint) %>%
-            summarise(n.pat = n())
-    }
 
     prop <- ordinal_data %>%
         group_by(toxicity, timepoint, dose) %>%
@@ -140,29 +133,15 @@ if (params$invert == TRUE) {
 }
 
 # Logic to handle whether timepoint is a date or a numeric value
-if (ordinal_date == TRUE) {
-    # prop <- prop %>% filter(as.Date(timepoint) <= as.Date(final_t))
-    # prop$timepoint <- as.factor(as.Date(prop$timepoint))
-    prop <- prop %>% filter(timepoint <= final_t)
-    prop$timepoint <- as.factor(prop$timepoint)
-} else {
-    prop <- prop %>% filter(timepoint <= final_t)
-    prop$timepoint <- as.factor(prop$timepoint)
-}
+prop <- prop %>% filter(timepoint <= final_t)
+prop$timepoint <- as.factor(prop$timepoint)
 
-if (ordinal_date == TRUE) {
-    no_pat <- ordinal_data %>%
-        filter(timepoint == min(timepoint), toxicity == toxic) %>% # filter(timepoint == min(as.Date(timepoint)), toxicity == toxic) %>%
-        group_by(dose) %>%
-        filter(dose %in% no_doseb) %>%
-        summarise(n.pat = n(), .groups = "keep")
-} else {
     no_pat <- ordinal_data %>%
         filter(timepoint == min(timepoint), toxicity == toxic) %>%
         group_by(dose) %>%
         filter(dose %in% no_doseb) %>%
         summarise(n.pat = n(), .groups = "keep")
-}
+
 
 no_patient <- no_pat$n.pat
 
@@ -172,17 +151,10 @@ formatter <- if (isFALSE(showExtra)) {
         filter(dose %in% no_doseb) %>%
         filter(toxicity %in% toxic) %>%
         filter(grade != "Unreported")
-    if (ordinal_date == TRUE) {
         n_pat <- ordinal_data %>%
             filter(toxicity == toxic) %>%
             group_by(dose, timepoint) %>%
             summarise(n.pat = n())
-    } else {
-        n_pat <- ordinal_data %>%
-            filter(toxicity == toxic) %>%
-            group_by(dose, timepoint) %>%
-            summarise(n.pat = n())
-    }
     groupsizes <- c()
     for (i in no_doseb) {
         pat_numbs <- n_pat %>%

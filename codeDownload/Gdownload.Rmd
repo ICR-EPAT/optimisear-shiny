@@ -61,7 +61,6 @@ continuous_data_filteredG <- continuous_data
 
 # Logic to handle date format
 if (continuous_date == TRUE) {
-    # continuous_data_filteredG$timepoint <- as.Date(continuous_data_filteredG$timepoint)
     continuous_data_filteredG <- date_to_timepoint_continuous(continuous_data_filteredG) %>% select(-date)
 }
 

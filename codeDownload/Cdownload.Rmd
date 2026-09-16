@@ -53,7 +53,6 @@ date_to_timepoint_continuous <- function(data) {
 
 # Filter to leave only the relevant PRO domain and then remove the column
 if (params$continuous_date == TRUE) {
-    # continuous_data_filtered$timepoint == as.Date(continuous_data_filtered$timepoint)
     continuous_data_filtered <- date_to_timepoint_continuous(continuous_data)
 }
 continuous_data_filtered <- continuous_data %>%
