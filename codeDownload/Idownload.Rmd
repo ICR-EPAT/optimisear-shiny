@@ -30,8 +30,12 @@ library(gt)
 library(gridExtra)
 library(survminer)
 
-# Define parameters
+# To read in the data, uncomment the following line and add in the filepath to your data file after ensuring it meets the app formatting requirements.
+# ordinal_data <- read.csv(FILEPATH, header = TRUE, sep = ",")
+# Also ensure that the next line is commented out if you are reading in your own data file.
 ordinal_data <- params$ordinal_data
+
+# Define parameters
 no_doseI <- params$no_doseI
 toxicI <- params$toxicI
 times_I <- params$times_I

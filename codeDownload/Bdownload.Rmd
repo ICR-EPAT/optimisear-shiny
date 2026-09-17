@@ -32,9 +32,12 @@ library(gt)
 library(gridExtra)
 library(survminer)
 
+# To read in the data, uncomment the following line and add in the filepath to your data file after ensuring it meets the app formatting requirements.
+# ordinal_data <- read.csv(FILEPATH, header = TRUE, sep = ",")
+# Also ensure that the next line is commented out if you are reading in your own data file.
+ordinal_data <- params$ordinal_data
 
 # Set the parameters
-ordinal_data <- params$ordinal_data
 no_doseb <- params$no_doseb
 toxic <- params$toxic
 final_t <- params$final_t
@@ -84,10 +87,10 @@ prop <- ordinal_data %>%
 # Logic to handle whether to show unreported participants within the barplot (default is to show unreported participants)
 if (showExtra == FALSE) {
     ordinal_data <- ordinal_data %>% filter(grade != "Unreported")
-        n_pat <- ordinal_data %>%
-            filter(toxicity == toxic) %>%
-            group_by(dose, timepoint) %>%
-            summarise(n.pat = n())
+    n_pat <- ordinal_data %>%
+        filter(toxicity == toxic) %>%
+        group_by(dose, timepoint) %>%
+        summarise(n.pat = n())
 
     prop <- ordinal_data %>%
         group_by(toxicity, timepoint, dose) %>%
@@ -136,11 +139,11 @@ if (params$invert == TRUE) {
 prop <- prop %>% filter(timepoint <= final_t)
 prop$timepoint <- as.factor(prop$timepoint)
 
-    no_pat <- ordinal_data %>%
-        filter(timepoint == min(timepoint), toxicity == toxic) %>%
-        group_by(dose) %>%
-        filter(dose %in% no_doseb) %>%
-        summarise(n.pat = n(), .groups = "keep")
+no_pat <- ordinal_data %>%
+    filter(timepoint == min(timepoint), toxicity == toxic) %>%
+    group_by(dose) %>%
+    filter(dose %in% no_doseb) %>%
+    summarise(n.pat = n(), .groups = "keep")
 
 
 no_patient <- no_pat$n.pat
@@ -151,10 +154,10 @@ formatter <- if (isFALSE(showExtra)) {
         filter(dose %in% no_doseb) %>%
         filter(toxicity %in% toxic) %>%
         filter(grade != "Unreported")
-        n_pat <- ordinal_data %>%
-            filter(toxicity == toxic) %>%
-            group_by(dose, timepoint) %>%
-            summarise(n.pat = n())
+    n_pat <- ordinal_data %>%
+        filter(toxicity == toxic) %>%
+        group_by(dose, timepoint) %>%
+        summarise(n.pat = n())
     groupsizes <- c()
     for (i in no_doseb) {
         pat_numbs <- n_pat %>%

@@ -28,8 +28,12 @@ library(gt)
 library(gridExtra)
 library(survminer)
 
-# Define the parameters
+# To read in the data, uncomment the following line and add in the filepath to your data file after ensuring it meets the app formatting requirements.
+# continuous_data <- read.csv(FILEPATH, header = TRUE, sep = ",")
+# Also ensure that the next line is commented out if you are reading in your own data file.
 continuous_data <- params$continuous_data
+
+# Define the parameters
 no_doseF <- params$no_doseF
 func_F <- params$func_F
 final_tF <- params$final_tF
