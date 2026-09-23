@@ -1120,9 +1120,13 @@ server <- function(input, output, session) {
       filter(dose %in% no_dose()) %>%
       filter(toxicity %in% toxicA())
     if (input$ordinal_date == TRUE) {
-      ordinal_data <- ordinal_data %>%
+      ordinal_formatted <- ordinal_data %>%
+        date_to_timepoint_ordinal()
+      ordinal_data$base_adj <- ordinal_formatted %>%
         group_by(id, toxicity) %>%
-        mutate(base_adj = grade - grade[timepoint == min(as.Date(ordinal_data$timepoint))])
+        mutate(base_adj = grade - grade[timepoint == min(ordinal_formatted$timepoint)]) %>%
+        select(base_adj) %>%
+        pull()
     } else {
       ordinal_data <- ordinal_data %>%
         group_by(id, toxicity) %>%

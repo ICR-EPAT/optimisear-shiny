@@ -32,6 +32,15 @@ library(gt)
 library(gridExtra)
 library(survminer)
 
+# Function to handle date data
+date_to_timepoint_ordinal <- function(data) {
+    data %>%
+        group_by(id, toxicity) %>%
+        arrange(timepoint) %>%
+        mutate(date = timepoint, timepoint = row_number() - 1) %>%
+        ungroup()
+}
+
 
 # Select the data for the specified dose and toxicity
 summary_df <- params$ordinal_data %>%
@@ -46,9 +55,13 @@ ordinal_data <- params$ordinal_data
 
 # Calculates the baseline adjusted grade for each patient and toxicity
 if (params$ordinal_date == TRUE) {
-    ordinal_data <- ordinal_data %>%
+    ordinal_formatted <- ordinal_data %>%
+        date_to_timepoint_ordinal()
+    ordinal_data$base_adj <- ordinal_formatted %>%
         group_by(id, toxicity) %>%
-        mutate(base_adj = grade - grade[timepoint == min(as.Date(ordinal_data$timepoint))])
+        mutate(base_adj = grade - grade[timepoint == min(ordinal_formatted$timepoint)]) %>%
+        select(base_adj) %>%
+        pull()
 } else {
     ordinal_data <- ordinal_data %>%
         group_by(id, toxicity) %>%
