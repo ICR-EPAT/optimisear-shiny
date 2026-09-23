@@ -30,12 +30,30 @@ library(gt)
 library(gridExtra)
 library(survminer)
 
-# Define parameters
+# To read in the data, uncomment the following line and add in the filepath to your data file after ensuring it meets the app formatting requirements.
+# ordinal_data <- read.csv(FILEPATH, header = TRUE, sep = ",")
+# Also ensure that the next line is commented out if you are reading in your own data file.
 ordinal_data <- params$ordinal_data
+
+# Define parameters
 no_doseI <- params$no_doseI
 toxicI <- params$toxicI
 times_I <- params$times_I
 ordinal_date <- params$ordinal_date
+
+# Function to handle date data
+date_to_timepoint_ordinal <- function(data) {
+  data %>%
+    group_by(id, toxicity) %>%
+    arrange(timepoint) %>%
+    mutate(date = timepoint, timepoint = row_number() - 1) %>%
+    ungroup()
+}
+
+# Handling of date data
+if (ordinal_date == TRUE) {
+  ordinal_data <- date_to_timepoint_ordinal(ordinal_data) %>% select(-date)
+}
 
 # Custom max function to help calculate baseline adjusted score
 custom.max <- function(x) {

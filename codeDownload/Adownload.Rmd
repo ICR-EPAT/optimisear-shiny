@@ -32,21 +32,41 @@ library(gt)
 library(gridExtra)
 library(survminer)
 
-# Select the data for the specified dose and toxicity
-summary_df <- params$ordinal_data %>% filter(dose %in% params$no_dose) %>% filter(toxicity %in% params$toxicA) 
+# Function to handle date data
+date_to_timepoint_ordinal <- function(data) {
+    data %>%
+        group_by(id, toxicity) %>%
+        arrange(timepoint) %>%
+        mutate(date = timepoint, timepoint = row_number() - 1) %>%
+        ungroup()
+}
 
+
+# Select the data for the specified dose and toxicity
+summary_df <- params$ordinal_data %>%
+    filter(dose %in% params$no_dose) %>%
+    filter(toxicity %in% params$toxicA)
+
+
+# To read in the data, uncomment the following line and add in the filepath to your data file after ensuring it meets the app formatting requirements.
+# ordinal_data <- read.csv(FILEPATH, header = TRUE, sep = ",")
+# Also ensure that the next line is commented out if you are reading in your own data file.
 ordinal_data <- params$ordinal_data
 
 # Calculates the baseline adjusted grade for each patient and toxicity
-if (params$ordinal_date == TRUE){
+if (params$ordinal_date == TRUE) {
+    ordinal_formatted <- ordinal_data %>%
+        date_to_timepoint_ordinal()
+    ordinal_data$base_adj <- ordinal_formatted %>%
+        group_by(id, toxicity) %>%
+        mutate(base_adj = grade - grade[timepoint == min(ordinal_formatted$timepoint)]) %>%
+        select(base_adj) %>%
+        pull()
+} else {
     ordinal_data <- ordinal_data %>%
-                    group_by(id, toxicity) %>%
-                    mutate(base_adj = grade-grade[timepoint == min(as.Date(ordinal_data$timepoint))])  
-    }   else {
-    ordinal_data <- ordinal_data %>%
-                    group_by(id, toxicity) %>%
-                    mutate(base_adj = grade-grade[timepoint == min(ordinal_data$timepoint)])
-    }
+        group_by(id, toxicity) %>%
+        mutate(base_adj = grade - grade[timepoint == min(ordinal_data$timepoint)])
+}
 
 # Filter out rows with NA values (remove patients with missing baseline adjusted grade)
 ordinal_data <- ordinal_data %>% filter(is.na(base_adj) == FALSE)
@@ -54,19 +74,21 @@ ordinal_data <- ordinal_data %>% filter(is.na(base_adj) == FALSE)
 change <- params$baseA
 
 # Create a summary dataframe with time to event and event occurrence for each patient
-if (params$ordinal_date == TRUE){
+if (params$ordinal_date == TRUE) {
     summary_df <- ordinal_data %>%
-                  group_by(id) %>%
-                  summarise(
-                            time = if (any(base_adj >= change)) as.numeric(min(as.Date(timepoint[base_adj >= change])) - min(as.Date(timepoint))) else as.numeric(max(as.Date(timepoint))- min(as.Date(timepoint))),
-                            event = as.integer(any(base_adj >= change)))
-    } else {
+        group_by(id) %>%
+        summarise(
+            time = if (any(base_adj >= change)) as.numeric(min(as.Date(timepoint[base_adj >= change])) - min(as.Date(timepoint))) else as.numeric(max(as.Date(timepoint)) - min(as.Date(timepoint))),
+            event = as.integer(any(base_adj >= change))
+        )
+} else {
     summary_df <- ordinal_data %>%
-                  group_by(id) %>%
-                  summarise(
-                  time = if (any(base_adj >= change)) as.numeric(min(timepoint[base_adj >= change]) - min(timepoint)) else as.numeric(max(timepoint)- min(timepoint)),
-                  event = as.integer(any(base_adj >= change)))
-    }
+        group_by(id) %>%
+        summarise(
+            time = if (any(base_adj >= change)) as.numeric(min(timepoint[base_adj >= change]) - min(timepoint)) else as.numeric(max(timepoint) - min(timepoint)),
+            event = as.integer(any(base_adj >= change))
+        )
+}
 
 # Add the dose to the summary dataframe and name it "dose"
 summary_df <- cbind(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose)))
@@ -76,38 +98,39 @@ colnames(summary_df)[5] <- "dose"
 fit <- survfit2(Surv(time, event) ~ dose, data = summary_df)
 
 median_df <- survminer::surv_median(fit) %>%
-              dplyr::select(strata, median) %>%
-              rename(Dose = strata, "Median time \n to event" = median)
+    dplyr::select(strata, median) %>%
+    rename(Dose = strata, "Median time \n to event" = median)
 
-median_df[,1]<-paste0("Dose: ", unique(summary_df$dose))
+median_df[, 1] <- paste0("Dose: ", unique(summary_df$dose))
 
 # Create a tableGrob object to display the median time to event for each dose group
 tbl_grob <- tableGrob(median_df,
-                      rows = NULL,
-                      theme = ttheme_default(
-                                             core = list(
-                                                         fg_params = list(cex = 0.7, col = "black"), 
-                                                         bg_params = list(fill = NA, col = "black")),
-                                             colhead = list(
-                                                            fg_params = list(cex = 0.8, fontface = "bold", col = "black"),
-                                                            bg_params = list(fill = NA, col = "black"))
-                                             )
-                      )
+    rows = NULL,
+    theme = ttheme_default(
+        core = list(
+            fg_params = list(cex = 0.7, col = "black"),
+            bg_params = list(fill = NA, col = "black")
+        ),
+        colhead = list(
+            fg_params = list(cex = 0.8, fontface = "bold", col = "black"),
+            bg_params = list(fill = NA, col = "black")
+        )
+    )
+)
 
 summary_df$dose <- paste0("Dose: ", summary_df$dose)
 
 # Create the Kaplan-Meier graph
 survfit2(Surv(time, event) ~ dose, data = summary_df) %>%
-                                 ggsurvfit(linewidth = 1.5) +
-                                 add_censor_mark() +
-                                 add_confidence_interval() +
-                                 scale_ggsurvfit() + add_risktable() + 
-                                 ggtitle(params$graphtitle) + theme(plot.title = element_text(size = params$titlesize, face = "bold"), axis.title = element_text(size = params$axissize)) +
-                                  labs(y = params$y_lab , x = params$x_lab) +
-                                  annotation_custom(
-                                  tbl_grob,
-                                  xmin = params$box_x, xmax = params$box_x + 2, # x-position range for table
-                                  ymin = params$box_y, ymax = params$box_y + 0.3 # y-position range for table
-                                  )
-
+    ggsurvfit(linewidth = 1.5) +
+    add_censor_mark() +
+    add_confidence_interval() +
+    scale_ggsurvfit() + add_risktable() +
+    ggtitle(params$graphtitle) + theme(plot.title = element_text(size = params$titlesize, face = "bold"), axis.title = element_text(size = params$axissize)) +
+    labs(y = params$y_lab, x = params$x_lab) +
+    annotation_custom(
+        tbl_grob,
+        xmin = params$box_x, xmax = params$box_x + 2, # x-position range for table
+        ymin = params$box_y, ymax = params$box_y + 0.3 # y-position range for table
+    )
 ```

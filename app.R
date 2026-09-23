@@ -664,7 +664,30 @@ ui <- div(page_navbar(
       .bslib-value-box
       .value-box-title {font-size:14px;}")))
 ))
+#######################################################################################################################  Useful functions
+date_to_timepoint_ordinal <- function(data) {
+  data %>%
+    group_by(id, toxicity) %>%
+    arrange(timepoint) %>%
+    mutate(date = timepoint, timepoint = row_number() - 1) %>%
+    ungroup()
+}
 
+max_no_dates_ordinal <- function(data) {
+  max(data %>% group_by(id, toxicity) %>% summarise(no.times = n_distinct(timepoint)) %>% pull(no.times))
+}
+
+date_to_timepoint_continuous <- function(data) {
+  data %>%
+    group_by(id, functioning) %>%
+    arrange(timepoint) %>%
+    mutate(date = timepoint, timepoint = row_number() - 1) %>%
+    ungroup()
+}
+
+max_no_dates_continuous <- function(data) {
+  max(data %>% group_by(id, functioning) %>% summarise(no.times = n_distinct(timepoint)) %>% pull(no.times))
+}
 #######################################################################################################################   SERVER SIDE
 
 server <- function(input, output, session) {
@@ -1097,9 +1120,13 @@ server <- function(input, output, session) {
       filter(dose %in% no_dose()) %>%
       filter(toxicity %in% toxicA())
     if (input$ordinal_date == TRUE) {
-      ordinal_data <- ordinal_data %>%
+      ordinal_formatted <- ordinal_data %>%
+        date_to_timepoint_ordinal()
+      ordinal_data$base_adj <- ordinal_formatted %>%
         group_by(id, toxicity) %>%
-        mutate(base_adj = grade - grade[timepoint == min(as.Date(ordinal_data$timepoint))])
+        mutate(base_adj = grade - grade[timepoint == min(ordinal_formatted$timepoint)]) %>%
+        select(base_adj) %>%
+        pull()
     } else {
       ordinal_data <- ordinal_data %>%
         group_by(id, toxicity) %>%
@@ -1207,7 +1234,7 @@ server <- function(input, output, session) {
     data <- ordinal_data()
     tpoint <- unique(data$timepoint)
     if (input$ordinal_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_ordinal(data)
     }
     updateSliderInput(session, "tpointB", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
   })
@@ -1231,7 +1258,7 @@ server <- function(input, output, session) {
     data <- ordinal_data()
     tpoint <- unique(data$timepoint)
     if (input$ordinal_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_ordinal(data)
     }
     updateSliderInput(session, "tpointB", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
   })
@@ -1272,8 +1299,9 @@ server <- function(input, output, session) {
       filter(toxicity %in% toxic())
 
     if (input$ordinal_date == TRUE) {
+      ordinal_data <- date_to_timepoint_ordinal(ordinal_data)
       n_pat <- ordinal_data %>%
-        filter(timepoint == min(as.Date(timepoint)), toxicity == toxic()) %>%
+        filter(timepoint == min(timepoint), toxicity == toxic()) %>%
         group_by(dose) %>%
         summarise(n.pat = n())
     } else {
@@ -1293,17 +1321,10 @@ server <- function(input, output, session) {
     if (isTruthy(input$updateB)) {
       if (editB()$showExtra == FALSE) {
         ordinal_data <- ordinal_data %>% filter(grade != "Unreported")
-        if (input$ordinal_date == TRUE) {
-          n_pat <- ordinal_data %>%
-            filter(toxicity == toxic()) %>%
-            group_by(dose, timepoint) %>%
-            summarise(n.pat = n())
-        } else {
-          n_pat <- ordinal_data %>%
-            filter(toxicity == toxic()) %>%
-            group_by(dose, timepoint) %>%
-            summarise(n.pat = n())
-        }
+        n_pat <- ordinal_data %>%
+          filter(toxicity == toxic()) %>%
+          group_by(dose, timepoint) %>%
+          summarise(n.pat = n())
 
         prop <- ordinal_data %>%
           group_by(toxicity, timepoint, dose) %>%
@@ -1347,13 +1368,8 @@ server <- function(input, output, session) {
       prop$grade <- factor(prop$grade, levels = c("Discontinued", "Unreported", 5:1))
     }
 
-    if (input$ordinal_date == TRUE) {
-      prop <- prop %>% filter(as.Date(timepoint) <= as.Date(final_t()))
-      prop$timepoint <- as.factor(as.Date(prop$timepoint))
-    } else {
-      prop <- prop %>% filter(timepoint <= final_t())
-      prop$timepoint <- as.factor(prop$timepoint)
-    }
+    prop <- prop %>% filter(timepoint <= final_t())
+    prop$timepoint <- as.factor(prop$timepoint)
 
     prop
   })
@@ -1364,19 +1380,11 @@ server <- function(input, output, session) {
   no_patient <- reactive({
     req(input$numdoseB)
     ordinal_data <- ordinal_data()
-    if (input$ordinal_date == TRUE) {
-      no_pat <- ordinal_data %>%
-        filter(timepoint == min(as.Date(timepoint)), toxicity == toxic()) %>%
-        group_by(dose) %>%
-        filter(dose %in% no_doseb()) %>%
-        summarise(n.pat = n(), .groups = "keep")
-    } else {
-      no_pat <- ordinal_data %>%
-        filter(timepoint == min(timepoint), toxicity == toxic()) %>%
-        group_by(dose) %>%
-        filter(dose %in% no_doseb()) %>%
-        summarise(n.pat = n(), .groups = "keep")
-    }
+    no_pat <- ordinal_data %>%
+      filter(timepoint == min(timepoint), toxicity == toxic()) %>%
+      group_by(dose) %>%
+      filter(dose %in% no_doseb()) %>%
+      summarise(n.pat = n(), .groups = "keep")
     no_pat$n.pat
   })
   formatter <- reactive({
@@ -1386,19 +1394,11 @@ server <- function(input, output, session) {
           filter(dose %in% no_doseb()) %>%
           filter(toxicity %in% toxic()) %>%
           filter(grade != "Unreported")
-        if (input$ordinal_date == TRUE) {
-          n_pat <- ordinal_data %>%
-            filter(toxicity == toxic()) %>%
-            filter(as.Date(timepoint) <= final_t()) %>%
-            group_by(dose, timepoint) %>%
-            summarise(n.pat = n())
-        } else {
-          n_pat <- ordinal_data %>%
-            filter(toxicity == toxic()) %>%
-            filter(timepoint <= final_t()) %>%
-            group_by(dose, timepoint) %>%
-            summarise(n.pat = n())
-        }
+        n_pat <- ordinal_data %>%
+          filter(toxicity == toxic()) %>%
+          filter(timepoint <= final_t()) %>%
+          group_by(dose, timepoint) %>%
+          summarise(n.pat = n())
         groupsizes <- c()
         for (i in no_doseb()) {
           pat_numbs <- n_pat %>%
@@ -1534,7 +1534,7 @@ server <- function(input, output, session) {
     data <- continuous_data()
     tpoint <- unique(data$timepoint)
     if (input$continuous_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_continuous(data)
     }
     updateSliderInput(session, "tpointC", label = "Final timepoint of interest", min = sort(tpoint)[2], max = max(tpoint))
   })
@@ -1558,7 +1558,7 @@ server <- function(input, output, session) {
     data <- continuous_data()
     tpointC <- unique(data$timepoint)
     if (input$continuous_date == TRUE) {
-      tpointC <- as.Date(tpointC)
+      tpointC <- 0:max_no_dates_continuous(data)
     }
     updateSliderInput(session, "tpointC", label = "Final timepoint of interest", min = tpointC[2], max = max(tpointC))
   })
@@ -1602,12 +1602,12 @@ server <- function(input, output, session) {
     req(input$functioningC)
     req(input$tpointC)
     continuous_data <- continuous_data()
+    if (input$continuous_date == TRUE) {
+      continuous_data <- date_to_timepoint_continuous(continuous_data)
+    }
     continuous_data <- continuous_data %>%
       filter(functioning == func_C()) %>%
       dplyr::select(-functioning) # %>% filter(!is.na(score))
-    if (input$continuous_date == TRUE) {
-      continuous_data$timepoint == as.Date(continuous_data$timepoint)
-    }
     continuous_data
   })
 
@@ -1953,9 +1953,10 @@ server <- function(input, output, session) {
   observe({
     req(input$upload_cts)
     data <- continuous_data()
-    tpoint <- unique(data$timepoint)
     if (input$continuous_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_continuous(data)
+    } else {
+      tpoint <- unique(data$timepoint)
     }
     updateSliderInput(session, "tpointE", label = "Final timepoint of interest", min = min(tpoint), max = max(tpoint))
   })
@@ -1978,9 +1979,10 @@ server <- function(input, output, session) {
   observe({
     req(input$dummy_continuous)
     data <- continuous_data()
-    tpointE <- unique(data$timepoint)
     if (input$continuous_date == TRUE) {
-      tpointE <- as.Date(tpointE)
+      tpointE <- 0:max_no_dates_continuous(data)
+    } else {
+      tpointE <- unique(data$timepoint)
     }
     updateSliderInput(session, "tpointE", label = "Final timepoint of interest", min = min(tpointE), max = max(tpointE))
   })
@@ -2016,7 +2018,7 @@ server <- function(input, output, session) {
     req(input$tpointE)
     continuous_data <- continuous_data()
     if (input$continuous_date == TRUE) {
-      continuous_data$timepoint <- as.Date(continuous_data$timepoint)
+      continuous_data <- date_to_timepoint_continuous(continuous_data)
     }
     continuous_data <- continuous_data %>%
       filter(functioning == func_E()) %>%
@@ -2083,7 +2085,7 @@ server <- function(input, output, session) {
     data <- continuous_data()
     tpoint <- unique(data$timepoint)
     if (input$continuous_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_continuous(data)
     }
     updateSliderInput(session, "tpointF", label = "Final timepoint of interest", min = sort(tpoint)[2], max = max(tpoint))
   })
@@ -2108,7 +2110,7 @@ server <- function(input, output, session) {
     data <- continuous_data()
     tpoint <- unique(data$timepoint)
     if (input$continuous_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_continuous(data)
     }
     updateSliderInput(session, "tpointF", label = "Final timepoint of interest", min = tpoint[2], max = max(tpoint))
   })
@@ -2154,7 +2156,7 @@ server <- function(input, output, session) {
     filtered <- continuous_data()
     filtered$functioning <- as.character(filtered$functioning)
     if (input$continuous_date == TRUE) {
-      filtered$timepoint <- as.Date(filtered$timepoint)
+      filtered <- date_to_timepoint_continuous(filtered) %>% select(-date)
     }
     filtered <- filtered %>%
       filter(dose %in% no_doseF()) %>%
@@ -2184,7 +2186,7 @@ server <- function(input, output, session) {
     firstT <- as.symbol(paste0("tp_", first_in_list))
     df <- data %>%
       group_by(functioning) %>%
-      pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_") %>%
+      pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_", id_cols = c(id, dose, functioning)) %>%
       mutate(score = !!finalT - !!firstT) %>%
       dplyr::select(id, score, dose, functioning)
 
@@ -2260,7 +2262,7 @@ server <- function(input, output, session) {
     data <- continuous_data()
     tpoint <- unique(data$timepoint)
     if (input$continuous_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_continuous(data)
     }
     updateSliderInput(session, "tpointG", label = "Final timepoint of interest", min = sort(tpoint)[2], max = max(tpoint))
   })
@@ -2296,7 +2298,7 @@ server <- function(input, output, session) {
     data <- continuous_data()
     tpoint <- unique(data$timepoint)
     if (input$continuous_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_continuous(data)
     }
     updateSliderInput(session, "tpointG", label = "Final timepoint of interest", min = tpoint[2], max = max(tpoint))
   })
@@ -2338,7 +2340,7 @@ server <- function(input, output, session) {
   continuous_data_filteredG <- reactive({
     continuous_data <- continuous_data()
     if (input$continuous_date == TRUE) {
-      continuous_data$timepoint <- as.Date(continuous_data$timepoint)
+      continuous_data <- date_to_timepoint_continuous(continuous_data) %>% select(-date)
     }
     continuous_data$functioning <- as.character(continuous_data$functioning)
     continuous_data_filtered <- continuous_data %>%
@@ -2360,14 +2362,14 @@ server <- function(input, output, session) {
   })
 
   dfG <- reactive({
-    endT_list <- unique(continuous_data() %>% filter(timepoint <= final_tG()) %>% select(timepoint))
+    endT_list <- unique(continuous_data_filteredG() %>% filter(timepoint <= final_tG()) %>% select(timepoint))
     endT <- max(endT_list$timepoint)
     startT <- min(unique(continuous_data_filteredG()$timepoint))
     tp_end <- sym(paste0("tp_", endT))
     tp_start <- sym(paste0("tp_", startT))
     df <- continuous_data_filteredG() %>%
       filter(timepoint <= endT) %>%
-      pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_") %>%
+      pivot_wider(names_from = timepoint, values_from = score, names_prefix = "tp_", id_cols = c(id, dose, functioning)) %>%
       mutate(score = !!tp_end - !!tp_start) %>%
       dplyr::select(id, score, dose, functioning)
 
@@ -2479,11 +2481,11 @@ server <- function(input, output, session) {
             )
           ) +
           geom_text(
-            data = arrowdf, aes(x = 2, y = improve_text, label = "Improvement"),
+            data = arrowdf, aes(x = 1, y = improve_text, label = "Improvement"),
             inherit.aes = FALSE
           ) +
           geom_text(
-            data = arrowdf, aes(x = 2, y = worse_text, label = "Worsening"),
+            data = arrowdf, aes(x = 1, y = worse_text, label = "Worsening"),
             inherit.aes = FALSE
           ) +
           ggtitle(editG$title) + theme(plot.title = element_text(size = editG$titlesize, face = "bold"), axis.title = element_text(size = editG$axissize))
@@ -2529,11 +2531,11 @@ server <- function(input, output, session) {
             )
           ) +
           geom_text(
-            data = arrowdf, aes(x = 2, y = 22, label = "Improvement"),
+            data = arrowdf, aes(x = 1, y = 22, label = "Improvement"),
             inherit.aes = FALSE
           ) +
           geom_text(
-            data = arrowdf, aes(x = 2, y = -22, label = "Worsening"),
+            data = arrowdf, aes(x = 1, y = -22, label = "Worsening"),
             inherit.aes = FALSE
           )
       }
@@ -2556,7 +2558,7 @@ server <- function(input, output, session) {
     data <- ordinal_data()
     tpoint <- unique(data$timepoint)
     if (input$ordinal_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_ordinal(data)
     }
     updateSliderInput(session, "tpointH", label = "Start and endpoint for comparison", min = min(tpoint), max = max(tpoint), value = c(min(tpoint), max(tpoint)))
   })
@@ -2580,7 +2582,7 @@ server <- function(input, output, session) {
     data <- ordinal_data()
     tpoint <- unique(data$timepoint)
     if (input$ordinal_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_ordinal(data)
     }
     updateSliderInput(session, "tpointH", label = "Start and endpoint for comparison", min = min(tpoint), max = max(tpoint), value = c(min(tpoint), max(tpoint)))
   })
@@ -2614,6 +2616,9 @@ server <- function(input, output, session) {
   ordinal_dataH <- reactive({
     tps <- times_H()
     ordinal_dataH <- ordinal_data()
+    if (input$ordinal_date == TRUE) {
+      ordinal_dataH <- date_to_timepoint_ordinal(ordinal_dataH) %>% select(-date)
+    }
     list_T <- unique(ordinal_dataH %>% filter(timepoint <= tps[2] & timepoint >= tps[1]) %>% select(timepoint))
     tps[1] <- min(list_T$timepoint)
     tp_first <- as.symbol(paste0("tp_", tps[1]))
@@ -2891,7 +2896,7 @@ server <- function(input, output, session) {
     data <- ordinal_data()
     tpoint <- unique(data$timepoint)
     if (input$ordinal_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_ordinal(data)
     }
     updateSliderInput(session, "tpointI", label = "Final timepoint of interest", min = sort(tpoint)[2], max = max(tpoint))
   })
@@ -2915,7 +2920,7 @@ server <- function(input, output, session) {
     data <- ordinal_data()
     tpoint <- unique(data$timepoint)
     if (input$ordinal_date == TRUE) {
-      tpoint <- as.Date(tpoint)
+      tpoint <- 0:max_no_dates_ordinal(data)
     }
     updateSliderInput(session, "tpointI", label = "Final timepoint of interest", min = tpoint[2], max = max(tpoint))
   })
@@ -2955,6 +2960,9 @@ server <- function(input, output, session) {
   #### Filter and sort data
   ordinal_dataI <- reactive({
     ordinal_data <- ordinal_data()
+    if (input$ordinal_date == TRUE) {
+      ordinal_data <- date_to_timepoint_ordinal(ordinal_data) %>% select(-date)
+    }
     end_list <- unique(ordinal_data %>% filter(timepoint <= times_I()) %>% select(timepoint))
     end <- max(end_list$timepoint)
     tp_end <- as.symbol(paste0("tp_", end))

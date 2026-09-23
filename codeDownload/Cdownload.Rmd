@@ -35,20 +35,34 @@ library(gt)
 library(gridExtra)
 library(survminer)
 
-# Set the parameters
+# To read in the data, uncomment the following line and add in the filepath to your data file after ensuring it meets the app formatting requirements.
+# continuous_data <- read.csv(FILEPATH, header = TRUE, sep = ",")
+# Also ensure that the next line is commented out if you are reading in your own data file.
 continuous_data <- params$continuous_data
+
+# Set the parameters
 no_doseC <- params$no_doseC
 func_C <- params$func_C
 final_tC <- params$final_tC
 continuous_date <- params$continuous_date
 
+# Function to handle date data
+date_to_timepoint_continuous <- function(data) {
+    data %>%
+        group_by(id, functioning) %>%
+        arrange(timepoint) %>%
+        mutate(date = timepoint, timepoint = row_number() - 1) %>%
+        ungroup()
+}
+
 # Filter to leave only the relevant PRO domain and then remove the column
+if (params$continuous_date == TRUE) {
+    continuous_data_filtered <- date_to_timepoint_continuous(continuous_data)
+}
 continuous_data_filtered <- continuous_data %>%
     filter(functioning == func_C) %>%
     dplyr::select(-functioning)
-if (params$continuous_date == TRUE) {
-    continuous_data_filtered$timepoint == as.Date(continuous_data_filtered$timepoint)
-}
+
 
 # Find the baseline then calculate the change from baseline
 diffC <- continuous_data_filtered %>%

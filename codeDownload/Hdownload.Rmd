@@ -29,12 +29,30 @@ library(gt)
 library(gridExtra)
 library(survminer)
 
-# Define parameters
+# To read in the data, uncomment the following line and add in the filepath to your data file after ensuring it meets the app formatting requirements.
+# ordinal_data <- read.csv(FILEPATH, header = TRUE, sep = ",")
+# Also ensure that the next line is commented out if you are reading in your own data file.
 ordinal_data <- params$ordinal_data
+
+# Define parameters
 no_doseH <- params$no_doseH
 toxicH <- params$toxicH
 tps <- params$times_H
 ordinal_date <- params$ordinal_date
+
+# Function to handle date data
+date_to_timepoint_ordinal <- function(data) {
+  data %>%
+    group_by(id, toxicity) %>%
+    arrange(timepoint) %>%
+    mutate(date = timepoint, timepoint = row_number() - 1) %>%
+    ungroup()
+}
+
+# Handle date data
+if (ordinal_date == TRUE) {
+  ordinal_data <- date_to_timepoint_ordinal(ordinal_data) %>% select(-date)
+}
 
 # Create list of timepoints within the specified range
 list_T <- unique(ordinal_data %>% filter(timepoint <= tps[2] & timepoint >= tps[1]) %>% select(timepoint))
