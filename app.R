@@ -1122,17 +1122,17 @@ server <- function(input, output, session) {
     if (input$ordinal_date == TRUE) {
       ordinal_formatted <- ordinal_data %>%
         date_to_timepoint_ordinal()
-      ordinal_data$base_adj <- ordinal_formatted %>%
+      base_adj <- ordinal_formatted %>%
         group_by(id, toxicity) %>%
         mutate(base_adj = grade - grade[timepoint == min(ordinal_formatted$timepoint)]) %>%
-        select(base_adj) %>%
-        pull()
+        select(id, base_adj, date, toxicity)
+      ordinal_data <- left_join(ordinal_data, base_adj, by = c("id", "timepoint" = "date", "toxicity"), unmatched = "drop")
     } else {
       ordinal_data <- ordinal_data %>%
         group_by(id, toxicity) %>%
         mutate(base_adj = grade - grade[timepoint == min(ordinal_data$timepoint)])
     }
-    ordinal_data <- ordinal_data %>% filter(is.na(base_adj) == FALSE)
+    ordinal_data <- ordinal_data %>% filter(is.na(base_adj) == FALSE) # filter out missing base-adj values. If baseline is missing, then the patient is not included in the analysis.
     if (input$ordinal_date == TRUE) {
       summary_df <- ordinal_data %>%
         group_by(id) %>%
@@ -1148,8 +1148,9 @@ server <- function(input, output, session) {
           event = as.integer(any(base_adj >= change))
         ) # 1 if grade 3 occurred, 0 if censored
     }
-    summary_df <- cbind(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose)))
-    colnames(summary_df)[5] <- "dose"
+    summary_df <- left_join(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose), .groups = "drop"), by = "id", unmatched = "drop")
+    colnames(summary_df)[4] <- "dose"
+    print(summary_df)
     summary_df
   })
 
