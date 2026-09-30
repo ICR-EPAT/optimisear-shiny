@@ -57,11 +57,11 @@ ordinal_data <- params$ordinal_data
 if (params$ordinal_date == TRUE) {
     ordinal_formatted <- ordinal_data %>%
         date_to_timepoint_ordinal()
-    ordinal_data$base_adj <- ordinal_formatted %>%
+    base_adj <- ordinal_formatted %>%
         group_by(id, toxicity) %>%
         mutate(base_adj = grade - grade[timepoint == min(ordinal_formatted$timepoint)]) %>%
-        select(base_adj) %>%
-        pull()
+        select(id, base_adj, date, toxicity)
+    ordinal_data <- left_join(ordinal_data, base_adj, by = c("id", "timepoint" = "date", "toxicity"), unmatched = "drop")
 } else {
     ordinal_data <- ordinal_data %>%
         group_by(id, toxicity) %>%
@@ -91,8 +91,8 @@ if (params$ordinal_date == TRUE) {
 }
 
 # Add the dose to the summary dataframe and name it "dose"
-summary_df <- cbind(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose)))
-colnames(summary_df)[5] <- "dose"
+summary_df <- left_join(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose), .groups = "drop"), by = "id", unmatched = "drop")
+colnames(summary_df)[4] <- "dose"
 
 # Create a survfit object to be used to plot a Kaplan-Meier graph and calculate median time to event for each dose group
 fit <- survfit2(Surv(time, event) ~ dose, data = summary_df)

@@ -13,6 +13,7 @@ library(bslib)
 library(bsicons)
 library(gridExtra)
 library(survminer)
+library(datefixR)
 # rmarkdown needs a pandoc binary to render the "download code" .Rmd reports.
 # In the Docker image (and any conda env built from local.yml/environment.yml) pandoc is
 # already on the PATH, so only fall back to the `pandoc` R package (which downloads a
@@ -1008,6 +1009,9 @@ server <- function(input, output, session) {
   observeEvent(input$upload, {
     if (class(ordinal_data()$timepoint[1]) == "character") {
       showNotification("Timepoint of format \"YYYY-MM-DD\" detected in input, auto-switching ON date mode. Switch back OFF if not a date.", type = "warning")
+      if (any(ordinal_data()$timepoint != as.character(fix_date_char(ordinal_data()$timepoint)))) {
+        showNotification("Timepoint formatting incorrect and figures produced may be inaccurate. Please ensure it is in the format \"YYYY-MM-DD\".", type = "error", duration = NULL)
+      }
     } else if (class(ordinal_data()$timepoint[1]) == "integer") {
       showNotification("Timepoint of format integer detected in input, auto-switching OFF date mode. Switch back ON if a date.", type = "warning")
     }
@@ -1122,17 +1126,17 @@ server <- function(input, output, session) {
     if (input$ordinal_date == TRUE) {
       ordinal_formatted <- ordinal_data %>%
         date_to_timepoint_ordinal()
-      ordinal_data$base_adj <- ordinal_formatted %>%
+      base_adj <- ordinal_formatted %>%
         group_by(id, toxicity) %>%
         mutate(base_adj = grade - grade[timepoint == min(ordinal_formatted$timepoint)]) %>%
-        select(base_adj) %>%
-        pull()
+        select(id, base_adj, date, toxicity)
+      ordinal_data <- left_join(ordinal_data, base_adj, by = c("id", "timepoint" = "date", "toxicity"), unmatched = "drop")
     } else {
       ordinal_data <- ordinal_data %>%
         group_by(id, toxicity) %>%
         mutate(base_adj = grade - grade[timepoint == min(ordinal_data$timepoint)])
     }
-    ordinal_data <- ordinal_data %>% filter(is.na(base_adj) == FALSE)
+    ordinal_data <- ordinal_data %>% filter(is.na(base_adj) == FALSE) # filter out missing base-adj values. If baseline is missing, then the patient is not included in the analysis.
     if (input$ordinal_date == TRUE) {
       summary_df <- ordinal_data %>%
         group_by(id) %>%
@@ -1148,8 +1152,9 @@ server <- function(input, output, session) {
           event = as.integer(any(base_adj >= change))
         ) # 1 if grade 3 occurred, 0 if censored
     }
-    summary_df <- cbind(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose)))
-    colnames(summary_df)[5] <- "dose"
+    summary_df <- left_join(summary_df, ordinal_data %>% group_by(id) %>% dplyr::summarise(max(dose), .groups = "drop"), by = "id", unmatched = "drop")
+    colnames(summary_df)[4] <- "dose"
+    print(summary_df)
     summary_df
   })
 
@@ -1506,6 +1511,9 @@ server <- function(input, output, session) {
   observeEvent(input$upload_cts, {
     if (class(continuous_data()$timepoint[1]) == "character") {
       showNotification("Timepoint of format \"YYYY-MM-DD\" detected in input, auto-switching ON date mode. Switch back OFF if not a date.", type = "warning")
+      if (any(continuous_data()$timepoint != as.character(fix_date_char(continuous_data()$timepoint)))) {
+        showNotification("Timepoint formatting incorrect and figures produced may be inaccurate. Please ensure it is in the format \"YYYY-MM-DD\".", type = "error", duration = NULL)
+      }
     } else if (class(continuous_data()$timepoint[1]) == "integer") {
       showNotification("Timepoint of format integer detected in input, auto-switching OFF date mode. Switch back ON if a date.", type = "warning")
     }

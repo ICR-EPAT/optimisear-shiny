@@ -22,4 +22,5 @@ dependencies:
   - r-survminer
   - r-rmarkdown
   - pandoc
+  - r-datefixr
 prefix: /opt/anaconda3/envs/r-shiny-env
