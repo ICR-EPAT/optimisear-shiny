@@ -13,6 +13,7 @@ library(bslib)
 library(bsicons)
 library(gridExtra)
 library(survminer)
+library(datefixR)
 # rmarkdown needs a pandoc binary to render the "download code" .Rmd reports.
 # In the Docker image (and any conda env built from local.yml/environment.yml) pandoc is
 # already on the PATH, so only fall back to the `pandoc` R package (which downloads a
@@ -1008,6 +1009,9 @@ server <- function(input, output, session) {
   observeEvent(input$upload, {
     if (class(ordinal_data()$timepoint[1]) == "character") {
       showNotification("Timepoint of format \"YYYY-MM-DD\" detected in input, auto-switching ON date mode. Switch back OFF if not a date.", type = "warning")
+      if (any(ordinal_data()$timepoint != as.character(fix_date_char(ordinal_data()$timepoint)))) {
+        showNotification("Timepoint formatting incorrect and figures produced may be inaccurate. Please ensure it is in the format \"YYYY-MM-DD\".", type = "error", duration = NULL)
+      }
     } else if (class(ordinal_data()$timepoint[1]) == "integer") {
       showNotification("Timepoint of format integer detected in input, auto-switching OFF date mode. Switch back ON if a date.", type = "warning")
     }
@@ -1507,6 +1511,9 @@ server <- function(input, output, session) {
   observeEvent(input$upload_cts, {
     if (class(continuous_data()$timepoint[1]) == "character") {
       showNotification("Timepoint of format \"YYYY-MM-DD\" detected in input, auto-switching ON date mode. Switch back OFF if not a date.", type = "warning")
+      if (any(continuous_data()$timepoint != as.character(fix_date_char(continuous_data()$timepoint)))) {
+        showNotification("Timepoint formatting incorrect and figures produced may be inaccurate. Please ensure it is in the format \"YYYY-MM-DD\".", type = "error", duration = NULL)
+      }
     } else if (class(continuous_data()$timepoint[1]) == "integer") {
       showNotification("Timepoint of format integer detected in input, auto-switching OFF date mode. Switch back ON if a date.", type = "warning")
     }
