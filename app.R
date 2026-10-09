@@ -285,7 +285,7 @@ ui <- div(page_navbar(
                 selected = NULL, inline = TRUE
               ),
               sliderInput("tpointB", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-              selectInput("toxicB", label = "Toxicity of interest", choices = NULL),
+              selectInput("toxicB", label = "PRO domain of interest", choices = NULL),
               height = 800
             )), card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadB", style = "background-color: #d9bfd9"), downloadButton("downloadBcode", style = "background-color: #d9bfd9", label = "Code")))
           ),
@@ -329,7 +329,7 @@ ui <- div(page_navbar(
                 selected = NULL, inline = TRUE
               ),
               sliderInput("tpointH", label = "Start and endpoint for comparison", min = 0, max = 1, value = c(0, 1), step = 1),
-              checkboxGroupInput("toxicH", label = "Toxicity of interest", choices = NULL, inline = TRUE),
+              checkboxGroupInput("toxicH", label = "PRO domain of interest", choices = NULL, inline = TRUE),
               height = 800
             )),
             card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadH", style = "background-color: #d9bfd9"), downloadButton("downloadHcode", style = "background-color: #d9bfd9", label = "Code")))
@@ -371,7 +371,7 @@ ui <- div(page_navbar(
                 selected = NULL, inline = TRUE
               ),
               sliderInput("tpointI", label = "Endpoint of interest", min = 1, max = 1, value = 1, step = 1),
-              checkboxGroupInput("toxicI", label = "Toxicity of interest", selected = NULL, inline = TRUE),
+              checkboxGroupInput("toxicI", label = "PRO domain of interest", selected = NULL, inline = TRUE),
               height = 800
             )),
             card(card_header("Download .svg file", style = "background-color: #bfd9bf"), card_body(downloadButton("downloadI", style = "background-color: #d9bfd9"), downloadButton("downloadIcode", style = "background-color: #d9bfd9", label = "Code")))
@@ -1248,7 +1248,7 @@ server <- function(input, output, session) {
     req(input$upload)
     data <- ordinal_data()
     toxic <- unique(data$toxicity)
-    updateSelectInput(session, "toxicB", label = "Toxicity of interest", choices = toxic, selected = NULL)
+    updateSelectInput(session, "toxicB", label = "PRO domain of interest", choices = toxic, selected = NULL)
   })
   ####### for dummy data
   observe({
@@ -1272,7 +1272,7 @@ server <- function(input, output, session) {
     req(input$dummy_ordinal)
     data <- ordinal_data()
     toxic <- unique(data$toxicity)
-    updateSelectInput(session, "toxicB", label = "Toxicity of interest", choices = toxic, selected = NULL)
+    updateSelectInput(session, "toxicB", label = "PRO domain of interest", choices = toxic, selected = NULL)
   })
 
   # Define the relevant variables
@@ -2575,7 +2575,7 @@ server <- function(input, output, session) {
     req(input$upload)
     data <- ordinal_data()
     toxic <- unique(data$toxicity)
-    updateCheckboxGroupInput(session, "toxicH", label = "Toxicity of interest", choices = toxic, selected = NULL)
+    updateCheckboxGroupInput(session, "toxicH", label = "PRO domain of interest", choices = toxic, selected = NULL)
   })
   ####### Dummy
   observe({
@@ -2599,7 +2599,7 @@ server <- function(input, output, session) {
     req(input$dummy_ordinal)
     data <- ordinal_data()
     toxic <- unique(data$toxicity)
-    updateCheckboxGroupInput(session, "toxicH", label = "Toxicity of interest", choices = toxic, selected = NULL)
+    updateCheckboxGroupInput(session, "toxicH", label = "PRO domain of interest", choices = toxic, selected = NULL)
   })
 
   # Define the relevant variables
@@ -2913,7 +2913,7 @@ server <- function(input, output, session) {
     req(input$upload)
     data <- ordinal_data()
     toxic <- unique(data$toxicity)
-    updateCheckboxGroupInput(session, "toxicI", label = "Toxicity of interest", choices = toxic, selected = NULL)
+    updateCheckboxGroupInput(session, "toxicI", label = "PRO domain of interest", choices = toxic, selected = NULL)
   })
   ############# for the dummy set
   observe({
@@ -2937,7 +2937,7 @@ server <- function(input, output, session) {
     req(input$dummy_ordinal)
     data <- ordinal_data()
     toxic <- unique(data$toxicity)
-    updateCheckboxGroupInput(session, "toxicI", label = "Toxicity of interest", choices = toxic, selected = NULL)
+    updateCheckboxGroupInput(session, "toxicI", label = "PRO domain of interest", choices = toxic, selected = NULL)
   })
 
   # Define the relevant variables
