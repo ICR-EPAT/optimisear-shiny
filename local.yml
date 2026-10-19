@@ -20,5 +20,6 @@ dependencies:
   - r-bsicons
   - r-gridExtra
   - r-survminer
+  - r-datefixr
   - r-rmarkdown
   - pandoc
