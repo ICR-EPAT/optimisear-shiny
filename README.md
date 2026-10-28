@@ -1,3 +1,4 @@
+[![DOI](https://zenodo.org/badge/1011251730.svg)](https://doi.org/10.5281/zenodo.23727900)
 # OPTIMISE-AR Shiny App
 The OPTIMISE-AR  (incOrporating PaTIent-reported outcoMes In doSE-finding trials–Analysis Recommendations) shiny app is a companion software to the OPTIMISE-AR guidance [1]. It provides an easy to use platform to generate graphics to summarise Patient Reported Outcome (PRO) data for use in dose-finding oncology trial (DFOT) publications. This toolkit is designed to support trialists in line with three key PRO endpoint types:
 
